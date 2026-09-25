@@ -340,6 +340,27 @@
         outline: 3px solid #06c;
         outline-offset: 2px;
       }
+      .search-icon.is-loading {
+        cursor: wait;
+        opacity: 0.65;
+      }
+      .search-icon.is-loading::before {
+        width: 14px;
+        height: 14px;
+        border-width: 2px;
+        border-color: #1a3f7a #1a3f7a transparent transparent;
+        animation: search-spin 0.7s linear infinite;
+        left: 6px;
+        top: 6px;
+      }
+      .search-icon.is-loading::after {
+        display: none;
+      }
+      @keyframes search-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
       #deRows .pl {
         position: relative;
       }
@@ -367,6 +388,9 @@
         color: #111;
         text-align: left;
         cursor: pointer;
+        transition:
+          background 0.12s ease,
+          box-shadow 0.12s ease;
       }
       .product-suggestion:last-child {
         border-bottom: 0;
@@ -374,8 +398,10 @@
       .product-suggestion:hover,
       .product-suggestion:focus-visible,
       .product-suggestion.active {
-        background: #eef5ff;
+        background: #d7e8ff !important;
+        color: #0f356f;
         outline: 0;
+        box-shadow: inset 5px 0 0 #1a3f7a;
       }
       .product-suggestion .code {
         display: block;
@@ -428,12 +454,17 @@
         color: #111;
         text-align: left;
         cursor: pointer;
+        transition:
+          background 0.12s ease,
+          box-shadow 0.12s ease;
       }
       .date-suggestion:hover,
       .date-suggestion:focus-visible,
       .date-suggestion.active {
-        background: #eef5ff;
+        background: #d7e8ff !important;
+        color: #135cc9;
         outline: 0;
+        box-shadow: inset 5px 0 0 #1a3f7a;
       }
       .box {
         border: 1px solid #bbb;
@@ -1071,6 +1102,9 @@
       #entry .pl input.product-name {
         display: none !important;
       }
+      #entry .pl .clear-x-wrap:has(input.inv) > .clear-x-btn {
+        display: none !important;
+      }
       #entry .pl.hd > span:nth-child(2) {
         display: none;
       }
@@ -1094,24 +1128,13 @@
       }
       #entry .pl {
         display: grid;
-        grid-template-columns: 34px 0.8fr 1fr 1fr 1fr 1fr 1.1fr 34px;
+        grid-template-columns: 34px 1fr 1fr 1fr 1fr 1.1fr 34px;
         gap: 6px;
         align-items: center;
         margin-bottom: 6px;
       }
       #entry .pl .ppc {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        min-height: 33px;
-        padding: 6px 8px;
-        border: 1px solid #ccd3dc;
-        border-radius: 6px;
-        background: #f3f5f8;
-        color: #1a3f7a;
-        font-size: 13.5px;
-        font-weight: 700;
-        white-space: nowrap;
+        display: none;
       }
       #entry .pl .row-warn {
         display: none;
@@ -1164,6 +1187,7 @@
         text-align: right;
       }
       #entry .pl .rm {
+        display: none !important;
         border: 1px solid #c9ced4;
         background: #fff;
         border-radius: 5px;
@@ -1319,7 +1343,7 @@
           gap: 6px;
           align-items: center;
           padding: 8px 6px;
-          padding-right: 34px;
+          padding-right: 6px;
           position: relative;
           border: 1px solid #d0d5db;
           border-radius: 8px;
@@ -1330,9 +1354,6 @@
           display: none;
         }
         #entry .pl:not(.hd) > .n {
-          display: none;
-        }
-        #entry .pl:not(.hd) > .ppc {
           display: none;
         }
         #entry .pl:not(.hd) > .clear-x-wrap:has(input.product-name) {
@@ -1377,6 +1398,9 @@
           white-space: nowrap;
         }
         #entry #deRows:not(.view-all) > .pl:last-child > .row-add {
+          display: block;
+        }
+        #entry #deRows > .pl.editing > .row-add {
           display: block;
         }
         #entry .pl:not(.hd) > .rm {
@@ -1533,6 +1557,21 @@
       #entry .addbar .note {
         margin-top: 0;
       }
+      #entry .add-meta {
+        display: flex;
+        gap: 14px;
+        color: #555;
+        font-size: 12px;
+      }
+      #entry .add-meta:empty {
+        display: none;
+      }
+      #entry #cancelEdit {
+        border-color: #b33;
+        color: #b33;
+        font-size: 12px;
+        padding: 7px 10px;
+      }
       #entry button#addRow {
         margin-left: auto;
         min-width: 76px;
@@ -1688,6 +1727,11 @@
       #viewDlg td:nth-child(n + 4) {
         width: 64px;
       }
+      #viewDlg th:nth-child(8),
+      #viewDlg td:nth-child(8) {
+        width: 58px;
+        text-align: center;
+      }
       #viewDlg th,
       #viewDlg td {
         border: 1px solid #cbd2da;
@@ -1740,6 +1784,10 @@
         background: #1a3f7a;
         border-color: #1a3f7a;
         color: #fff;
+      }
+      #viewDlg .edit-row {
+        padding: 5px 8px;
+        font-size: 12px;
       }
       @media print {
         dialog#saveDlg {
@@ -1873,9 +1921,7 @@
   <body>
     <div class="toolbar">
       <button type="button" id="openBlank">Blank Form</button>
-      <button type="button" id="openEntry" class="primary">
-        Data Entry Form
-      </button>
+      <button type="button" id="openEntry" class="primary">New Entry</button>
     </div>
 
     <main class="page" data-form="Blank Form">
@@ -2117,7 +2163,7 @@
           </div>
           <div class="pl hd post-search-hidden product-list-group">
             <span class="n">Sl.</span><span>Name of Product</span
-            ><span>Per Pcs</span><span>Batch No.</span><span>Date of Mfg.</span
+            ><span>Batch No.</span><span>Date of Mfg.</span
             ><span>Date of Exp</span><span>Quantity</span
             ><span>Invoice Value</span><span></span>
           </div>
@@ -2133,6 +2179,8 @@
           </div>
           <div class="addbar post-search-hidden product-list-group">
             <div class="note" id="rowNote"></div>
+            <div class="add-meta" id="addMeta" aria-live="polite"></div>
+            <button type="button" id="cancelEdit" hidden>Cancel Edit</button>
             <button
               type="button"
               id="addRow"
@@ -2182,12 +2230,13 @@
                 <th>Exp</th>
                 <th>Qty</th>
                 <th>Value</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody id="viewRows"></tbody>
             <tfoot>
               <tr class="grand-row">
-                <td colspan="5">Grand Total</td>
+                <td colspan="6">Grand Total</td>
                 <td id="viewGrandQty">0</td>
                 <td id="viewGrandValue">0</td>
               </tr>
@@ -2752,7 +2801,7 @@
               '"' +
               (i === 5
                 ? ' inputmode="decimal" readonly tabindex="-1" title="Quantity অনুযায়ী অটো হিসাব হবে"'
-                : i === 4
+                : i === 1 || i === 4
                   ? ' inputmode="numeric"'
                   : "") +
               ">";
@@ -2888,6 +2937,21 @@
             }
           });
           quantityInput.addEventListener("input", updateInvoiceValue);
+          quantityInput.addEventListener("keydown", (event) => {
+            if (event.key !== "Enter") return;
+            event.preventDefault();
+            event.stopPropagation();
+            event.target.blur();
+            const target = commitCurrentRowAndAddNew();
+            if (!target) return;
+            if (target.incomplete) {
+              focusEmpty(target);
+              return;
+            }
+            setTimeout(() => {
+              target.row?.querySelector(".product-name")?.focus();
+            }, 50);
+          });
           invoiceInput.addEventListener("input", updateTotals);
           // Mfg সিলেক্ট করলে Exp অটো বসবে: 2022 → +৩ বছর, 2023/2024 → +২ বছর
           // (একই মাস; চলতি মাস বা তার পরের হলে বসবে না, কারণ মেয়াদ শেষ হয়নি)
@@ -3006,6 +3070,8 @@
         // ===== সেভ / ভিউ (মূল ফরম থেকে সম্পূর্ণ আলাদা) =====
         const $sd = $("saveDlg");
         let pending = null;
+        let editingRow = null;
+        let editingSnapshot = null;
 
         const mpoText = (ipi, name) =>
           ipi && name ? ipi + " - " + name : ipi || name || "";
@@ -3023,25 +3089,80 @@
           return "";
         }
 
-        function collectEntry() {
+        function collectEntry(committedOnly = false) {
           const fields = {};
           Object.keys(map).forEach((k) => {
             fields[k] = $("de_" + k).value.trim();
           });
           fields.mpo = mpoText($("de_ipi").value.trim(), fields.mpo);
           const items = Array.from(list.children)
+            .filter(
+              (d) => !committedOnly || d.classList.contains("row-committed"),
+            )
             .map((d) => ({
               row: Array.from(d.querySelectorAll("input")).map((i) =>
                 i.value.trim(),
               ),
               code: codeFor(d),
             }))
-            .filter((it) => it.row.some((v) => v !== ""));
+            .filter((it) => it.row.slice(0, 5).some((v) => v !== ""));
           return {
             fields,
             rows: items.map((it) => it.row),
             codes: items.map((it) => it.code),
           };
+        }
+
+        function editProductRow(row) {
+          editingRow = row;
+          editingSnapshot = {
+            values: Array.from(row.querySelectorAll("input")).map(
+              (input) => input.value,
+            ),
+            committed: row.classList.contains("row-committed"),
+            dataset: { ...row.dataset },
+            ppc: row.querySelector(".ppc")?.textContent || "",
+          };
+          row.classList.remove("row-committed");
+          row.classList.add("editing");
+          list.classList.add("view-all");
+          $("typeProduct").value = row.querySelector(".product-name").value;
+          $("cancelEdit").hidden = false;
+          $("addRow").textContent = "Update";
+          viewDlg.close();
+          document.body.classList.add("de-open");
+          revealProductList();
+          dlg.showModal();
+          setTimeout(() => $("typeProduct").focus(), 50);
+        }
+
+        function clearEditState() {
+          editingRow?.classList.remove("editing");
+          editingRow = null;
+          editingSnapshot = null;
+          list.classList.remove("view-all");
+          $("cancelEdit").hidden = true;
+          $("addRow").textContent = "Add";
+          $("typeProduct").value = "";
+          $("addMeta").textContent = "";
+        }
+
+        function cancelProductEdit() {
+          if (!editingRow || !editingSnapshot) return;
+          const inputs = editingRow.querySelectorAll("input");
+          editingSnapshot.values.forEach((value, index) => {
+            if (inputs[index]) inputs[index].value = value;
+          });
+          Object.keys(editingRow.dataset).forEach(
+            (key) => delete editingRow.dataset[key],
+          );
+          Object.assign(editingRow.dataset, editingSnapshot.dataset);
+          const ppc = editingRow.querySelector(".ppc");
+          if (ppc) ppc.textContent = editingSnapshot.ppc;
+          if (editingSnapshot.committed)
+            editingRow.classList.add("row-committed");
+          clearEditState();
+          updateTotals();
         }
 
         function renderViewTable(data) {
@@ -3071,6 +3192,19 @@
                   return td;
                 }),
               );
+              const action = document.createElement("td");
+              const edit = document.createElement("button");
+              edit.type = "button";
+              edit.className = "edit-row";
+              edit.textContent = "Edit";
+              const sourceRows = Array.from(list.children).filter((item) =>
+                Array.from(item.querySelectorAll("input"))
+                  .slice(0, 5)
+                  .some((input) => input.value.trim()),
+              );
+              edit.onclick = () => editProductRow(sourceRows[index]);
+              action.appendChild(edit);
+              tr.appendChild(action);
               return tr;
             }),
           );
@@ -3167,7 +3301,7 @@
             bad[0].querySelectorAll("input")[2].focus();
             return;
           }
-          const data = collectEntry();
+          const data = collectEntry(true);
           if (!data.rows.length) {
             alert("কমপক্ষে একটি পণ্যের সারি পূরণ করুন।");
             return;
@@ -3450,12 +3584,77 @@
             if (t.invalid) t.empty.select();
           }, 50);
         }
+        function validateRowsBeforeView() {
+          for (const row of list.children) {
+            const inputs = Array.from(row.querySelectorAll("input"));
+            const entryInputs = inputs.slice(0, 5);
+            if (!entryInputs.some((input) => input.value.trim())) continue;
+            const empty = firstEmptyInput(row);
+            if (empty) {
+              const rowNo = Array.from(list.children).indexOf(row) + 1;
+              const idx = inputs.indexOf(empty);
+              focusEmpty({
+                empty,
+                incomplete: true,
+                rowNo,
+                label: COLS[idx],
+                invalid: (idx === 2 || idx === 3) && empty.value.trim() !== "",
+              });
+              return false;
+            }
+            const warning = row.querySelector(".row-warn");
+            if (warning?.style.display === "block") {
+              alert(
+                "সারি " +
+                  (Array.from(list.children).indexOf(row) + 1) +
+                  "-এর মেয়াদ এখনো শেষ হয়নি। Date of Exp ঠিক করুন.",
+              );
+              inputs[2].focus();
+              return false;
+            }
+            row.classList.add("row-committed");
+          }
+          return true;
+        }
         // Add চাপলে (বা Quantity-তে Enter দিলে) বর্তমান সারিটি সম্পূর্ণ ও
         // বৈধ হলে "ফরমে" যোগ হয়ে যায় (লুকিয়ে যায়, View চাপলে আবার দেখা
         // যাবে) এবং তার জায়গায় খালি সারি (একই কলামগুলো — Name of Product,
         // Batch No., Date of Mfg., Date of Exp, Quantity, Invoice Value —
         // খালি অবস্থায়) দেখা যায়, পরের প্রোডাক্ট টাইপ করার জন্য।
         function commitCurrentRowAndAddNew() {
+          if (editingRow) {
+            const empty = firstEmptyInput(editingRow);
+            if (empty) {
+              const rowNo = Array.from(list.children).indexOf(editingRow) + 1;
+              const idx = Array.from(
+                editingRow.querySelectorAll("input"),
+              ).indexOf(empty);
+              return {
+                row: editingRow,
+                empty,
+                incomplete: true,
+                rowNo,
+                label: COLS[idx],
+                invalid: (idx === 2 || idx === 3) && empty.value.trim() !== "",
+              };
+            }
+            const warning = editingRow.querySelector(".row-warn");
+            if (warning?.style.display === "block") {
+              alert(
+                "এই product-এর মেয়াদ এখনো শেষ হয়নি। Date of Exp ঠিক করুন।",
+              );
+              const mfg = editingRow.querySelector(".mfg-date");
+              if (mfg) mfg.focus();
+              return { row: editingRow, empty: mfg, incomplete: true };
+            }
+            editingRow.classList.add("row-committed");
+            clearEditState();
+            const next =
+              Array.from(list.children).find(
+                (row) => !row.classList.contains("row-committed"),
+              ) || addRow();
+            return { row: next, empty: next.querySelector("input") };
+          }
           const before = list.children.length;
           const target = rowToFill();
           if (target && !target.incomplete && list.children.length > before) {
@@ -3463,10 +3662,12 @@
             const committedRow = rows[rows.length - 2];
             if (committedRow) committedRow.classList.add("row-committed");
             $("typeProduct").value = "";
+            $("addMeta").textContent = "";
           }
           return target;
         }
         $("addRow").onclick = () => focusEmpty(commitCurrentRowAndAddNew());
+        $("cancelEdit").onclick = cancelProductEdit;
         function openTypeProductSuggestions() {
           let row = Array.from(list.children).find(
             (item) => !item.classList.contains("row-committed"),
@@ -3475,6 +3676,7 @@
           const productInput = row?.querySelector(".product-name");
           if (!productInput) return;
           productInput.value = $("typeProduct").value;
+          $("addMeta").textContent = "";
           const batchInput = row.querySelector(".batch-no");
           const panel = $("typeProductSuggestions");
           panel._anchorInput = $("typeProduct");
@@ -3483,6 +3685,33 @@
         $("typeProduct").addEventListener("input", openTypeProductSuggestions);
         $("typeProduct").addEventListener("focus", openTypeProductSuggestions);
         $("typeProduct").addEventListener("click", openTypeProductSuggestions);
+        $("typeProduct").addEventListener("keydown", (event) => {
+          const panel = $("typeProductSuggestions");
+          if (panel.style.display !== "block") return;
+          const items = Array.from(panel.children);
+          if (!items.length) return;
+          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+            let index = panel._activeIndex ?? -1;
+            index =
+              event.key === "ArrowDown"
+                ? Math.min(index + 1, items.length - 1)
+                : Math.max(index - 1, 0);
+            panel._activeIndex = index;
+            items.forEach((item, itemIndex) =>
+              item.classList.toggle("active", itemIndex === index),
+            );
+            items[index].scrollIntoView({ block: "nearest" });
+          } else if (event.key === "Enter") {
+            const index = panel._activeIndex ?? -1;
+            if (index > -1 && items[index]) {
+              event.preventDefault();
+              items[index].click();
+            }
+          } else if (event.key === "Escape") {
+            panel.style.display = "none";
+          }
+        });
         $("typeProduct").addEventListener("blur", () => {
           const panel = $("typeProductSuggestions");
           setTimeout(() => {
@@ -3493,7 +3722,8 @@
         });
         // View: Add করা product-সহ পূর্ণ form preview দেখায়
         $("viewAdded").onclick = () => {
-          const data = collectEntry();
+          if (!validateRowsBeforeView()) return;
+          const data = collectEntry(false);
           if (!data.rows.length) {
             alert("View করার জন্য কমপক্ষে একটি পণ্যের সারি পূরণ করুন।");
             return;
@@ -3841,6 +4071,15 @@
                         : Number.isFinite(ppNum)
                           ? ppNum.toFixed(2)
                           : pp;
+                  $("addMeta").textContent =
+                    "Pack Size: " +
+                    (record.fields["PACK SIZE"] || "-") +
+                    " | Per Pcs: " +
+                    (pp === undefined || pp === "" || pp === null
+                      ? "-"
+                      : Number.isFinite(ppNum)
+                        ? ppNum.toFixed(2)
+                        : pp);
                   const perPcs = Number(record.fields["PER PCS"]);
                   rowEl.dataset.perPcs = Number.isFinite(perPcs)
                     ? String(perPcs)
@@ -3951,6 +4190,65 @@
             ? { document, fields: firestoreFields(document), division }
             : null;
         }
+        async function findChemistByCode(chemistCode) {
+          const target = (chemistCode || "").trim();
+          if (!target) return null;
+          const territory = currentTerritoryCode.trim().toUpperCase();
+          const preferred = /^NDIN/.test(territory)
+            ? "inm"
+            : /^SVD/.test(territory)
+              ? "isv"
+              : "pharma";
+          const divisions = [
+            preferred,
+            ...["pharma", "inm", "isv"].filter(
+              (division) => division !== preferred,
+            ),
+          ];
+          for (const division of divisions) {
+            const parent = CHEMIST_DB + "/Chemist_List/" + division;
+            for (const fieldPath of [
+              "CHEMIST CODE",
+              "CODE",
+              "Code",
+              "Chemist Code",
+            ]) {
+              for (const value of [
+                { stringValue: target },
+                { integerValue: target },
+              ]) {
+                try {
+                  const response = await postJSON(parent + ":runQuery", {
+                    structuredQuery: {
+                      from: [{ collectionId: "clients" }],
+                      where: {
+                        fieldFilter: {
+                          field: { fieldPath: "`" + fieldPath + "`" },
+                          op: "EQUAL",
+                          value,
+                        },
+                      },
+                      limit: 1,
+                    },
+                  });
+                  const document = (response || []).find(
+                    (item) => item.document,
+                  )?.document;
+                  if (document) {
+                    return {
+                      document,
+                      fields: firestoreFields(document),
+                      division,
+                    };
+                  }
+                } catch (e) {
+                  if (e.code === "perm") throw e;
+                }
+              }
+            }
+          }
+          return null;
+        }
         // Chemist সার্চ সফল হলে (বা আগের এন্ট্রি আবার খুললে) Product List দেখায়
         function updateChemistSummary() {
           $("summaryCcode").textContent = $("de_ccode").value.trim() || "-";
@@ -3995,15 +4293,18 @@
           return true;
         }
         async function searchChemist() {
-          const code = currentTerritoryCode.trim();
+          const code = $("de_ccode").value.trim();
           if (!code) {
-            setSt("err", "আগে IPI NO দিয়ে Territory Code আনুন।");
+            alert("আগে Chemist Code লিখুন, তারপর Search চাপুন।");
+            $("de_ccode").focus();
             return;
           }
-          // প্রতিবার Search করলে browser-এ রাখা পুরনো Chemist তথ্য ব্যবহার হবে না।
-          ["ccode", "chemist", "addr"].forEach((key) => {
-            $("de_" + key).value = "";
-          });
+          const searchButton = $("searchChemist");
+          searchButton.disabled = true;
+          searchButton.classList.add("is-loading");
+          // প্রতিবার Search করলে browser-এ রাখা পুরনো Name/Address ব্যবহার হবে না।
+          $("de_chemist").value = "";
+          $("de_addr").value = "";
           $("entryFieldsBlock").classList.remove("post-search-hidden");
           document
             .querySelectorAll(".product-list-group")
@@ -4012,14 +4313,14 @@
           showChemistSection();
           setSt("load", "Chemist খোঁজা হচ্ছে…");
           try {
-            const result = await findChemistByTerritory(code);
+            const result = await findChemistByCode(code);
             if (!result) {
-              setSt("err", code + "-এর জন্য কোনো Chemist পাওয়া যায়নি।");
+              alert(code + " Code-এর কোনো Chemist পাওয়া যায়নি।");
+              setSt("err", code + " Code-এর কোনো Chemist পাওয়া যায়নি।");
               return;
             }
             const chemistCode =
-              fieldValue(result.fields, ["CHEMIST CODE", "CODE"]) ||
-              result.document.name.split("/").pop();
+              fieldValue(result.fields, ["CHEMIST CODE", "CODE"]) || code;
             const chemistName = fieldValue(result.fields, [
               "NAME",
               "CHEMIST NAME",
@@ -4045,6 +4346,9 @@
                 ? "Chemist search-এর জন্য Firestore-এ read permission প্রয়োজন।"
                 : "Chemist ডাটাবেসে search করা যায়নি। Firestore project/path যাচাই করুন।",
             );
+          } finally {
+            searchButton.disabled = false;
+            searchButton.classList.remove("is-loading");
           }
         }
 
@@ -4149,17 +4453,6 @@
           if (e.target.id === "de_wp2") {
             tryEmployeeOk();
             return;
-          }
-          // Quantity ঘরে Enter: শর্ত (সব ঘর ভরা+বৈধ) ঠিক থাকলে নতুন সারি তৈরি হবে,
-          // ফোকাস সেই নতুন সারির Name of Product-এ যাবে। শর্ত না মিললে এলার্ট।
-          const row = e.target.closest(".pl");
-          if (row) {
-            const ins = Array.from(row.querySelectorAll("input"));
-            if (ins.indexOf(e.target) === 4) {
-              e.target.blur(); // আগে ডুপ্লিকেট-মার্জ চেক হবে
-              focusEmpty(commitCurrentRowAndAddNew());
-              return;
-            }
           }
           const all = Array.from(dlg.querySelectorAll("input[type=text]"));
           const i = all.indexOf(e.target);
