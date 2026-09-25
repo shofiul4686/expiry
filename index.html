@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -75,6 +74,10 @@
       .sign div {
         width: 62mm;
         text-align: center;
+      }
+      .sign.rsm .pageno {
+        width: 28mm;
+        flex: none;
       }
 
       header {
@@ -342,7 +345,7 @@
       }
       .product-suggestions {
         display: none;
-        position: absolute;
+        position: fixed;
         z-index: 1000;
         top: calc(100% - 2px);
         left: 40px;
@@ -369,7 +372,8 @@
         border-bottom: 0;
       }
       .product-suggestion:hover,
-      .product-suggestion:focus-visible {
+      .product-suggestion:focus-visible,
+      .product-suggestion.active {
         background: #eef5ff;
         outline: 0;
       }
@@ -398,7 +402,7 @@
       }
       .date-suggestions {
         display: none;
-        position: absolute;
+        position: fixed;
         z-index: 1000;
         top: calc(100% - 2px);
         left: 0;
@@ -411,9 +415,13 @@
         background: #fff;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
       }
+      .date-suggestions {
+        white-space: nowrap;
+      }
       .date-suggestion {
         display: block;
         width: 100%;
+        white-space: nowrap;
         padding: 6px 8px;
         border: 0;
         background: #fff;
@@ -422,7 +430,8 @@
         cursor: pointer;
       }
       .date-suggestion:hover,
-      .date-suggestion:focus-visible {
+      .date-suggestion:focus-visible,
+      .date-suggestion.active {
         background: #eef5ff;
         outline: 0;
       }
@@ -444,6 +453,16 @@
       .address {
         margin-top: 8px;
         font-size: 13px;
+      }
+      .address label::after {
+        content: ":";
+      }
+      .address label {
+        display: flex;
+        justify-content: space-between;
+        flex: none;
+        width: 98px;
+        margin-right: 4px;
       }
 
       table {
@@ -473,6 +492,8 @@
       .grid svg.lines line {
         stroke: #000;
         stroke-width: 1px;
+        stroke-opacity: 1;
+        shape-rendering: crispEdges;
       }
       svg.ln {
         display: block;
@@ -484,6 +505,8 @@
       svg.ln line {
         stroke: #000;
         stroke-width: 1px;
+        stroke-opacity: 1;
+        shape-rendering: crispEdges;
       }
       th,
       td {
@@ -560,6 +583,48 @@
       }
       col.c-inv {
         width: 102px;
+      }
+      /* ---- Saved Form শুধু: ২১ সারির নিচে Total সারি (৭ কলাম স্প্যান, "Total" ডানে) ---- */
+      .total-row input {
+        font-weight: 700;
+      }
+      tr.total-row td.total-label-cell {
+        text-align: right !important;
+      }
+      tr.total-row td.total-label-cell input {
+        text-align: right !important;
+        padding-right: 8px;
+      }
+      tr.total-row td.inv-total-cell input {
+        text-align: right !important;
+      }
+      /* ---- Saved Form শুধু: একাধিক পাতা থাকলে শেষ পাতায় প্রতি পাতার Invoice
+      Value যোগফলের ব্রেকডাউন (Total সেলের ঠিক নিচে, ছোট করে) ---- */
+      .inv-total-cell {
+        position: relative;
+      }
+      .inv-breakdown {
+        position: absolute;
+        right: 4px;
+        top: 100%;
+        text-align: right;
+        font-size: 11px;
+        line-height: 1.3;
+        white-space: nowrap;
+        color: #000;
+        pointer-events: none;
+      }
+      .inv-breakdown:empty {
+        display: none;
+      }
+      .inv-breakdown .grand {
+        font-weight: 700;
+        text-align: right;
+      }
+      .inv-breakdown .grand-line {
+        border-top: 1px solid #000;
+        margin: 1px 0;
+        height: 0;
       }
 
       /* ===== মোবাইল / ছোট স্ক্রিন (শুধু স্ক্রিনে; প্রিন্ট সবসময় A4 লেআউটে) ===== */
@@ -654,6 +719,9 @@
         .address {
           font-size: 12px;
           margin-top: 6px;
+        }
+        .address label {
+          width: 178px;
         }
 
         .table-wrap {
@@ -755,6 +823,10 @@
           padding: 10mm 14mm;
           page-break-after: avoid;
           break-inside: avoid;
+          border: 0.50pt solid #000;
+        }
+        .formbox {
+          border: 0.50pt solid #000;
         }
         html,
         body {
@@ -768,10 +840,17 @@
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
         }
-        /* Excel-এর মতো ০.৫ পয়েন্ট (thin) লাইন — SVG দিয়ে আঁকা */
+        /* Excel-এর মতো চিকন কিন্তু সলিড-কালো লাইন — SVG দিয়ে আঁকা */
         .grid svg.lines line,
         svg.ln line {
-          stroke-width: 0.5pt;
+          stroke: #000;
+          stroke-width: 0.50pt;
+          stroke-opacity: 1;
+          shape-rendering: crispEdges;
+        }
+        th,
+        td {
+          border: 0 !important;
         }
         .fill > svg.dots line {
           stroke-width: 0.5pt;
@@ -802,11 +881,15 @@
         border: 0;
         border-radius: 10px;
         padding: 0;
-        width: min(980px, 96vw);
+        width: min(760px, 96vw);
         max-height: 92vh;
         color: #111;
         font-family: "Noto Sans Bengali", Arial, Helvetica, sans-serif;
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+        transition: width 0.15s ease;
+      }
+      dialog#entry.wide-mode {
+        width: min(1100px, 96vw);
       }
       dialog#entry::backdrop {
         background: rgba(0, 0, 0, 0.45);
@@ -896,10 +979,40 @@
       }
       #entry .pl {
         display: grid;
-        grid-template-columns: 34px 2.4fr 1.1fr 1fr 1fr 1fr 1.1fr 34px;
+        grid-template-columns: 34px 2.1fr 0.8fr 1fr 1fr 1fr 1fr 1.1fr 34px;
         gap: 6px;
         align-items: center;
         margin-bottom: 6px;
+      }
+      #entry .pl .ppc {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        min-height: 33px;
+        padding: 6px 8px;
+        border: 1px solid #ccd3dc;
+        border-radius: 6px;
+        background: #f3f5f8;
+        color: #1a3f7a;
+        font-size: 13.5px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      #entry .pl .row-warn {
+        display: none;
+        grid-column: 1 / -1;
+        margin: 0 0 2px 40px;
+        padding: 5px 10px;
+        border: 1px solid #e0a3a3;
+        border-radius: 5px;
+        background: #fff4f4;
+        color: #a33;
+        font-size: 12.5px;
+        font-weight: 700;
+      }
+      #entry .pl input.exp-warn {
+        border-color: #c33;
+        background: #fff4f4;
       }
       #deRows .pl:focus-within {
         z-index: 20;
@@ -919,6 +1032,11 @@
         padding: 6px 7px;
         font-size: 13.5px;
       }
+      #entry .pl .inv[readonly] {
+        background: #f3f4f6;
+        cursor: not-allowed;
+        caret-color: transparent;
+      }
       #entry .pl .inv {
         text-align: right;
       }
@@ -934,6 +1052,29 @@
       }
       #entry .pl .rm:hover {
         background: #fdeeee;
+      }
+      #entry .pl-totals {
+        display: grid;
+        grid-template-columns: 34px 2.1fr 0.8fr 1fr 1fr 1fr 1fr 1.1fr 34px;
+        gap: 6px;
+        align-items: center;
+        margin: 2px 0 10px;
+        padding-top: 8px;
+        border-top: 2px solid #333;
+        font-size: 13.5px;
+        font-weight: 700;
+      }
+      #entry .pl-totals .tot-label {
+        grid-column: 1 / 7;
+        text-align: right;
+        padding-right: 8px;
+        color: #1a3f7a;
+      }
+      #entry .pl-totals .tot-qty {
+        text-align: center;
+      }
+      #entry .pl-totals .tot-inv {
+        text-align: right;
       }
       #entry footer.df {
         display: flex;
@@ -1000,7 +1141,13 @@
           border-radius: 0;
         }
         #entry .fields {
-          grid-template-columns: 1fr;
+          gap: 10px 10px;
+        }
+        #entry .pair {
+          gap: 6px;
+        }
+        #entry label.f {
+          font-size: 11.5px;
         }
         #entry .pl.hd {
           display: none;
@@ -1030,11 +1177,45 @@
         #entry .pl input:nth-of-type(1) {
           grid-column: 1 / -1;
         }
+        #entry .pl .ppc {
+          grid-column: 1 / -1;
+          justify-content: flex-start;
+        }
+        #entry .pl .ppc::before {
+          content: "Per Pcs: ";
+          font-weight: 400;
+          color: #555;
+          margin-right: 6px;
+        }
         #entry .pl input[type="text"]::placeholder {
           color: #8a929b;
         }
         #entry .pl .inv {
           text-align: left;
+        }
+        #entry .pl-totals {
+          grid-template-columns: 1fr 1fr;
+          gap: 4px 8px;
+          padding: 10px;
+          border: 1px solid #d0d5db;
+          border-radius: 8px;
+          background: #f3f5f8;
+          margin: 2px 0 10px;
+        }
+        #entry .pl-totals .tot-label {
+          grid-column: 1 / -1;
+          text-align: left;
+          padding-right: 0;
+        }
+        #entry .pl-totals .tot-qty::before {
+          content: "Quantity: ";
+          font-weight: 400;
+          color: #555;
+        }
+        #entry .pl-totals .tot-inv::before {
+          content: "Invoice Value: ";
+          font-weight: 400;
+          color: #555;
         }
         #entry input[type="text"] {
           font-size: 16px;
@@ -1055,17 +1236,283 @@
           display: none !important;
         }
       }
+      /* ===== Saved Form শুধু: Code কলাম (Blank Form অপরিবর্তিত) ===== */
+      .saved-page col.c-sl { width: 41px; }
+      .saved-page col.c-name { width: 167px; }
+      .saved-page col.c-code { width: 60px; }
+      .saved-page td:nth-child(1),
+      .saved-page td:nth-child(2),
+      .saved-page td:nth-child(2) input,
+      .saved-page td:nth-child(4),
+      .saved-page td:nth-child(4) input,
+      .saved-page td:nth-child(7),
+      .saved-page td:nth-child(7) input {
+        text-align: center;
+      }
+      .saved-page td:nth-child(3),
+      .saved-page td:nth-child(3) input,
+      .saved-page td:nth-child(5),
+      .saved-page td:nth-child(5) input,
+      .saved-page td:nth-child(6),
+      .saved-page td:nth-child(6) input {
+        text-align: left;
+      }
+      .saved-page td:nth-child(8),
+      .saved-page td:nth-child(8) input {
+        text-align: right;
+      }
+      @media screen and (max-width: 820px) {
+        .saved-page col.c-sl { width: 6%; }
+        .saved-page col.c-name { width: 21%; }
+        .saved-page col.c-code { width: 10%; }
+        .saved-page col.c-batch { width: 12%; }
+        .saved-page col.c-mfg { width: 12%; }
+        .saved-page col.c-exp { width: 12%; }
+        .saved-page col.c-qty { width: 10%; }
+        .saved-page col.c-inv { width: 17%; }
+      }
+      /* ===== Saved Form শুধু: অটো Invoice No ব্যাজ (Blank Form-এ থাকবে না) ===== */
+      .inv-no-badge {
+        text-align: left;
+        font-size: 7px;
+        font-weight: 700;
+        margin-top: -6px;
+        letter-spacing: 0.2px;
+      }
+      .inv-no-badge:empty {
+        display: none;
+      }
+      /* সারি যোগ: শুধু "+" বাটন, ডানে (Save-এর ঠিক ওপরে) */
+      #entry .addbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 8px;
+      }
+      #entry .addbar .note {
+        margin-top: 0;
+      }
+      #entry button#addRow {
+        margin-left: auto;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        font-size: 24px;
+        line-height: 1;
+        border-radius: 50%;
+        background: #1a3f7a;
+        border-color: #1a3f7a;
+        color: #fff;
+      }
+      #entry button#addRow:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      /* Data Entry Form খোলা থাকলে বাকি সব হাইড */
+      body.de-open .toolbar,
+      body.de-open main.page {
+        display: none !important;
+      }
+      /* ফরমের নাম (শুধু স্ক্রিনে) */
+      .toolbar .formname {
+        display: inline-block;
+        margin-left: 14px;
+        padding: 4px 12px;
+        border-radius: 12px;
+        background: #1a3f7a;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        vertical-align: middle;
+      }
+      /* ===== সেভ/ভিউ পপআপ ===== */
+      dialog#saveDlg {
+        border: 0;
+        border-radius: 10px;
+        padding: 0;
+        width: min(440px, 94vw);
+        color: #111;
+        font-family: "Noto Sans Bengali", Arial, Helvetica, sans-serif;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+      }
+      dialog#saveDlg::backdrop {
+        background: rgba(0, 0, 0, 0.45);
+      }
+      #saveDlg .sd-body {
+        padding: 18px 20px 6px;
+      }
+      #saveDlg h2 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        text-align: center;
+      }
+      #saveDlg h2.sd-title-ok {
+        color: #1b7a3a;
+      }
+      #saveDlg .sd-sum {
+        margin: 0;
+        font-size: 13.5px;
+        color: #333;
+        line-height: 1.6;
+      }
+      #saveDlg .sd-status {
+        min-height: 20px;
+        margin: 10px 0 0;
+        font-size: 13px;
+        color: #666;
+      }
+      #saveDlg .sd-status.ok {
+        color: #1b7a3a;
+        font-weight: 700;
+      }
+      #saveDlg .sd-status.err {
+        color: #a33;
+      }
+      #saveDlg footer {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 12px 20px;
+        margin-top: 12px;
+        border-top: 1px solid #ddd;
+        background: #f6f7f9;
+        border-radius: 0 0 10px 10px;
+      }
+      #saveDlg footer .sp {
+        flex: 1;
+      }
+      #saveDlg button {
+        font: inherit;
+        font-size: 14px;
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: 1px solid #444;
+        background: #fff;
+        cursor: pointer;
+      }
+      #saveDlg button.ok {
+        background: #1a3f7a;
+        border-color: #1a3f7a;
+        color: #fff;
+      }
+      #saveDlg button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      #saveDlg button:focus-visible {
+        outline: 3px solid #06c;
+        outline-offset: 2px;
+      }
+      @media print {
+        dialog#saveDlg {
+          display: none !important;
+        }
+        /* Saved Form ২২ সারির বেশি হলে দুই পাতা: প্রথম পাতার পর নতুন পাতা */
+        html.two-pages,
+        html.two-pages body {
+          height: auto !important;
+          overflow: visible !important;
+        }
+        html.two-pages .saved-page {
+          break-after: page;
+          page-break-after: always;
+        }
+        html.two-pages .saved-page.saved-last {
+          break-after: auto;
+          page-break-after: auto;
+        }
+      }
+      /* ---- Hidden until Chemist Code search succeeds ---- */
+      .post-search-hidden {
+        display: none !important;
+      }
+      /* ---- Per-input red × clear button ---- */
+      .clear-x-wrap {
+        position: relative;
+        display: block;
+        width: 100%;
+        min-width: 0;
+      }
+      .row .clear-x-wrap,
+      .search-field .clear-x-wrap {
+        flex: 1;
+        min-width: 0;
+      }
+      .clear-x-wrap > input {
+        width: 100%;
+        box-sizing: border-box;
+        padding-right: 22px;
+      }
+      .clear-x-wrap > input[readonly] + .clear-x-btn {
+        display: none;
+      }
+      #entry .clear-x-btn,
+      .clear-x-btn {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        -webkit-appearance: none;
+        appearance: none;
+        border: none;
+        outline: none;
+        background: transparent;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        margin: 0;
+        width: auto;
+        height: auto;
+        min-width: 0;
+        min-height: 0;
+        color: #c81e1e;
+        font-weight: 700;
+        font-size: 18px;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1;
+        cursor: pointer;
+        z-index: 4;
+        display: none;
+      }
+      #entry .clear-x-btn:focus,
+      #entry .clear-x-btn:hover,
+      #entry .clear-x-btn:active,
+      .clear-x-btn:focus,
+      .clear-x-btn:hover,
+      .clear-x-btn:active {
+        border: none;
+        outline: none;
+        box-shadow: none;
+        background: transparent;
+      }
+      #entry .clear-x-wrap.has-value > .clear-x-btn,
+      .clear-x-wrap.has-value > .clear-x-btn {
+        display: block;
+      }
+      .clear-x-btn:hover {
+        color: #8f1414;
+      }
+      @media print {
+        .clear-x-btn {
+          display: none !important;
+        }
+        .clear-x-wrap > input {
+          padding-right: 2px;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="toolbar">
-      <button type="button" onclick="window.print()">Print form</button>
+      <button type="button" id="openBlank">Blank Form</button>
       <button type="button" id="openEntry" class="primary">
-        ডাটা এন্ট্রি ফরম
+        Data Entry Form
       </button>
+
     </div>
 
-    <main class="page">
+    <main class="page" data-form="Blank Form">
       <header>
         <div class="logo">
           <img
@@ -1128,7 +1575,7 @@
 
       <div class="row address">
         <label for="addr" style="font-weight: 600; font-size: 13px"
-          >Address :</label
+          >Address</label
         ><input id="addr" type="text" />
       </div>
 
@@ -1166,6 +1613,7 @@
       </footer>
       <footer class="sign rsm">
         <div>Signature of RSM</div>
+        <div class="pageno">Page 1 of 2</div>
         <div class="depot">
           Replacement given date and Signature of Depot Manager
         </div>
@@ -1175,14 +1623,14 @@
     <dialog id="entry" aria-labelledby="entryTitle">
       <form method="dialog" id="entryForm" onsubmit="return false;">
         <header class="dh">
-          <h2 id="entryTitle">ডাটা এন্ট্রি ফরম</h2>
+          <h2 id="entryTitle">Data Entry Form</h2>
           <p>
-            এখানে তথ্য দিয়ে "ফরমে বসান" চাপলে তথ্যগুলো মূল ফরমে বসে যাবে। মূল
-            ফরমে সরাসরি লেখা যাবে না।
+            একাধিক পণ্যের তথ্য দিয়ে "সেভ" চাপলেই সেভ হবে, তারপর পপআপে ভিউ করা যাবে।
+            Blank Form-এর সাথে এই ফরমের কোনো যোগাযোগ নেই।
           </p>
         </header>
         <div class="db">
-          <div class="fields">
+          <div class="fields" id="entryFieldsBlock">
             <div class="pair">
               <div>
                 <label class="f" for="de_ipi">IPI NO</label
@@ -1242,29 +1690,57 @@
             </div>
           </div>
 
-          <h3 class="sec">পণ্যের তালিকা</h3>
-          <div class="pl hd">
+          <h3 class="sec post-search-hidden product-list-group">Product List</h3>
+          <div class="pl hd post-search-hidden product-list-group">
             <span class="n">Sl.</span><span>Name of Product</span
-            ><span>Batch No.</span><span>Date of Mfg.</span
+            ><span>Per Pcs</span><span>Batch No.</span><span>Date of Mfg.</span
             ><span>Date of Exp</span><span>Quantity</span
             ><span>Invoice Value</span><span></span>
           </div>
-          <div id="deRows"></div>
-          <button type="button" id="addRow">+ সারি যোগ করুন</button>
-          <div class="note" id="rowNote"></div>
+          <div id="deRows" class="post-search-hidden product-list-group"></div>
+          <div id="deTotals" class="pl-totals post-search-hidden product-list-group" aria-live="polite">
+            <span class="tot-label">Total</span
+            ><span class="tot-qty" id="totQty">0</span
+            ><span class="tot-inv" id="totInv">0.00</span>
+          </div>
+          <div class="addbar post-search-hidden product-list-group">
+            <div class="note" id="rowNote"></div>
+            <button
+              type="button"
+              id="addRow"
+              title="সারি যোগ করুন"
+              aria-label="সারি যোগ করুন"
+            >
+              +
+            </button>
+          </div>
         </div>
         <footer class="df">
-          <button type="button" class="warn" id="clearAll">সব মুছুন</button>
+          <button type="button" class="warn post-search-hidden product-list-group" id="clearAll">Clear All</button>
+          <button type="button" id="deViewSaved" hidden>Saved Form দেখুন</button>
           <span class="sp"></span>
-          <button type="button" id="cancelEntry">বাতিল</button>
-          <button type="button" class="ok" id="applyEntry">ফরমে বসান</button>
+          <button type="button" class="post-search-hidden product-list-group" id="cancelEntry">Cancel</button>
+          <button type="button" class="ok post-search-hidden product-list-group" id="applyEntry">Save</button>
         </footer>
       </form>
     </dialog>
 
+    <dialog id="saveDlg" aria-labelledby="sdTitle">
+      <div class="sd-body">
+        <h2 id="sdTitle">Save</h2>
+        <p class="sd-sum" id="sdSum"></p>
+        <p class="sd-status" id="sdStatus" role="status" aria-live="polite"></p>
+      </div>
+      <footer>
+        <button type="button" id="sdBack" hidden>ফিরে যান</button>
+        <span class="sp"></span>
+        <button type="button" class="ok" id="sdSave">OK</button>
+      </footer>
+    </dialog>
+
     <script>
       // ফর্মে শুরুতেই ডিফল্ট রো না-দেখানোর জন্য ০ রো দিয়ে শুরু
-      const ROWS = 22;
+      const ROWS = 21; // Saved Form/Blank Form-এর এক পাতায় সারি (এন্ট্রিতে কোনো সীমা নেই)
       const tbody = document.getElementById("rows");
       const labels = [
         "Name of product",
@@ -1300,9 +1776,9 @@
 
       function syncMainTable(values = []) {
         tbody.innerHTML = "";
-        values.forEach((row, index) => {
-          tbody.appendChild(buildProductRow(row, index + 1));
-        });
+        for (let index = 0; index < ROWS; index++) {
+          tbody.appendChild(buildProductRow(values[index] || [], index + 1));
+        }
         renderTableGrid();
       }
 
@@ -1312,10 +1788,9 @@
         const HEAD = 30,
           ROW = 27;
         const W = widths.reduce((a, b) => a + b, 0);
-        const visibleRows = tbody.children.length;
+        const visibleRows = Math.max(tbody.children.length, ROWS);
         const existingSvg = document.querySelector(".grid > svg.lines");
         if (existingSvg) existingSvg.remove();
-        if (!visibleRows) return;
 
         const total = HEAD + visibleRows * ROW;
         const svg = document.createElementNS(NS, "svg");
@@ -1367,7 +1842,7 @@
         wrap.appendChild(sv);
       });
 
-      document.querySelectorAll(".sign div").forEach((d) => {
+      document.querySelectorAll(".sign div:not(.pageno)").forEach((d) => {
         const s = document.createElementNS(NS, "svg");
         s.setAttribute("class", "ln");
         const line = document.createElementNS(NS, "line");
@@ -1392,6 +1867,233 @@
         const $ = (id) => document.getElementById(id);
         const dlg = $("entry"),
           list = $("deRows");
+        const mainForm = document.querySelector("main.page");
+        const STORAGE_KEY = "formE_savedEntry";
+        let savedEntry = null;
+
+        // মূল A4 ফরমের সম্পূর্ণ আলাদা একটা কপি — শুধু "সেভ করা" তথ্য দেখানোর জন্য।
+        // মূল ফরমের সাথে এর কোনো লাইভ যোগাযোগ নেই।
+        const savedForm = mainForm.cloneNode(true);
+        savedForm.classList.add("saved-page");
+        savedForm.dataset.form = "Saved Form";
+        savedForm.style.display = "none";
+        const savedFieldEls = {};
+        ["mpo", "am", "ccode", "chemist", "wp1", "wp2", "addr"].forEach(
+          (k) => {
+            savedFieldEls[k] = savedForm.querySelector("#" + k);
+          },
+        );
+        const savedTbody = savedForm.querySelector("#rows");
+        savedForm.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
+        // ---- Saved Form শুধু: সব ইনপুট read-only, কোনো ডাটা এডিট/পরিবর্তন করা যাবে না ----
+        savedForm.querySelectorAll("input").forEach((inp) => {
+          inp.readOnly = true;
+          inp.tabIndex = -1;
+        });
+
+        // ---- Saved Form শুধু: ২১ সারির নিচে Total (7 কলাম স্প্যান করে ডানে "Total",
+        // পাশে Invoice Value-এর যোগফল) ----
+        // colspan=6 এখানে মূল ৭ কলামের হিসাবে (Sl+Name+Batch+Mfg+Exp+Qty); Code কলাম
+        // যোগ হওয়ার সময় colspan 6 থেকে 7 করে দেওয়া হয় (নিচের IIFE-তে)।
+        (function () {
+          const tr = document.createElement("tr");
+          tr.className = "total-row";
+          tr.innerHTML =
+            '<td colspan="6" class="total-label-cell"><input type="text" readonly tabindex="-1" value="Total" aria-label="Total"></td>' +
+            '<td class="inv-total-cell"><div class="inv-breakdown" aria-hidden="true"></div><input type="text" readonly tabindex="-1" aria-label="Total invoice value"></td>';
+          savedTbody.appendChild(tr);
+        })();
+
+        // ---- Saved Form শুধু: "Code" কলাম (Name of Product-এর বামে) ----
+        (function () {
+          const t = savedForm.querySelector("table");
+          t.querySelector("col.c-name").insertAdjacentHTML(
+            "beforebegin",
+            '<col class="c-code" />',
+          );
+          t.querySelector("thead th:nth-child(2)").insertAdjacentHTML(
+            "beforebegin",
+            "<th>Code</th>",
+          );
+          savedTbody.querySelectorAll("tr").forEach((tr) => {
+            if (tr.classList.contains("total-row")) {
+              // Total রো-তে আলাদা Code সেল যোগ না করে লেবেল সেলের colspan ১ বাড়ানো হয়
+              const labelCell = tr.querySelector(".total-label-cell");
+              if (labelCell) {
+                const cs = parseInt(labelCell.getAttribute("colspan") || "1", 10);
+                labelCell.setAttribute("colspan", String(cs + 1));
+              }
+              return;
+            }
+            tr.children[1].insertAdjacentHTML(
+              "beforebegin",
+              '<td><input type="text" aria-label="Product code"></td>',
+            );
+          });
+          const NS2 = "http://www.w3.org/2000/svg";
+          const widths = [41, 60, 167, 83, 76, 76, 83, 102];
+          const HEAD = 30,
+            ROW = 27;
+          const rowsN = savedTbody.children.length;
+          const W = widths.reduce((a, b) => a + b, 0);
+          const total = HEAD + rowsN * ROW;
+          const grid = savedForm.querySelector(".grid");
+          const old = grid.querySelector("svg.lines");
+          if (old) old.remove();
+          const svg = document.createElementNS(NS2, "svg");
+          svg.setAttribute("class", "lines");
+          svg.setAttribute("width", W);
+          svg.setAttribute("height", total);
+          svg.setAttribute("aria-hidden", "true");
+          const add = (x1, y1, x2, y2) => {
+            const l = document.createElementNS(NS2, "line");
+            l.setAttribute("x1", x1);
+            l.setAttribute("y1", y1);
+            l.setAttribute("x2", x2);
+            l.setAttribute("y2", y2);
+            svg.appendChild(l);
+          };
+          let x = 0;
+          add(0.5, 0, 0.5, total);
+          widths.forEach((w, i) => {
+            x += w;
+            const px = i === widths.length - 1 ? x - 0.5 : x + 0.5;
+            add(px, 0, px, total);
+          });
+          add(0, 0.5, W, 0.5);
+          add(0, HEAD + 0.5, W, HEAD + 0.5);
+          for (let i = 1; i <= rowsN; i++) {
+            const y = HEAD + i * ROW;
+            const py = i === rowsN ? y - 0.5 : y + 0.5;
+            add(0, py, W, py);
+          }
+          grid.appendChild(svg);
+        })();
+        // ---- Saved Form শুধু: অটো তৈরি Invoice No দেখানোর ব্যাজ (টেবিলের ঠিক উপরে) ----
+        (function () {
+          const badge = document.createElement("div");
+          badge.className = "inv-no-badge";
+          const tableWrap = savedForm.querySelector(".table-wrap");
+          tableWrap.insertAdjacentElement("beforebegin", badge);
+        })();
+        mainForm.insertAdjacentElement("afterend", savedForm);
+
+        // ---- Saved Form-এর পাতাগুলো: প্রতি পাতায় ২২ সারি; সারি বেশি হলে দরকার মতো
+        // নতুন পাতা তৈরি হয় (কোনো সীমা নেই), সব পাতায় একই Invoice No ----
+        const savedInputs1 = Array.from(savedForm.querySelectorAll("input"));
+        const savedPages = [
+          { form: savedForm, fields: savedFieldEls, tbody: savedTbody },
+        ];
+        function ensureSavedPages(n) {
+          while (savedPages.length < n) {
+            const form = savedForm.cloneNode(true);
+            form.classList.add("saved-extra");
+            form.dataset.form = "Saved Form (Page " + (savedPages.length + 1) + ")";
+            form.style.display = "none";
+            const ins = Array.from(form.querySelectorAll("input"));
+            const fields = {};
+            Object.keys(savedFieldEls).forEach((k) => {
+              const i = savedInputs1.indexOf(savedFieldEls[k]);
+              fields[k] = i > -1 ? ins[i] : null;
+            });
+            savedPages[savedPages.length - 1].form.insertAdjacentElement(
+              "afterend",
+              form,
+            );
+            savedPages.push({
+              form,
+              fields,
+              tbody: form.querySelector("tbody"),
+            });
+          }
+        }
+        let savedPageCount = 1;
+
+        function getSavedEntry() {
+          if (savedEntry) return savedEntry;
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) return JSON.parse(raw);
+          } catch (e) {}
+          return null;
+        }
+
+        function populateSavedForm(data) {
+          const total = (data.rows && data.rows.length) || 0;
+          const n = Math.max(1, Math.ceil(total / ROWS));
+          ensureSavedPages(n);
+          savedPageCount = n;
+          // প্রতি পাতা শুধু তার নিজের (running/cumulative নয়) Quantity/Invoice
+          // Value যোগফল দেখায়; শেষ পাতায় আলাদা ছোট ব্রেকডাউনে সব পাতার যোগফল
+          // ("LAST PAGE TOTAL") দেখানো হয়
+          let qtySum = 0,
+            invSum = 0;
+          const pageInvTotals = []; // প্রতি পাতার নিজস্ব (cumulative নয়) Invoice Value যোগফল
+          savedPages.forEach((pg, p) => {
+            const invBeforePage = invSum;
+            Object.keys(pg.fields).forEach((k) => {
+              if (pg.fields[k])
+                pg.fields[k].value = (data.fields && data.fields[k]) || "";
+            });
+            const b = pg.form.querySelector(".inv-no-badge");
+            if (b) {
+              b.textContent = "";
+              if (data.invoiceNo) {
+                b.appendChild(
+                  document.createTextNode("Invoice No: " + data.invoiceNo),
+                );
+              }
+            }
+            Array.from(pg.tbody.children).forEach((tr, i) => {
+              if (tr.classList.contains("total-row")) return; // এটার মান নিচে আলাদাভাবে বসছে
+              const idx = p * ROWS + i;
+              tr.querySelector("td").textContent = idx + 1;
+              const inputs = tr.querySelectorAll("input");
+              const r = (data.rows && data.rows[idx]) || [];
+              const code = (data.codes && data.codes[idx]) || "";
+              // Saved Form কলাম: Code, Name, Batch, Mfg, Exp, Qty, Invoice
+              const rowVals = r.length
+                ? [code, r[0], r[1], r[2], r[3], r[4], r[5]]
+                : [];
+              inputs.forEach((inp, j) => {
+                inp.value = rowVals[j] || "";
+              });
+              const q = Number((r[4] || "").toString().trim());
+              const v = Number((r[5] || "").toString().trim());
+              if (r.length && Number.isFinite(q)) qtySum += q;
+              if (r.length && Number.isFinite(v)) invSum += v;
+            });
+            const pageOwnInv = invSum - invBeforePage;
+            pageInvTotals.push(pageOwnInv);
+            const totRow = pg.tbody.querySelector(".total-row");
+            if (totRow) {
+              const invInput = totRow.querySelector(".inv-total-cell input");
+              if (invInput)
+                invInput.value = pageOwnInv ? String(Math.round(pageOwnInv)) : "0";
+              const bd = totRow.querySelector(".inv-breakdown");
+              if (bd) {
+                // একাধিক পাতা থাকলে শুধু শেষ পাতায়: প্রতি পাতার Invoice Value
+                // "+" দিয়ে সারি করে দেখানো হয়, নিচে সবগুলোর যোগফল (LAST PAGE TOTAL)
+                if (n > 1 && p === n - 1) {
+                  // শেষ পাতার (page 3) নিজের মান আগে থেকেই Total সেলে আছে,
+                  // তাই breakdown-এ শুধু আগের পাতাগুলো (২,১...) "+" দিয়ে দেখানো হয়
+                  const priorPages = pageInvTotals.slice(0, -1).reverse();
+                  const lines = priorPages
+                    .map((v) => "<div>+ " + Math.round(v) + "</div>")
+                    .join("");
+                  bd.innerHTML =
+                    lines +
+                    '<div class="grand-line"></div>' +
+                    '<div class="grand">TOTAL&nbsp;&nbsp;=&nbsp;&nbsp;' +
+                    Math.round(invSum) +
+                    "</div>";
+                } else {
+                  bd.innerHTML = "";
+                }
+              }
+            }
+          });
+        }
         const map = {
           mpo: "mpo",
           am: "am",
@@ -1452,17 +2154,14 @@
           }
         }
 
+
         document.querySelectorAll(".page input").forEach((i) => {
           i.readOnly = true;
           i.tabIndex = -1;
           i.title = "ডাটা এন্ট্রি ফরম বাটন থেকে তথ্য দিন";
         });
 
-        const mainRows = () =>
-          Array.from(document.querySelectorAll("#rows tr"));
-
         function addRow(vals = []) {
-          if (list.children.length >= ROWS) return null;
           const d = document.createElement("div");
           d.className = "pl";
           let h = '<span class="n"></span>';
@@ -1474,7 +2173,7 @@
               ph[i] +
               '"' +
               (i === 5
-                ? ' class="inv" inputmode="decimal"'
+                ? ' class="inv" inputmode="decimal" readonly tabindex="-1" title="Quantity অনুযায়ী অটো হিসাব হবে"'
                 : i === 4
                   ? ' inputmode="numeric"'
                   : "") +
@@ -1489,6 +2188,8 @@
                     input +
                     '<span class="date-suggestions" role="listbox"></span></span>'
                   : input;
+            if (i === 0)
+              h += '<span class="ppc" role="status" aria-label="Per Pcs"></span>';
           });
           h +=
             '<button type="button" class="rm" title="সারি মুছুন" aria-label="সারি মুছুন">×</button>';
@@ -1505,16 +2206,59 @@
           const updateInvoiceValue = () => {
             const quantity = Number(quantityInput.value.trim());
             const perPcs = Number(d.dataset.perPcs || "");
-            if (Number.isFinite(quantity) && Number.isFinite(perPcs)) {
-              invoiceInput.value = (quantity * perPcs).toFixed(2);
+            if (d.dataset.perPcs && Number.isFinite(quantity) && Number.isFinite(perPcs)) {
+              invoiceInput.value = String(Math.round(quantity * perPcs));
             } else if (!quantityInput.value.trim()) {
               invoiceInput.value = "";
             }
+            updateTotals();
           };
+          // একই Product + Batch + Date of Mfg. + Date of Exp হলে আলাদা সারি না
+          // রেখে আগের সারির Quantity-তে যোগ করে দেওয়া হয়; এই সারিটি মুছে যায়।
+          const rowKey = () =>
+            [productInput, batchInput, ...dateInputs]
+              .map((i) => i.value.trim().toUpperCase())
+              .join("|");
+          function tryMergeDuplicate() {
+            const pname = productInput.value.trim();
+            const batch = batchInput.value.trim();
+            const mfg = dateInputs[0].value.trim();
+            const exp = dateInputs[1].value.trim();
+            const qty = quantityInput.value.trim();
+            if (!pname || !batch || !mfg || !exp || !qty) return false;
+            const myKey = rowKey();
+            const other = Array.from(list.children).find((row) => {
+              if (row === d) return false;
+              const oins = row.querySelectorAll("input");
+              if (!oins[0].value.trim() || !oins[1].value.trim()) return false;
+              const oKey = [oins[0], oins[1], oins[2], oins[3]]
+                .map((i) => i.value.trim().toUpperCase())
+                .join("|");
+              return oKey === myKey;
+            });
+            if (!other) return false;
+            const oQty = other.querySelectorAll("input")[4];
+            const merged = (Number(oQty.value.trim()) || 0) + (Number(qty) || 0);
+            oQty.value = String(merged);
+            oQty.dispatchEvent(new Event("input", { bubbles: true }));
+            d.remove();
+            renumber();
+            oQty.focus();
+            return true;
+          }
+          quantityInput.addEventListener("blur", tryMergeDuplicate);
+          batchInput.addEventListener("blur", tryMergeDuplicate);
+          dateInputs[1].addEventListener("blur", tryMergeDuplicate);
           productInput.addEventListener("focus", () => {
             showProductSuggestions(productInput, suggestionPanel, batchInput);
           });
           productInput.addEventListener("input", () => {
+            // নাম বদলালে আগের দাম সরে যাবে
+            if (productInput.value.trim() !== (d.dataset.pname || "")) {
+              const pe = d.querySelector(".ppc");
+              if (pe) pe.textContent = "";
+              d.dataset.perPcs = "";
+            }
             showProductSuggestions(productInput, suggestionPanel, batchInput);
           });
           productInput.addEventListener("blur", () => {
@@ -1524,18 +2268,91 @@
               }
             }, 150);
           });
+          // Name of Product-এর সাজেশন তীর চিহ্ন (↑/↓) দিয়ে বাছাই করে Enter
+          // দিলে সিলেক্ট হবে; সাজেশন বন্ধ থাকলে Enter স্বাভাবিক আচরণ করবে
+          // (নতুন সারি তৈরি/পরের ঘরে যাওয়া — dlg-এর keydown হ্যান্ডলারে)।
+          productInput.addEventListener("keydown", (e) => {
+            if (suggestionPanel.style.display !== "block") return;
+            const items = Array.from(suggestionPanel.children);
+            if (!items.length) return;
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+              e.preventDefault();
+              e.stopPropagation();
+              let idx = suggestionPanel._activeIndex ?? -1;
+              idx =
+                e.key === "ArrowDown"
+                  ? Math.min(idx + 1, items.length - 1)
+                  : Math.max(idx - 1, 0);
+              suggestionPanel._activeIndex = idx;
+              items.forEach((it, i) => it.classList.toggle("active", i === idx));
+              items[idx].scrollIntoView({ block: "nearest" });
+            } else if (e.key === "Enter") {
+              const idx = suggestionPanel._activeIndex ?? -1;
+              if (idx > -1 && items[idx]) {
+                e.preventDefault();
+                e.stopPropagation();
+                items[idx].click();
+              }
+            } else if (e.key === "Escape") {
+              suggestionPanel.style.display = "none";
+            }
+          });
           quantityInput.addEventListener("input", updateInvoiceValue);
+          invoiceInput.addEventListener("input", updateTotals);
+          // Mfg সিলেক্ট করলে Exp অটো বসবে: 2022 → +৩ বছর, 2023/2024 → +২ বছর
+          // (একই মাস; চলতি মাস বা তার পরের হলে বসবে না, কারণ মেয়াদ শেষ হয়নি)
+          const YEARS_AHEAD = { 2022: 3, 2023: 2, 2024: 2 };
+          const warnEl = document.createElement("div");
+          warnEl.className = "row-warn";
+          warnEl.setAttribute("role", "alert");
+          d.appendChild(warnEl);
+          const clearWarn = () => {
+            warnEl.style.display = "none";
+            dateInputs[1].classList.remove("exp-warn");
+          };
+          dateInputs[1].addEventListener("input", clearWarn);
+          const autoExp = (mfg) => {
+            clearWarn();
+            const m = /^([A-Za-z]{3})-(\d{2})$/.exec((mfg || "").trim());
+            if (!m) return;
+            const mi = monthNames.findIndex(
+              (n) => n.toLowerCase() === m[1].toLowerCase(),
+            );
+            const yr = 2000 + Number(m[2]);
+            if (mi < 0 || !YEARS_AHEAD[yr]) return;
+            const expY = yr + YEARS_AHEAD[yr];
+            if (new Date(expY, mi, 1) >= currentMonth) {
+              dateInputs[1].value = "";
+              warnEl.textContent =
+                "⚠ এই পণ্যের মেয়াদ (" +
+                monthNames[mi] +
+                "-" +
+                String(expY).slice(-2) +
+                ") এখনো শেষ হয়নি, তাই Date of Exp ফাঁকা রাখা হয়েছে।";
+              warnEl.style.display = "block";
+              dateInputs[1].classList.add("exp-warn");
+              return;
+            }
+            dateInputs[1].value = monthNames[mi] + "-" + String(expY).slice(-2);
+            renumber();
+            tryMergeDuplicate();
+          };
+          dateInputs[0].addEventListener("input", () =>
+            autoExp(dateInputs[0].value),
+          );
           bindDateSuggestions(
             dateInputs[0],
             datePanels[0],
             dateMfgValues,
             dateInputs[1],
+            autoExp,
           );
           bindDateSuggestions(
             dateInputs[1],
             datePanels[1],
             dateExpValues,
             null,
+            tryMergeDuplicate,
           );
           vals.forEach((v, i) => {
             if (ins[i]) ins[i].value = v || "";
@@ -1549,88 +2366,499 @@
           return d;
         }
 
+        function updateTotals() {
+          let qtySum = 0,
+            invSum = 0,
+            hasQty = false,
+            hasInv = false;
+          Array.from(list.children).forEach((d) => {
+            const ins = d.querySelectorAll("input");
+            const qRaw = (ins[4]?.value || "").trim();
+            const vRaw = (ins[5]?.value || "").trim();
+            const q = Number(qRaw);
+            const v = Number(vRaw);
+            if (qRaw && Number.isFinite(q)) {
+              qtySum += q;
+              hasQty = true;
+            }
+            if (vRaw && Number.isFinite(v)) {
+              invSum += v;
+              hasInv = true;
+            }
+          });
+          $("totQty").textContent = hasQty ? String(qtySum) : "0";
+          $("totInv").textContent = hasInv ? String(Math.round(invSum)) : "0";
+        }
+
         function renumber() {
+          $("rowNote").style.color = "";
+          $("rowNote").style.fontWeight = "";
           Array.from(list.children).forEach(
             (d, i) => (d.querySelector(".n").textContent = i + 1),
           );
           $("rowNote").textContent =
-            "সারি: " +
-            list.children.length +
-            " / " +
-            ROWS +
-            " (ফরমে সর্বোচ্চ " +
-            ROWS +
-            "টি সারি ধরে)";
-          $("addRow").disabled = list.children.length >= ROWS;
+            list.children.length > ROWS
+              ? list.children.length +
+                "টি সারি: Saved Form " +
+                Math.ceil(list.children.length / ROWS) +
+                " পাতায় (একই Invoice No) দেখাবে।"
+              : "";
+          $("addRow").disabled = false;
+          updateTotals();
         }
 
         function load() {
-          Object.keys(map).forEach((k) => {
-            $("de_" + k).value = $(map[k]).value;
-          });
-          $("de_ipi").value = $("mpo").dataset.ipi || "";
-          $("de_mpo").value = $("mpo").dataset.name || "";
-          list.innerHTML = "";
-          const filled = mainRows()
-            .map((tr) =>
-              Array.from(tr.querySelectorAll("input")).map((i) => i.value),
-            )
-            .filter((r) => r.some((v) => v.trim() !== ""));
-          filled.forEach((r) => addRow(r));
-          $("rowNote").textContent =
-            "সারি: " +
-            list.children.length +
-            " / " +
-            ROWS +
-            " (ফরমে সর্বোচ্চ " +
-            ROWS +
-            "টি সারি ধরে)";
+          renumber();
         }
 
-        function setMpoDisplay(ipi, name) {
-          const cleanIpi = (ipi || "").trim();
-          const cleanName = (name || "").trim();
-          $("mpo").dataset.ipi = cleanIpi;
-          $("mpo").dataset.name = cleanName;
-          $("mpo").value =
-            cleanIpi && cleanName
-              ? cleanIpi + " - " + cleanName
-              : cleanIpi || cleanName;
+        // ===== সেভ / ভিউ (মূল ফরম থেকে সম্পূর্ণ আলাদা) =====
+        const $sd = $("saveDlg");
+        let pending = null;
+
+        const mpoText = (ipi, name) =>
+          ipi && name ? ipi + " - " + name : ipi || name || "";
+
+        // পণ্যের কোড: সাজেশন থেকে বাছা হলে সেটা, নাহলে নাম মিলিয়ে খুঁজে নেয়
+        function codeFor(d) {
+          const name = d.querySelector("input").value.trim().toUpperCase();
+          if (!name) return "";
+          if (d.dataset.code && (d.dataset.pname || "").toUpperCase() === name)
+            return d.dataset.code;
+          for (const arr of productCache.values()) {
+            const r = arr.find((x) => x.name.toUpperCase() === name);
+            if (r) return r.fields.CODE || "";
+          }
+          return "";
+        }
+
+        function collectEntry() {
+          const fields = {};
+          Object.keys(map).forEach((k) => {
+            fields[k] = $("de_" + k).value.trim();
+          });
+          fields.mpo = mpoText($("de_ipi").value.trim(), fields.mpo);
+          const items = Array.from(list.children)
+            .map((d) => ({
+              row: Array.from(d.querySelectorAll("input")).map((i) =>
+                i.value.trim(),
+              ),
+              code: codeFor(d),
+            }))
+            .filter((it) => it.row.some((v) => v !== ""));
+          return {
+            fields,
+            rows: items.map((it) => it.row),
+            codes: items.map((it) => it.code),
+          };
+        }
+
+        function persist(data) {
+          savedEntry = data;
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            return true;
+          } catch (e) {
+            return false;
+          }
+        }
+
+        function showPage(which) {
+          // "none" = শুধু উপরের দুটি বাটন দেখাবে
+          mainForm.style.display = which === "main" ? "" : "none";
+          savedForm.style.display = which === "saved" ? "" : "none";
+          savedPages.forEach((pg, i) => {
+            const on = which === "saved" && i < savedPageCount;
+            pg.form.style.display = on ? "" : "none";
+            pg.form.classList.toggle("saved-last", i === savedPageCount - 1);
+          });
+          document.documentElement.classList.toggle(
+            "two-pages",
+            which === "saved" && savedPageCount > 1,
+          );
+          refreshViewBtn();
+          window.scrollTo(0, 0);
+        }
+
+        function refreshViewBtn() {
+          $("deViewSaved").hidden = !getSavedEntry();
+        }
+
+        // সেভ সফল হয়ে "OK" চাপার পর ডাটা এন্ট্রি ফরম খালি করে নতুন এন্ট্রির
+        // জন্য প্রস্তুত করে (Clear All-এর মতোই, কিন্তু confirm ছাড়া এবং ডায়ালগ
+        // খোলা রেখে দেয় যাতে পরের এন্ট্রি সাথে সাথে দেওয়া যায়)।
+        function resetEntryForNext() {
+          Object.keys(map).forEach((k) => {
+            $("de_" + k).value = "";
+          });
+          $("de_ipi").value = "";
+          list.innerHTML = "";
+          $("rowNote").textContent = "";
+          updateTotals();
+          autoName = "";
+          currentTerritoryCode = "";
+          st.className = "ipiStatus";
+          st.textContent = "";
+          $("entryFieldsBlock").classList.remove("post-search-hidden");
+          document
+            .querySelectorAll(".product-list-group")
+            .forEach((el) => el.classList.add("post-search-hidden"));
+          dlg.classList.remove("wide-mode");
+          pending = null;
+        }
+
+        function setSdStatus(cls, txt) {
+          $("sdStatus").className = "sd-status " + cls;
+          $("sdStatus").textContent = txt;
+        }
+
+        function sameAsSaved() {
+          const cur = getSavedEntry();
+          return (
+            !!cur &&
+            !!pending &&
+            JSON.stringify(cur.fields) === JSON.stringify(pending.fields) &&
+            JSON.stringify(cur.rows) === JSON.stringify(pending.rows) &&
+            JSON.stringify(cur.codes || []) === JSON.stringify(pending.codes || [])
+          );
         }
 
         function apply() {
-          Object.keys(map).forEach((k) => {
-            $(map[k]).value = $("de_" + k).value.trim();
-          });
-          const ipi = $("de_ipi").value.trim();
-          const nm = $("de_mpo").value.trim();
-          setMpoDisplay(ipi, nm);
-
-          const rows = Array.from(list.children)
-            .map((d) =>
-              Array.from(d.querySelectorAll("input")).map((i) =>
-                i.value.trim(),
-              ),
-            )
-            .filter((r) => r.some((v) => v !== ""));
-          syncMainTable(rows.slice(0, ROWS));
-          dlg.close();
+          // মেয়াদ শেষ হয়নি (Exp ফাঁকা + সতর্কতা) এমন সারি থাকলে সেভ আটকাবে
+          const bad = Array.from(list.children).filter(
+            (d) => d.querySelector(".row-warn")?.style.display === "block",
+          );
+          if (bad.length) {
+            const nums = bad.map((d) => Array.from(list.children).indexOf(d) + 1);
+            const note = $("rowNote");
+            note.textContent =
+              "সেভ হয়নি: সারি " +
+              nums.join(", ") +
+              "-এর মেয়াদ এখনো শেষ হয়নি। Date of Exp দিন, Mfg বদলান, অথবা সারিটি মুছুন।";
+            note.style.color = "#a33";
+            note.style.fontWeight = "700";
+            bad[0].scrollIntoView({ block: "center" });
+            bad[0].querySelectorAll("input")[2].focus();
+            return;
+          }
+          const data = collectEntry();
+          if (!data.rows.length) {
+            alert("কমপক্ষে একটি পণ্যের সারি পূরণ করুন।");
+            return;
+          }
+          pending = data;
+          $("sdSum").textContent = "";
+          $sd.showModal();
+          runSave(); // সরাসরি সেভ হবে; আলাদা করে দ্বিতীয়বার Save চাপতে হবে না
         }
+
+        const EXPIRY_DB =
+          "https://dinajpur-expiry-default-rtdb.asia-southeast1.firebasedatabase.app";
+        // Dinajpur / Sep-2026 / 25 / <অটো আইডি>
+        function expiryPath(d) {
+          return (
+            "Dinajpur/" +
+            monthNames[d.getMonth()] +
+            "-" +
+            d.getFullYear() +
+            "/" +
+            String(d.getDate()).padStart(2, "0")
+          );
+        }
+
+        // ===== Invoice No অটো-জেনারেট =====
+        // NDIN... => INM-MEXP-YYYYMM-0001, SVD... => ISV-MEXP-YYYYMM-0001,
+        // বাকি সব => IPI-MEXP-YYYYMM-0001। সাল/মাস বদলালে সিরিয়াল নতুন করে ০০০১ থেকে শুরু হয়।
+        async function putJSON(url, body) {
+          const r = await fetch(url, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          if (r.status === 401 || r.status === 403) {
+            const e = new Error("perm");
+            e.code = "perm";
+            throw e;
+          }
+          if (!r.ok) {
+            const e = new Error("http " + r.status);
+            e.code = "http";
+            throw e;
+          }
+          return r.json();
+        }
+        function invoicePrefix(territoryCode) {
+          const t = (territoryCode || "").trim().toUpperCase();
+          if (/^NDIN/.test(t)) return "INM";
+          if (/^SVD/.test(t)) return "ISV";
+          return "IPI";
+        }
+        async function nextInvoiceNo(territoryCode, d) {
+          const prefix = invoicePrefix(territoryCode);
+          const ym = d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0");
+          // প্রতিটা প্রিফিক্স + মাসের জন্য আলাদা কাউন্টার; Firebase-এর
+          // সার্ভার-সাইড atomic increment (".sv":{"increment":1}) ব্যবহার করা
+          // হয়েছে, যাতে একাধিক ডিভাইস থেকে একসাথে সেভ করলেও নম্বর না মেলা
+          // (duplicate) কখনো না হয়।
+          const path = "InvoiceCounters/" + prefix + "/" + ym + ".json";
+          const serial = await putJSON(EXPIRY_DB + "/" + path, {
+            ".sv": { increment: 1 },
+          });
+          return prefix + "-MEXP-" + ym + "-" + String(serial).padStart(4, "0");
+        }
+
+        // ===== সেভ প্রবাহ: Save চাপলে অটো Invoice No তৈরি + Firebase-এ সেভ =====
+        // সফল হলে "Save Successful" + Invoice No + OK; OK চাপলে ফরম খালি হয়ে
+        // ফোকাস IPI NO-তে যায়। ব্যর্থ হলে "আবার চেষ্টা" ও "ফিরে যান" আসে।
+        let saving = false;
+        function sdState(kind, title, status) {
+          $("sdTitle").textContent = title;
+          $("sdTitle").classList.toggle("sd-title-ok", kind === "ok");
+          setSdStatus(kind, status);
+          const busy = kind === "busy";
+          const ok = kind === "ok";
+          $("sdSave").hidden = busy;
+          $("sdSave").textContent = ok ? "OK" : "আবার চেষ্টা করুন";
+          $("sdBack").hidden = busy || ok;
+        }
+        function finishSave() {
+          $sd.close();
+          resetEntryForNext();
+          $("de_ipi").focus();
+        }
+        async function runSave() {
+          if (!pending || saving) return;
+          saving = true;
+          $("applyEntry").disabled = true;
+          try {
+            if (!pending.invoiceNo) {
+              sdState("busy", "Save", "Invoice No তৈরি হচ্ছে…");
+              try {
+                pending.invoiceNo = await nextInvoiceNo(
+                  currentTerritoryCode,
+                  new Date(),
+                );
+              } catch (e) {
+                sdState(
+                  "err",
+                  "Save হয়নি",
+                  e.code === "perm"
+                    ? "Invoice কাউন্টারে write অনুমতি নেই (Firebase Rules)।"
+                    : "Invoice No তৈরি করা যায়নি (ইন্টারনেট/সার্ভার সমস্যা)।",
+                );
+                return;
+              }
+            }
+            $("sdSum").textContent = "Invoice No: " + pending.invoiceNo;
+            sdState("busy", "Save", "সেভ হচ্ছে…");
+            const now = new Date();
+            const data = {
+              fields: pending.fields,
+              rows: pending.rows,
+              codes: pending.codes,
+              invoiceNo: pending.invoiceNo,
+              savedAt: now.toISOString(),
+            };
+            let cloud = false,
+              cloudErr = "";
+            try {
+              const path = expiryPath(now);
+              const res = await postJSON(
+                EXPIRY_DB + "/" + path + ".json",
+                data,
+              );
+              data.cloudPath = path + "/" + res.name;
+              cloud = true;
+            } catch (e) {
+              cloudErr =
+                e.code === "perm"
+                  ? "Firebase Rules-এ write অনুমতি নেই।"
+                  : "ইন্টারনেট/সার্ভার সমস্যা।";
+            }
+            const stored = persist(data);
+            populateSavedForm(data);
+            refreshViewBtn();
+            if (cloud) {
+              pending.cloudSaved = true;
+              sdState("ok", "Save Successful ✓", "");
+              $("sdSave").focus();
+            } else {
+              sdState(
+                "err",
+                "Save হয়নি",
+                "Firebase-এ সেভ হয়নি: " +
+                  cloudErr +
+                  (stored ? " তথ্য এই ডিভাইসে রাখা আছে।" : ""),
+              );
+            }
+          } finally {
+            saving = false;
+            $("applyEntry").disabled = false;
+          }
+        }
+        $("sdSave").onclick = () => {
+          if (!pending) return;
+          if (pending.cloudSaved) finishSave();
+          else runSave();
+        };
+        $("sdBack").onclick = () => $sd.close();
+        $sd.addEventListener("cancel", (e) => {
+          // সেভ চলাকালীন Esc-এ বন্ধ হবে না; সফল হওয়ার পর Esc = OK
+          if (saving) {
+            e.preventDefault();
+          } else if (pending?.cloudSaved) {
+            e.preventDefault();
+            finishSave();
+          }
+        });
+        $("deViewSaved").onclick = () => {
+          const data = getSavedEntry();
+          if (!data) return;
+          populateSavedForm(data);
+          dlg.close();
+          showPage("saved");
+        };
+        $("openBlank").onclick = () => {
+          showPage("main");
+          window.addEventListener("afterprint", () => showPage("none"), {
+            once: true,
+          });
+          setTimeout(() => window.print(), 80);
+        };
 
         $("openEntry").onclick = () => {
           load();
           st.className = "ipiStatus";
           st.textContent = "";
+          showPage("none");
+          document.body.classList.add("de-open");
+          $("entryFieldsBlock").classList.remove("post-search-hidden");
+          document
+            .querySelectorAll(".product-list-group")
+            .forEach((el) => el.classList.add("post-search-hidden"));
+          dlg.classList.remove("wide-mode");
+          // আগে থেকে Chemist/Product ডাটা থাকলে (যেমন Saved Form দেখে ফিরলে)
+          // আবার সার্চ না করেই Product List দেখাবে
+          const hasData =
+            $("de_ccode").value.trim() !== "" || list.children.length > 0;
+          if (hasData) revealProductList();
           dlg.showModal();
-          $("de_mpo").focus();
+          if (hasData) {
+            setTimeout(() => {
+              const rows = list.children;
+              const target =
+                rows[rows.length - 1]?.querySelector("input") ||
+                $("de_ccode");
+              target.focus();
+            }, 50);
+          } else {
+            $("de_mpo").focus();
+          }
         };
-        $("addRow").onclick = () => {
-          const d = addRow();
-          if (d) d.querySelector("input").focus();
+        // Invoice Value অটো/রিড-অনলী, তাই শুধু প্রথম ৫টি ঘর (Name..Quantity) দেখা হয়।
+        // Mfg./Exp-এর জন্য সাজেশন লিস্টে থাকা মান ছাড়া অন্য কিছু লেখা থাকলে সেটাও
+        // "ফাঁকা"-র মতোই ধরা হয় (হাতে টাইপ করা তারিখ গ্রহণ করা হয় না)।
+        const firstEmptyInput = (row) => {
+          const ins = Array.from(row.querySelectorAll("input")).slice(0, 5);
+          const bad = (i, idx) => {
+            const v = i.value.trim();
+            if (v === "") return true;
+            if (idx === 2) return !dateMfgValues.includes(v);
+            if (idx === 3) return !dateExpValues.includes(v);
+            return false;
+          };
+          return ins.find((i, idx) => bad(i, idx));
         };
+        // কোনো সারির ঘর ফাঁকা/অবৈধ থাকলে নতুন সারি হবে না; ওই ঘরে ফোকাস যাবে
+        function rowToFill() {
+          for (const row of list.children) {
+            const empty = firstEmptyInput(row);
+            if (empty) {
+              const rowNo = Array.from(list.children).indexOf(row) + 1;
+              const idx = Array.from(row.querySelectorAll("input")).indexOf(empty);
+              const label = COLS[idx];
+              const isDate = idx === 2 || idx === 3;
+              const invalid = isDate && empty.value.trim() !== "";
+              return { row, empty, incomplete: true, rowNo, label, invalid };
+            }
+          }
+          const row = addRow();
+          return row ? { row, empty: row.querySelector("input") } : null;
+        }
+        // ফাঁকা/অবৈধ ঘর থাকলে এলার্ট দেখিয়ে ওই ঘরে ফোকাস দেয়
+        // নতুন সারির input-কে clear-× স্ক্রিপ্ট wrap করে (DOM-এ সরায়), তাই
+        // সঙ্গে সঙ্গে focus দিলে হারিয়ে যায় (এবং Name of Product-এর
+        // ফোকাস-সাজেশনও দেখায় না); wrap শেষ হওয়ার পর focus দেওয়া হচ্ছে।
+        function focusEmpty(t) {
+          if (!t) return;
+          if (t.incomplete) {
+            alert(
+              t.invalid
+                ? "সারি " + t.rowNo + "-এর “" + t.label +
+                  "” সাজেশন থেকে বাছাই করা হয়নি।\n" +
+                  "তালিকা থেকে একটি তারিখ বেছে নিন, তারপর নতুন সারি যোগ করুন।"
+                : "সারি " + t.rowNo + "-এর “" + t.label + "” ঘরটি ফাঁকা আছে।\n" +
+                  "আগে এটি পূরণ করুন, তারপর নতুন সারি যোগ করুন।",
+            );
+          }
+          setTimeout(() => {
+            t.empty.focus();
+            if (t.invalid) t.empty.select();
+          }, 50);
+        }
+        $("addRow").onclick = () => focusEmpty(rowToFill());
         $("searchChemist").onclick = searchChemist;
         $("applyEntry").onclick = apply;
-        $("cancelEntry").onclick = () => dlg.close();
+        $("cancelEntry").onclick = () => {
+          showPage("none");
+          dlg.close();
+        };
+        dlg.addEventListener("cancel", () => showPage("none"));
+
+        // ---- সাজেশন প্যানেল: ডায়ালগের নিচে/ফুটারে ঢেকে না যাওয়ার জন্য ----
+        // প্যানেল fixed; ইনপুটের নিচে জায়গা কম হলে ওপরে খোলে
+        const panelObserver = new MutationObserver(placePanels);
+        const observeOpts = {
+          subtree: true,
+          childList: true,
+          attributes: true,
+          attributeFilter: ["style"],
+        };
+        function placePanels() {
+          panelObserver.disconnect();
+          dlg
+            .querySelectorAll(".product-suggestions, .date-suggestions")
+            .forEach((panel) => {
+              if (panel.style.display !== "block") return;
+              const isProduct = panel.classList.contains("product-suggestions");
+              const anchor = isProduct
+                ? panel.closest(".pl").querySelector("input")
+                : panel.parentElement.querySelector("input");
+              const r = anchor.getBoundingClientRect();
+              const vh = window.innerHeight;
+              const below = vh - r.bottom - 10;
+              const above = r.top - 10;
+              const want = isProduct ? 220 : 180;
+              const openUp = below < Math.min(want, 140) && above > below;
+              const space = Math.max(80, openUp ? above : below);
+              const width = isProduct
+                ? Math.min(430, window.innerWidth - r.left - 10)
+                : Math.max(r.width, 96);
+              panel.style.left = Math.max(4, r.left) + "px";
+              panel.style.width = width + "px";
+              panel.style.maxHeight = Math.min(want, space) + "px";
+              if (openUp) {
+                panel.style.top = "auto";
+                panel.style.bottom = vh - r.top + 2 + "px";
+              } else {
+                panel.style.bottom = "auto";
+                panel.style.top = r.bottom + 2 + "px";
+              }
+            });
+          panelObserver.observe(dlg, observeOpts);
+        }
+        panelObserver.observe(dlg, observeOpts);
+        dlg.addEventListener("scroll", placePanels, true);
+        window.addEventListener("resize", placePanels);
         $("clearAll").onclick = () => {
           if (!confirm("ডাটা এন্ট্রি ফরমের সব তথ্য মুছে ফেলবেন?")) return;
           Object.keys(map).forEach((k) => {
@@ -1638,9 +2866,13 @@
           });
           $("de_ipi").value = "";
           list.innerHTML = "";
-          $("rowNote").textContent =
-            "সারি: 0 / " + ROWS + " (ফরমে সর্বোচ্চ " + ROWS + "টি সারি ধরে)";
-          syncMainTable([]);
+          $("rowNote").textContent = "";
+          updateTotals();
+          $("entryFieldsBlock").classList.remove("post-search-hidden");
+          document
+            .querySelectorAll(".product-list-group")
+            .forEach((el) => el.classList.add("post-search-hidden"));
+          dlg.classList.remove("wide-mode");
         };
 
         let allCache = null,
@@ -1890,6 +3122,19 @@
                 );
                 button.addEventListener("click", () => {
                   input.value = record.name;
+                  const rowEl = panel.closest(".pl");
+                  rowEl.dataset.code = record.fields.CODE || "";
+                  rowEl.dataset.pname = record.name;
+                  const ppcEl = rowEl.querySelector(".ppc");
+                  const pp = record.fields["PER PCS"];
+                  const ppNum = Number(pp);
+                  if (ppcEl)
+                    ppcEl.textContent =
+                      pp === undefined || pp === "" || pp === null
+                        ? ""
+                        : Number.isFinite(ppNum)
+                          ? ppNum.toFixed(2)
+                          : pp;
                   const perPcs = Number(record.fields["PER PCS"]);
                   panel.closest(".pl").dataset.perPcs = Number.isFinite(perPcs)
                     ? String(perPcs)
@@ -1901,11 +3146,13 @@
               }),
             );
             panel.style.display = matches.length ? "block" : "none";
+            panel._activeIndex = -1;
           } catch (e) {
             setSt("err", "Product list আনা যায়নি।");
           }
         }
-        function bindDateSuggestions(input, panel, values, nextInput) {
+        function bindDateSuggestions(input, panel, values, nextInput, onPick) {
+          let activeIndex = -1;
           const render = () => {
             const query = input.value.trim().toUpperCase();
             const matches = values.filter((value) =>
@@ -1923,12 +3170,14 @@
                 button.addEventListener("click", () => {
                   input.value = value;
                   panel.style.display = "none";
+                  if (onPick) onPick(value);
                   nextInput?.focus();
                 });
                 return button;
               }),
             );
             panel.style.display = matches.length ? "block" : "none";
+            activeIndex = -1;
           };
           input.addEventListener("focus", render);
           input.addEventListener("input", render);
@@ -1937,6 +3186,31 @@
               if (!panel.contains(document.activeElement))
                 panel.style.display = "none";
             }, 150);
+          });
+          // Date of Mfg./Date of Exp-এর সাজেশন তীর চিহ্ন (↑/↓) দিয়ে বাছাই
+          // করে Enter দিলে সিলেক্ট হবে; না হলে Enter স্বাভাবিক আচরণ করবে।
+          input.addEventListener("keydown", (e) => {
+            if (panel.style.display !== "block") return;
+            const items = Array.from(panel.children);
+            if (!items.length) return;
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+              e.preventDefault();
+              e.stopPropagation();
+              activeIndex =
+                e.key === "ArrowDown"
+                  ? Math.min(activeIndex + 1, items.length - 1)
+                  : Math.max(activeIndex - 1, 0);
+              items.forEach((it, i) => it.classList.toggle("active", i === activeIndex));
+              items[activeIndex].scrollIntoView({ block: "nearest" });
+            } else if (e.key === "Enter") {
+              if (activeIndex > -1 && items[activeIndex]) {
+                e.preventDefault();
+                e.stopPropagation();
+                items[activeIndex].click();
+              }
+            } else if (e.key === "Escape") {
+              panel.style.display = "none";
+            }
           });
         }
         async function findChemistByTerritory(territoryCode) {
@@ -1968,6 +3242,17 @@
             ? { document, fields: firestoreFields(document), division }
             : null;
         }
+        // Chemist সার্চ সফল হলে (বা আগের এন্ট্রি আবার খুললে) Product List দেখায়
+        function revealProductList() {
+          document
+            .querySelectorAll(".product-list-group")
+            .forEach((el) => el.classList.remove("post-search-hidden"));
+          if (!window.matchMedia("(min-width: 721px)").matches) {
+            // মোবাইলে জায়গা বাঁচাতে ফিল্ডগুলো লুকানো হয়; ডেস্কটপে খোলাই থাকবে
+            $("entryFieldsBlock").classList.add("post-search-hidden");
+          }
+          dlg.classList.add("wide-mode");
+        }
         async function searchChemist() {
           const code = currentTerritoryCode.trim();
           if (!code) {
@@ -1993,11 +3278,15 @@
             $("de_ccode").value = chemistCode;
             $("de_chemist").value = chemistName;
             $("de_addr").value = address;
-            const lastRow = list.lastElementChild;
-            const lastProduct = lastRow?.querySelector("input")?.value.trim();
-            const productRow = !lastRow || lastProduct ? addRow() : lastRow;
+            const target = rowToFill();
             setSt("ok", "Chemist পাওয়া গেছে: " + (chemistName || chemistCode));
-            productRow?.querySelector("input")?.focus();
+            revealProductList();
+            // নতুন সারির input-কে clear-× স্ক্রিপ্ট wrap করে (DOM-এ সরায়), তাই
+            // সঙ্গে সঙ্গে focus দিলে হারিয়ে যায়; wrap শেষ হওয়ার পর focus দেওয়া হচ্ছে।
+            setTimeout(() => {
+              focusEmpty(target);
+              if (target && !target.incomplete) target.empty.select();
+            }, 50);
           } catch (e) {
             setSt(
               "err",
@@ -2063,7 +3352,6 @@
             if (name) {
               $("de_mpo").value = name;
               autoName = name;
-              setMpoDisplay($("de_ipi").value, name);
             }
             const amName = await findAmName(rec);
             if (amName) $("de_am").value = amName;
@@ -2104,13 +3392,101 @@
         dlg.addEventListener("keydown", (e) => {
           if (e.key !== "Enter" || e.target.tagName !== "INPUT") return;
           e.preventDefault();
+          // Quantity ঘরে Enter: শর্ত (সব ঘর ভরা+বৈধ) ঠিক থাকলে নতুন সারি তৈরি হবে,
+          // ফোকাস সেই নতুন সারির Name of Product-এ যাবে। শর্ত না মিললে এলার্ট।
+          const row = e.target.closest(".pl");
+          if (row) {
+            const ins = Array.from(row.querySelectorAll("input"));
+            if (ins.indexOf(e.target) === 4) {
+              e.target.blur(); // আগে ডুপ্লিকেট-মার্জ চেক হবে
+              focusEmpty(rowToFill());
+              return;
+            }
+          }
           const all = Array.from(dlg.querySelectorAll("input[type=text]"));
           const i = all.indexOf(e.target);
           if (i > -1 && all[i + 1]) all[i + 1].focus();
         });
+
+        dlg.addEventListener("close", () => {
+          document.body.classList.remove("de-open");
+        });
+
         load();
+        showPage("none");
+        document.body.classList.add("de-open");
         dlg.showModal();
         $("de_ipi").focus();
+      })();
+    </script>
+    <script>
+      // ---- Add a red × clear button next to every text input (present now
+      // or added later, e.g. new product rows) ----
+      (function () {
+        const wrapped = [];
+        function wrapInput(inp) {
+          if (!inp || inp.dataset.hasClear) return;
+          inp.dataset.hasClear = "1";
+          const wrap = document.createElement("span");
+          wrap.className = "clear-x-wrap";
+          inp.parentNode.insertBefore(wrap, inp);
+          wrap.appendChild(inp);
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "clear-x-btn";
+          btn.textContent = "×";
+          btn.title = "মুছুন";
+          btn.setAttribute("aria-label", "মুছুন");
+          btn.tabIndex = -1;
+          btn.addEventListener("mousedown", function (e) {
+            e.preventDefault(); // input-কে blur হতে না দিয়ে ফোকাসে রাখা
+          });
+          btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (inp.readOnly || !inp.value) return;
+            inp.value = "";
+            inp.dispatchEvent(new Event("input", { bubbles: true }));
+            inp.dispatchEvent(new Event("change", { bubbles: true }));
+            if (!inp.readOnly) inp.focus();
+            wrap.classList.remove("has-value");
+          });
+          wrap.appendChild(btn);
+          const sync = () =>
+            wrap.classList.toggle(
+              "has-value",
+              document.activeElement === inp && !!inp.value,
+            );
+          inp.addEventListener("focus", sync);
+          inp.addEventListener("blur", () =>
+            wrap.classList.remove("has-value"),
+          );
+          wrapped.push({ inp: inp, wrap: wrap, sync: sync });
+        }
+        function wrapAll(root) {
+          (root || document)
+            .querySelectorAll('input[type="text"]:not([data-has-clear])')
+            .forEach(wrapInput);
+        }
+        wrapAll(document);
+        const mo = new MutationObserver(function (mutations) {
+          mutations.forEach(function (m) {
+            m.addedNodes.forEach(function (node) {
+              if (node.nodeType !== 1) return;
+              if (node.matches && node.matches('input[type="text"]'))
+                wrapInput(node);
+              if (node.querySelectorAll) wrapAll(node);
+            });
+          });
+        });
+        mo.observe(document.body, { childList: true, subtree: true });
+        // Periodic check catches values set by script (autofill/lookup),
+        // not just typing, without depending on every code path firing events.
+        setInterval(function () {
+          wrapped.forEach(function (w) {
+            w.sync();
+          });
+        }, 200);
       })();
     </script>
   </body>
