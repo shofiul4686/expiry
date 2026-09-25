@@ -1387,6 +1387,7 @@
         #entry .pl:not(.hd) > .row-add {
           display: none;
           grid-column: 4;
+          grid-row: 2;
           min-width: 0;
           padding: 6px 4px;
           border-radius: 16px;
@@ -1457,6 +1458,20 @@
           white-space: nowrap;
         }
         #entry .addbar #addRow {
+          display: none;
+        }
+        #entry .pl:not(.hd) > #viewAdded {
+          grid-column: 3;
+          grid-row: 2;
+          min-width: 0;
+          height: 30px;
+          padding: 6px 4px;
+          border-radius: 20px;
+          font-size: 12px;
+          font-weight: 700;
+          white-space: nowrap;
+        }
+        #entry footer.df.view-moved {
           display: none;
         }
         #entry footer.df .sp {
@@ -2586,6 +2601,7 @@
                 am: $("de_am").value.trim(),
                 wp2: $("de_wp2").value.trim(),
                 territoryCode: currentTerritoryCode || "",
+                employeeInfo: { ...currentEmployeeInfo },
               }),
             );
           } catch (e) {}
@@ -2982,7 +2998,7 @@
               return;
             }
             setTimeout(() => {
-              target.row?.querySelector(".product-name")?.focus();
+              $("typeProduct").focus();
             }, 50);
           });
           invoiceInput.addEventListener("input", updateTotals);
@@ -3143,6 +3159,7 @@
             fields,
             rows: items.map((it) => it.row),
             codes: items.map((it) => it.code),
+            employeeInfo: { ...currentEmployeeInfo },
           };
         }
 
@@ -3418,6 +3435,7 @@
         function finishSave() {
           $sd.close();
           resetEntryForNext();
+          if (!dlg.open) dlg.showModal();
           // Employee section আগে থেকেই ভরা, তাই সরাসরি Chemist Code-এ ফোকাস
           $("de_ccode").focus();
         }
@@ -3451,6 +3469,7 @@
               fields: pending.fields,
               rows: pending.rows,
               codes: pending.codes,
+              employeeInfo: pending.employeeInfo || {},
               invoiceNo: pending.invoiceNo,
               savedAt: now.toISOString(),
             };
@@ -3595,6 +3614,9 @@
         // ফোকাস-সাজেশনও দেখায় না); wrap শেষ হওয়ার পর focus দেওয়া হচ্ছে।
         function focusEmpty(t) {
           if (!t) return;
+          const focusTarget = t.empty.matches(".product-name")
+            ? $("typeProduct")
+            : t.empty;
           if (t.incomplete) {
             alert(
               t.invalid
@@ -3613,7 +3635,7 @@
             );
           }
           setTimeout(() => {
-            t.empty.focus();
+            focusTarget.focus();
             if (t.invalid) t.empty.select();
           }, 50);
         }
@@ -3833,7 +3855,8 @@
           seq = 0,
           timer = null,
           autoName = "",
-          currentTerritoryCode = "";
+          currentTerritoryCode = "",
+          currentEmployeeInfo = {};
         const dropAuto = () => {
           if (autoName && $("de_mpo").value === autoName)
             $("de_mpo").value = "";
@@ -4416,6 +4439,8 @@
         async function lookup() {
           const raw = $("de_ipi").value.trim();
           const mine = ++seq;
+          currentEmployeeInfo = {};
+          currentTerritoryCode = "";
           if (raw.length < 3) {
             dropAuto();
             st.className = "ipiStatus";
@@ -4442,7 +4467,31 @@
               autoName = name;
             }
             const amName = await findAmName(rec);
+            if (mine !== seq) return;
             if (amName) $("de_am").value = amName;
+            currentEmployeeInfo = {
+              ipi: pick(rec, "IPI NO") || ipi,
+              mpoName: name,
+              amName,
+              territoryCode: pick(rec, "TERRITORY CODE"),
+              territoryName: pick(rec, "TERRITORY NAME"),
+              areaCode: pick(rec, "AREA CODE"),
+              areaName: pick(rec, "AREA NAME"),
+              regionCode: pick(rec, "REGION CODE"),
+              regionName: pick(rec, "REGION NAME"),
+              zoneCode: pick(rec, "ZONE CODE"),
+              zoneName: pick(rec, "ZONE NAME"),
+              depotName: pick(rec, "DEPOT NAME"),
+              category: pick(rec, "CATEGORY"),
+              designation: pick(rec, "DESIGNATION"),
+              team: pick(rec, "TEAM"),
+              routeName: pick(rec, "ROUTE NAME"),
+              employeeStatus: pickAny(rec, [
+                "EMPLOYEE STATUS",
+                "EMPLOYEESTATUS",
+              ]),
+              recordStatus: pick(rec, "STATUS"),
+            };
             const extra = [
               pick(rec, "TERRITORY CODE"),
               pick(rec, "TERRITORY NAME"),
@@ -4471,6 +4520,9 @@
 
         $("de_ipi").addEventListener("input", () => {
           clearTimeout(timer);
+          seq += 1;
+          currentEmployeeInfo = {};
+          currentTerritoryCode = "";
           timer = setTimeout(lookup, 600);
         });
         $("de_ipi").addEventListener("change", () => {
@@ -4514,8 +4566,10 @@
           $("de_am").value = savedEmp.am || "";
           $("de_wp2").value = savedEmp.wp2 || "";
           currentTerritoryCode = savedEmp.territoryCode || "";
+          currentEmployeeInfo = savedEmp.employeeInfo || {};
           autoName = savedEmp.mpo || "";
           showChemistSection();
+          if (!currentEmployeeInfo.ipi) lookup();
         } else {
           showEmployeeSection();
         }
@@ -4596,6 +4650,55 @@
             w.sync();
           });
         }, 200);
+      })();
+    </script>
+    <script>
+      (function () {
+        const addbar = document.querySelector("#entry .addbar");
+        const footer = document.querySelector("#entry footer.df");
+        const viewButton = document.getElementById("viewAdded");
+        const addButton = document.getElementById("addRow");
+        const rows = document.getElementById("deRows");
+        if (!addbar || !footer || !viewButton || !addButton || !rows) return;
+        const mobile = window.matchMedia("(max-width: 720px)");
+        function placeViewBesideRowAdd() {
+          const editingAdd = rows.querySelector(".pl.editing .row-add");
+          const lastRowAdd = rows.querySelector(
+            ":not(.view-all) > .pl:last-child > .row-add",
+          );
+          const rowAdd = editingAdd || lastRowAdd;
+          if (rowAdd && viewButton.parentElement !== rowAdd.parentElement) {
+            rowAdd.insertAdjacentElement("beforebegin", viewButton);
+          }
+        }
+        function placeButtons(isMobile) {
+          if (isMobile) {
+            placeViewBesideRowAdd();
+            footer.classList.add("view-moved");
+          } else {
+            if (viewButton.parentElement !== footer) {
+              footer.appendChild(viewButton);
+            }
+            footer.classList.remove("view-moved");
+          }
+        }
+        placeButtons(mobile.matches);
+        const rowObserver = new MutationObserver(() => {
+          if (mobile.matches) placeViewBesideRowAdd();
+        });
+        rowObserver.observe(rows, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["class"],
+        });
+        if (mobile.addEventListener) {
+          mobile.addEventListener("change", (event) =>
+            placeButtons(event.matches),
+          );
+        } else if (mobile.addListener) {
+          mobile.addListener((event) => placeButtons(event.matches));
+        }
       })();
     </script>
   </body>
