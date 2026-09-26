@@ -10,11 +10,11 @@
       rel="stylesheet"
     />
     <style>
-      :root {
-        --ink: #111;
-        --line: #222;
-        --muted: #555;
-        --bg: #e9e9e9;
+        const productPriceBranches = [
+          "Flat_Rate",
+          "Normal Price",
+          "Without_Discount",
+        ];
         --paper: #fff;
       }
       * {
@@ -959,6 +959,11 @@
         font-size: 15px;
         font-weight: 700;
       }
+      #entry header.dh .header-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
       #entry .entry-blank-btn {
         flex: none;
         padding: 7px 12px;
@@ -970,6 +975,22 @@
         font-size: 12px;
         font-weight: 700;
         cursor: pointer;
+      }
+      #entry .draft-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 4px;
+      }
+      #entry .draft-row .ok {
+        flex: 0 0 20%;
+        min-height: 30px;
+        padding: 3px 8px;
+        font-size: 11px;
+      }
+      #entry #draftStatus {
+        color: #555;
+        font-size: 12px;
       }
       #entry header.dh p {
         margin: 2px 0 0;
@@ -1840,7 +1861,231 @@
         padding: 5px 8px;
         font-size: 12px;
       }
+      dialog#reportDlg {
+        border: 0;
+        border-radius: 10px;
+        padding: 0;
+        width: min(820px, 96vw);
+        max-height: 92vh;
+        color: #111;
+        font-family: "Noto Sans Bengali", Arial, Helvetica, sans-serif;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+      }
+      dialog#reportDlg::backdrop {
+        background: rgba(0, 0, 0, 0.45);
+      }
+      #reportDlg .rd-body {
+        padding: 18px 20px 8px;
+        overflow: auto;
+      }
+      #reportDlg h2 {
+        margin: 0 0 12px;
+        color: #1a3f7a;
+        font-size: 18px;
+      }
+      #reportDlg .rd-range {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: flex-end;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      #reportDlg .rd-field {
+        display: flex;
+        flex: 1 1 0;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+      }
+      #reportDlg .rd-range .f {
+        color: #333;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      #reportDlg .rd-range input[type="date"] {
+        width: 100%;
+        min-width: 0;
+        padding: 6px 4px;
+        border: 1px solid #999;
+        border-radius: 5px;
+        font: inherit;
+        font-size: 13px;
+      }
+      #reportDlg .rd-range button,
+      #reportDlg .rd-actions button {
+        flex: 0 0 auto;
+        padding: 7px 10px;
+        border: 1px solid #1a3f7a;
+        border-radius: 6px;
+        background: #1a3f7a;
+        color: #fff;
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      #reportDlg .rd-range button:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      #reportDlg .rd-status {
+        margin: 4px 0 10px;
+        color: #555;
+        font-size: 13px;
+      }
+      #reportDlg .rd-status.err {
+        color: #a33;
+        font-weight: 700;
+      }
+      #reportDlg .rd-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        border: 1px solid #cbd2da;
+        border-radius: 6px;
+        background: #f3f5f8;
+        font-size: 13px;
+      }
+      #reportDlg .rd-actions {
+        margin-bottom: 10px;
+      }
+      #reportDlg .rd-table-wrap {
+        overflow-x: auto;
+      }
+      #reportDlg table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 12px;
+      }
+      #reportDlg th,
+      #reportDlg td {
+        padding: 6px 5px;
+        border: 1px solid #cbd2da;
+        text-align: left;
+        overflow-wrap: anywhere;
+      }
+      #reportDlg th {
+        background: #f3f5f8;
+        color: #1a3f7a;
+        font-weight: 700;
+      }
+      #reportDlg th:nth-child(5),
+      #reportDlg td:nth-child(5) {
+        width: 90px;
+        text-align: right;
+      }
+      #reportDlg th:nth-child(6),
+      #reportDlg td:nth-child(6) {
+        width: 80px;
+        text-align: center;
+      }
+      #reportDlg .rd-view-btn {
+        padding: 4px 8px;
+        border: 1px solid #1a3f7a;
+        border-radius: 5px;
+        background: #fff;
+        color: #1a3f7a;
+        font: inherit;
+        font-size: 11px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      #reportDlg .grand-row td {
+        border-top: 2px solid #333;
+        background: #f3f5f8;
+        font-weight: 700;
+      }
+      #reportDlg footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        align-items: center;
+        padding: 12px 20px;
+        border-top: 1px solid #ddd;
+        background: #f6f7f9;
+        border-radius: 0 0 10px 10px;
+      }
+      #reportDlg footer button {
+        padding: 8px 16px;
+        border: 1px solid #444;
+        border-radius: 6px;
+        background: #fff;
+        font: inherit;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      #chemistSuggestions {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-height: 240px;
+        overflow-y: auto;
+        border: 1px solid #aab4c0;
+        border-radius: 5px;
+        background: #fff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.18);
+      }
+      #chemistSuggestions.show {
+        display: block;
+      }
+      .chemist-suggestion {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        align-items: stretch;
+        width: 100%;
+        padding: 8px 10px;
+        border: 0;
+        border-bottom: 1px solid #e3e7eb;
+        background: #fff;
+        color: #111;
+        text-align: left;
+        cursor: pointer;
+      }
+      .chemist-suggestion:last-child {
+        border-bottom: 0;
+      }
+      #entry .chemist-suggestion:hover,
+      #entry .chemist-suggestion:focus-visible,
+      #entry .chemist-suggestion.active {
+        background: #d7e8ff;
+        color: #0f356f;
+        outline: 0;
+        box-shadow: inset 4px 0 0 #1a3f7a;
+      }
+      .chemist-suggestion .cs-code,
+      .chemist-suggestion .cs-addr {
+        color: #555;
+        font-size: 11px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .chemist-suggestion .cs-name {
+        min-width: 0;
+        overflow: hidden;
+        font-size: 12.5px;
+        font-weight: 700;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      #allPrintStack .saved-page + .saved-page {
+        margin-top: 16px;
+      }
       @media print {
+        dialog#reportDlg {
+          display: none !important;
+        }
+        #allPrintStack .saved-page + .saved-page {
+          margin-top: 0;
+        }
         dialog#saveDlg {
           display: none !important;
         }
@@ -1920,6 +2165,71 @@
         #viewDlg footer button {
           flex: 1;
           padding: 8px 6px;
+        }
+        dialog#reportDlg {
+          width: 100vw;
+          max-width: 100vw;
+          height: 100dvh;
+          max-height: 100dvh;
+          border-radius: 0;
+          margin: 0;
+        }
+        #reportDlg .rd-body {
+          padding: 10px;
+        }
+        #reportDlg .rd-range {
+          gap: 5px;
+        }
+        #reportDlg .rd-range .f {
+          font-size: 10.5px;
+        }
+        #reportDlg .rd-range input[type="date"] {
+          padding: 5px 2px;
+          font-size: 12px;
+        }
+        #reportDlg .rd-range button {
+          padding: 7px 8px;
+          font-size: 12px;
+        }
+        #reportDlg .rd-summary {
+          gap: 8px;
+          padding: 6px 8px;
+          font-size: 11px;
+        }
+        #reportDlg .rd-actions button {
+          padding: 7px 10px;
+          font-size: 12px;
+        }
+        #reportDlg table {
+          width: 100%;
+          font-size: 9px;
+        }
+        #reportDlg th,
+        #reportDlg td {
+          padding: 4px 2px;
+          overflow-wrap: normal;
+          word-break: normal;
+          line-height: 1.25;
+        }
+        #reportDlg th:nth-child(1),
+        #reportDlg td:nth-child(1) {
+          width: 28px;
+          text-align: center;
+        }
+        #reportDlg th:nth-child(5),
+        #reportDlg td:nth-child(5) {
+          width: 56px;
+        }
+        #reportDlg th:nth-child(6),
+        #reportDlg td:nth-child(6) {
+          width: 50px;
+        }
+        #reportDlg .rd-view-btn {
+          padding: 3px 5px;
+          font-size: 9.5px;
+        }
+        #reportDlg footer {
+          padding: 10px 14px;
         }
       }
       /* ---- Hidden until Chemist Code search succeeds ---- */
@@ -2006,6 +2316,10 @@
     <div class="toolbar">
       <button type="button" id="openBlank">Blank Form</button>
       <button type="button" id="openEntry" class="primary">New Entry</button>
+      <button type="button" id="viewFormPrint" hidden>প্রিন্ট করুন</button>
+      <button type="button" id="backToReport" class="primary" hidden>
+        রিপোর্টে ফিরুন
+      </button>
     </div>
 
     <main class="page" data-form="Blank Form">
@@ -2124,9 +2438,24 @@
               >Employee Information</span
             >
           </h2>
-          <button type="button" class="entry-blank-btn" id="entryBlank" hidden>
-            Blank Form
-          </button>
+          <div class="header-actions">
+            <button
+              type="button"
+              class="entry-blank-btn"
+              id="entryReport"
+              hidden
+            >
+              Report
+            </button>
+            <button
+              type="button"
+              class="entry-blank-btn"
+              id="entryBlank"
+              hidden
+            >
+              Blank Form
+            </button>
+          </div>
         </header>
         <div class="db">
           <div class="fields" id="entryFieldsBlock">
@@ -2237,6 +2566,11 @@
                     aria-label="Search Chemist Code"
                   ></button>
                 </div>
+                <div
+                  id="chemistSuggestions"
+                  role="listbox"
+                  aria-label="Chemist suggestions"
+                ></div>
               </div>
               <div>
                 <label class="f" for="de_chemist">Name of Chemist</label
@@ -2256,6 +2590,30 @@
                   placeholder="Chemist Address"
                 />
               </div>
+              <div class="wide draft-row">
+                <button
+                  type="button"
+                  class="ok"
+                  id="draftBtn"
+                  title="Restore the previous draft"
+                >
+                  Draft
+                </button>
+                <button
+                  type="button"
+                  class="ok"
+                  id="chemistOk"
+                  title="Continue to product entry"
+                >
+                  OK
+                </button>
+              </div>
+              <div
+                class="ipiStatus wide"
+                id="draftStatus"
+                role="status"
+                aria-live="polite"
+              ></div>
             </div>
           </div>
 
@@ -2374,6 +2732,61 @@
         <button type="button" id="viewBack">Back</button>
         <span class="sp"></span>
         <button type="button" class="ok" id="viewSave">Save</button>
+      </footer>
+    </dialog>
+    <dialog id="reportDlg" aria-labelledby="rdTitle">
+      <div class="rd-body">
+        <h2 id="rdTitle">Report</h2>
+        <div class="rd-range">
+          <label class="rd-field" for="rdFrom">
+            <span class="f">From</span>
+            <input type="date" id="rdFrom" />
+          </label>
+          <label class="rd-field" for="rdTo">
+            <span class="f">To</span>
+            <input type="date" id="rdTo" />
+          </label>
+          <button type="button" id="rdGenerate">Generate</button>
+        </div>
+        <p class="rd-status" id="rdStatus" role="status" aria-live="polite"></p>
+        <div class="rd-summary" id="rdSummary" hidden>
+          <span><strong>মোট এন্ট্রি:</strong> <span id="rdCount">0</span></span>
+          <span
+            ><strong>মোট Quantity:</strong> <span id="rdSumQty">0</span></span
+          >
+          <span>
+            <strong>মোট Invoice Value:</strong>
+            <span id="rdSumValue">0</span>
+          </span>
+        </div>
+        <div class="rd-actions" id="rdActions" hidden>
+          <button type="button" id="rdPrintAll">All Print</button>
+        </div>
+        <div class="rd-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Sl.</th>
+                <th>Invoice No</th>
+                <th>Chemist code &amp; Name</th>
+                <th>MPO Name</th>
+                <th>Value</th>
+                <th>ফরম দেখুন</th>
+              </tr>
+            </thead>
+            <tbody id="rdRows"></tbody>
+            <tfoot>
+              <tr class="grand-row">
+                <td colspan="4">Grand Total</td>
+                <td id="rdGrandValue">0</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <footer>
+        <button type="button" id="rdClose">Close</button>
       </footer>
     </dialog>
 
@@ -2499,14 +2912,21 @@
         const FB_DB =
           "https://dinajpur-employee-list-default-rtdb.asia-southeast1.firebasedatabase.app";
         const FB_PATH = "DINAJPUR/Field_Force";
-        const CHEMIST_DB =
-          "https://firestore.googleapis.com/v1/projects/rutewisereport-dinajpur/databases/(default)/documents";
+        // ---- Chemist তথ্যের উৎস: Google Sheet (Client ID, Name, Address,
+        // Category Name, ISV Territory ID, INM Territory ID, PHARMA Territory ID) ----
+        const CHEMIST_SHEET_ID =
+          "17MJRZp6hhjeQeqj8Lrqipqv2q52t-P9AiCOCPskXUz4";
+        const CHEMIST_SHEET_GVIZ_BASE =
+          "https://docs.google.com/spreadsheets/d/" +
+          CHEMIST_SHEET_ID +
+          "/gviz/tq";
         const PRODUCT_DB = "https://shofiul4686-default-rtdb.firebaseio.com";
         const PRODUCT_ROOT = PRODUCT_DB + "/PRICE_LIST";
         const $ = (id) => document.getElementById(id);
         const dlg = $("entry"),
           list = $("deRows");
         const viewDlg = $("viewDlg");
+        const reportDlg = $("reportDlg");
         const mainForm = document.querySelector("main.page");
         const STORAGE_KEY = "formE_savedEntry";
         // Employee section (IPI/MPO/AM) এই ব্রাউজার/ডিভাইসে আলাদাভাবে মনে রাখা
@@ -2514,6 +2934,7 @@
         // টাইপ করতে না হয়। নতুন ব্রাউজার/ডিভাইসে localStorage খালি থাকে বলে
         // সেখানে আবার নতুন করে পূরণ করতে হবে।
         const EMP_KEY = "formE_employee";
+        const DRAFT_KEY = "formE_productDraft";
         let savedEntry = null;
 
         // মূল A4 ফরমের সম্পূর্ণ আলাদা একটা কপি — শুধু "সেভ করা" তথ্য দেখানোর জন্য।
@@ -2708,6 +3129,7 @@
           $("employeeFieldsBlock").classList.remove("pre-ok-hidden");
           $("chemistFieldsBlock").classList.add("pre-ok-hidden");
           $("entryBlank").hidden = true;
+          $("entryReport").hidden = true;
           document
             .querySelectorAll(".employee-section")
             .forEach((el) => el.classList.remove("pre-ok-hidden"));
@@ -2720,6 +3142,7 @@
           $("employeeFieldsBlock").classList.add("pre-ok-hidden");
           $("chemistFieldsBlock").classList.remove("pre-ok-hidden");
           $("entryBlank").hidden = false;
+          $("entryReport").hidden = false;
           document
             .querySelectorAll(".employee-section")
             .forEach((el) => el.classList.add("pre-ok-hidden"));
@@ -3392,6 +3815,134 @@
           pending = null;
         }
 
+        function collectDraftRows() {
+          return Array.from(list.children).map((row) => ({
+            values: Array.from(
+              row.querySelectorAll("input"),
+              (input) => input.value,
+            ),
+            dataset: { ...row.dataset },
+            committed: row.classList.contains("row-committed"),
+            ppc: row.querySelector(".ppc")?.textContent || "",
+          }));
+        }
+        function saveDraft() {
+          try {
+            localStorage.setItem(
+              DRAFT_KEY,
+              JSON.stringify({
+                fields: {
+                  ccode: $("de_ccode").value,
+                  chemist: $("de_chemist").value,
+                  addr: $("de_addr").value,
+                },
+                rows: collectDraftRows(),
+                savedAt: Date.now(),
+              }),
+            );
+          } catch (e) {}
+        }
+        function clearDraft() {
+          try {
+            localStorage.removeItem(DRAFT_KEY);
+          } catch (e) {}
+        }
+        function loadDraft() {
+          try {
+            const raw = localStorage.getItem(DRAFT_KEY);
+            if (raw) return JSON.parse(raw);
+          } catch (e) {}
+          return null;
+        }
+        function hasMeaningfulDraft(draft) {
+          if (!draft) return false;
+          const fields = draft.fields || {};
+          if (
+            [fields.ccode, fields.chemist, fields.addr].some((value) =>
+              (value || "").trim(),
+            )
+          )
+            return true;
+          return (draft.rows || []).some((row) =>
+            (row.values || [])
+              .slice(0, 5)
+              .some((value) => (value || "").trim()),
+          );
+        }
+        function currentEntryHasContent() {
+          if (
+            ["de_ccode", "de_chemist", "de_addr"].some((id) =>
+              $(id).value.trim(),
+            )
+          )
+            return true;
+          return Array.from(list.children).some((row) =>
+            Array.from(row.querySelectorAll("input"))
+              .slice(0, 5)
+              .some((input) => input.value.trim()),
+          );
+        }
+        function restoreDraft(draft) {
+          $("de_ccode").value = draft.fields?.ccode || "";
+          $("de_chemist").value = draft.fields?.chemist || "";
+          $("de_addr").value = draft.fields?.addr || "";
+          list.replaceChildren();
+          (draft.rows || []).forEach((savedRow) => {
+            const row = addRow(savedRow.values || []);
+            Object.assign(row.dataset, savedRow.dataset || {});
+            if (savedRow.ppc)
+              row.querySelector(".ppc").textContent = savedRow.ppc;
+            if (savedRow.committed) row.classList.add("row-committed");
+          });
+          updateTotals();
+        }
+        function setDraftStatus(message) {
+          $("draftStatus").textContent = message;
+        }
+        function restoreDraftClick() {
+          const draft = loadDraft();
+          if (!hasMeaningfulDraft(draft)) {
+            setDraftStatus("সংরক্ষিত কোনো Draft পাওয়া যায়নি।");
+            return;
+          }
+          if (
+            currentEntryHasContent() &&
+            !confirm(
+              "বর্তমান ফরমের তথ্য মুছে আগের Draft ফিরিয়ে আনা হবে। এগোবেন?",
+            )
+          )
+            return;
+          restoreDraft(draft);
+          if (
+            $("de_ccode").value.trim() &&
+            $("de_chemist").value.trim() &&
+            $("de_addr").value.trim()
+          ) {
+            revealProductList();
+          } else {
+            showChemistSection();
+          }
+          setDraftStatus("আগের Draft ফিরিয়ে আনা হয়েছে।");
+        }
+        let draftAutoSaveTimer = null;
+        function scheduleDraftAutoSave() {
+          clearTimeout(draftAutoSaveTimer);
+          draftAutoSaveTimer = setTimeout(saveDraft, 700);
+        }
+        dlg.addEventListener("input", (event) => {
+          if (
+            event.target.matches?.(
+              "#de_ccode, #de_chemist, #de_addr, #deRows input",
+            )
+          ) {
+            scheduleDraftAutoSave();
+          }
+        });
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) saveDraft();
+        });
+        window.addEventListener("pagehide", saveDraft);
+
         function setSdStatus(cls, txt) {
           $("sdStatus").className = "sd-status " + cls;
           $("sdStatus").textContent = txt;
@@ -3512,6 +4063,7 @@
         }
         function finishSave() {
           $sd.close();
+          clearDraft();
           resetEntryForNext();
           if (!dlg.open) dlg.showModal();
           // Employee section আগে থেকেই ভরা, তাই সরাসরি Chemist Code-এ ফোকাস
@@ -3612,6 +4164,210 @@
         $("entryBlank").onclick = () => {
           dlg.close();
           $("openBlank").click();
+        };
+        $("entryReport").onclick = () => {
+          const today = new Date();
+          const todayStr =
+            today.getFullYear() +
+            "-" +
+            String(today.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(today.getDate()).padStart(2, "0");
+          if (!$("rdFrom").value) $("rdFrom").value = todayStr;
+          if (!$("rdTo").value) $("rdTo").value = todayStr;
+          $("rdStatus").textContent = "";
+          $("rdStatus").className = "rd-status";
+          $("rdSummary").hidden = true;
+          $("rdActions").hidden = true;
+          $("rdRows").replaceChildren();
+          $("rdGrandValue").textContent = "0";
+          lastReportEntries = [];
+          reportDlg.showModal();
+        };
+        $("rdClose").onclick = () => reportDlg.close();
+
+        function parseDateInput(value) {
+          const [year, month, day] = value.split("-").map(Number);
+          return new Date(year, month - 1, day);
+        }
+        function isoDateStr(date) {
+          return (
+            date.getFullYear() +
+            "-" +
+            String(date.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(date.getDate()).padStart(2, "0")
+          );
+        }
+        const MAX_REPORT_DAYS = 92;
+        let lastReportEntries = [];
+        async function generateReport() {
+          const fromValue = $("rdFrom").value;
+          const toValue = $("rdTo").value;
+          const status = $("rdStatus");
+          status.className = "rd-status";
+          if (!fromValue || !toValue) {
+            status.className = "rd-status err";
+            status.textContent = "From ও To তারিখ দিন।";
+            return;
+          }
+          const from = parseDateInput(fromValue);
+          const to = parseDateInput(toValue);
+          if (from > to) {
+            status.className = "rd-status err";
+            status.textContent = "From তারিখ To তারিখের আগে বা সমান হতে হবে।";
+            return;
+          }
+          const dayCount = Math.round((to - from) / 86400000) + 1;
+          if (dayCount > MAX_REPORT_DAYS) {
+            status.className = "rd-status err";
+            status.textContent =
+              "একসাথে সর্বোচ্চ " +
+              MAX_REPORT_DAYS +
+              " দিনের রিপোর্ট দেখা যাবে। রেঞ্জ ছোট করুন।";
+            return;
+          }
+          const dates = Array.from(
+            { length: dayCount },
+            (_, index) =>
+              new Date(
+                from.getFullYear(),
+                from.getMonth(),
+                from.getDate() + index,
+              ),
+          );
+          const generateButton = $("rdGenerate");
+          generateButton.disabled = true;
+          status.textContent = "লোড হচ্ছে…";
+          $("rdSummary").hidden = true;
+          $("rdActions").hidden = true;
+          $("rdRows").replaceChildren();
+          lastReportEntries = [];
+          try {
+            const results = await Promise.all(
+              dates.map(async (date) => {
+                try {
+                  const data = await getJSON(
+                    EXPIRY_DB + "/" + expiryPath(date) + ".json",
+                  );
+                  return { date, data };
+                } catch (error) {
+                  return { date, error };
+                }
+              }),
+            );
+            const failed = results.find((result) => result.error);
+            const entries = [];
+            results.forEach(({ date, data }) => {
+              if (!data || typeof data !== "object") return;
+              Object.entries(data).forEach(([key, entry]) => {
+                if (entry && typeof entry === "object") {
+                  entries.push({ date, key, entry });
+                }
+              });
+            });
+            entries.sort(
+              (left, right) =>
+                new Date(left.entry.savedAt || 0) -
+                new Date(right.entry.savedAt || 0),
+            );
+            let quantityTotal = 0;
+            let valueTotal = 0;
+            const reportRows = entries.map(({ date, key, entry }, index) => {
+              const fields = entry.fields || {};
+              let entryValue = 0;
+              (entry.rows || []).forEach((row) => {
+                const quantity = Number(row[4]);
+                const value = Number(row[5]);
+                if (Number.isFinite(quantity)) quantityTotal += quantity;
+                if (Number.isFinite(value)) {
+                  entryValue += value;
+                  valueTotal += value;
+                }
+              });
+              const rowElement = document.createElement("tr");
+              const chemist =
+                [fields.ccode, fields.chemist]
+                  .filter((value) => value && String(value).trim())
+                  .join(" - ") || "-";
+              [
+                String(index + 1),
+                entry.invoiceNo || "-",
+                chemist,
+                fields.mpo || "-",
+                String(Math.round(entryValue)),
+              ].forEach((text) => {
+                const cell = document.createElement("td");
+                cell.textContent = text;
+                rowElement.appendChild(cell);
+              });
+              const actionCell = document.createElement("td");
+              const viewButton = document.createElement("button");
+              viewButton.type = "button";
+              viewButton.className = "rd-view-btn";
+              viewButton.textContent = "দেখুন";
+              viewButton.addEventListener("click", () =>
+                openEntryInNewTab(date, key),
+              );
+              actionCell.appendChild(viewButton);
+              rowElement.appendChild(actionCell);
+              return rowElement;
+            });
+            $("rdRows").replaceChildren(...reportRows);
+            $("rdGrandValue").textContent = String(Math.round(valueTotal));
+            $("rdCount").textContent = String(entries.length);
+            $("rdSumQty").textContent = String(quantityTotal);
+            $("rdSumValue").textContent = String(Math.round(valueTotal));
+            $("rdSummary").hidden = false;
+            lastReportEntries = entries.map(({ date, key }) => ({ date, key }));
+            $("rdActions").hidden = entries.length === 0;
+            if (failed) {
+              status.className = "rd-status err";
+              status.textContent =
+                failed.error.code === "perm"
+                  ? "Firebase Rules-এ পড়ার অনুমতি নেই।"
+                  : "ইন্টারনেট/সার্ভার সমস্যায় সব তথ্য আনা যায়নি।";
+            } else {
+              status.textContent = entries.length
+                ? ""
+                : "এই তারিখ রেঞ্জে কোনো সেভ করা এন্ট্রি পাওয়া যায়নি।";
+            }
+          } finally {
+            generateButton.disabled = false;
+          }
+        }
+        $("rdGenerate").onclick = generateReport;
+
+        function openEntryInNewTab(date, key) {
+          const url = new URL(location.href);
+          url.search = "";
+          url.searchParams.set("viewDate", isoDateStr(date));
+          url.searchParams.set("viewKey", key);
+          window.open(url.href, "_blank");
+        }
+        $("rdPrintAll").onclick = () => {
+          if (!lastReportEntries.length) return;
+          try {
+            sessionStorage.setItem(
+              "allPrintEntries",
+              JSON.stringify(
+                lastReportEntries.map(({ date, key }) => ({
+                  date: isoDateStr(date),
+                  key,
+                })),
+              ),
+            );
+          } catch (e) {}
+          const url = new URL(location.href);
+          url.search = "?allPrint=1";
+          window.open(url.href, "_blank");
+        };
+        $("viewFormPrint").onclick = () => window.print();
+        $("backToReport").onclick = () => {
+          showPage("none");
+          $("viewFormPrint").hidden = true;
+          $("backToReport").hidden = true;
+          reportDlg.showModal();
         };
 
         $("openEntry").onclick = () => {
@@ -3876,6 +4632,62 @@
         viewDlg.addEventListener("cancel", () => dlg.showModal());
         $("empOk").onclick = tryEmployeeOk;
         $("searchChemist").onclick = searchChemist;
+        $("de_ccode").addEventListener("input", scheduleChemistSuggestions);
+        $("de_ccode").addEventListener("focus", scheduleChemistSuggestions);
+        $("de_ccode").addEventListener("keydown", (event) => {
+          const panel = $("chemistSuggestions");
+          if (!panel.classList.contains("show")) return;
+          const items = Array.from(panel.children);
+          if (!items.length) return;
+          if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault();
+            event.stopPropagation();
+            let index = panel._activeIndex ?? -1;
+            index =
+              index < 0
+                ? event.key === "ArrowDown"
+                  ? 0
+                  : items.length - 1
+                : event.key === "ArrowDown"
+                  ? Math.min(index + 1, items.length - 1)
+                  : Math.max(index - 1, 0);
+            panel._activeIndex = index;
+            items.forEach((item, itemIndex) => {
+              const active = itemIndex === index;
+              item.classList.toggle("active", active);
+              item.setAttribute("aria-selected", String(active));
+            });
+            items[index].scrollIntoView({ block: "nearest" });
+          } else if (event.key === "Enter") {
+            const index = panel._activeIndex ?? -1;
+            if (index > -1 && items[index]) {
+              event.preventDefault();
+              event.stopPropagation();
+              items[index].click();
+            }
+          } else if (event.key === "Escape") {
+            panel.replaceChildren();
+            panel.classList.remove("show");
+          }
+        });
+        document.addEventListener("click", (event) => {
+          if (
+            event.target.id !== "de_ccode" &&
+            !event.target.closest("#chemistSuggestions")
+          ) {
+            $("chemistSuggestions").replaceChildren();
+            $("chemistSuggestions").classList.remove("show");
+          }
+        });
+        $("draftBtn").onclick = restoreDraftClick;
+        $("chemistOk").onclick = () => {
+          if (!revealProductList()) return;
+          const target = rowToFill();
+          setTimeout(() => {
+            focusEmpty(target);
+            if (target && !target.incomplete) target.empty.select();
+          }, 50);
+        };
         dlg.addEventListener("cancel", (event) => {
           event.preventDefault();
           returnToChemistSection();
@@ -3893,26 +4705,37 @@
         function placePanels() {
           panelObserver.disconnect();
           dlg
-            .querySelectorAll(".product-suggestions, .date-suggestions")
+            .querySelectorAll(
+              "#chemistSuggestions, .product-suggestions, .date-suggestions",
+            )
             .forEach((panel) => {
-              if (panel.style.display !== "block") return;
+              const isChemist = panel.id === "chemistSuggestions";
+              if (
+                isChemist
+                  ? !panel.classList.contains("show")
+                  : panel.style.display !== "block"
+              )
+                return;
               const isProduct = panel.classList.contains("product-suggestions");
-              const anchor = isProduct
-                ? panel._anchorInput ||
-                  panel.closest(".pl")?.querySelector("input")
-                : panel.parentElement.querySelector("input");
+              const anchor = isChemist
+                ? $("de_ccode").closest(".search-field")
+                : isProduct
+                  ? panel._anchorInput ||
+                    panel.closest(".pl")?.querySelector("input")
+                  : panel.parentElement.querySelector("input");
               if (!anchor) return;
               const r = anchor.getBoundingClientRect();
               const vh = window.innerHeight;
               const below = vh - r.bottom - 10;
               const above = r.top - 10;
-              const want = isProduct ? 220 : 180;
+              const want = isChemist ? 240 : isProduct ? 220 : 180;
               const openUp = below < Math.min(want, 140) && above > below;
               const space = Math.max(80, openUp ? above : below);
+              const left = Math.max(4, r.left);
               const width = isProduct
-                ? Math.min(430, window.innerWidth - r.left - 10)
-                : Math.max(r.width, 96);
-              panel.style.left = Math.max(4, r.left) + "px";
+                ? Math.min(430, window.innerWidth - left - 10)
+                : Math.min(Math.max(r.width, 96), window.innerWidth - left - 4);
+              panel.style.left = left + "px";
               panel.style.width = width + "px";
               panel.style.maxHeight = Math.min(want, space) + "px";
               if (openUp) {
@@ -4045,29 +4868,6 @@
           return r.json();
         }
 
-        const firestoreValue = (value) => {
-          if (!value || typeof value !== "object") return "";
-          if ("stringValue" in value)
-            return String(value.stringValue || "").trim();
-          if ("integerValue" in value)
-            return String(value.integerValue || "").trim();
-          if ("doubleValue" in value)
-            return String(value.doubleValue || "").trim();
-          if ("booleanValue" in value) return String(value.booleanValue);
-          return "";
-        };
-        const firestoreFields = (document) => {
-          const fields = {};
-          Object.entries(document?.fields || {}).forEach(([key, value]) => {
-            fields[
-              key
-                .replace(/[\s_-]+/g, " ")
-                .trim()
-                .toUpperCase()
-            ] = firestoreValue(value);
-          });
-          return fields;
-        };
         const fieldValue = (fields, names) => {
           for (const name of names) {
             const value =
@@ -4081,6 +4881,338 @@
           }
           return "";
         };
+        const CHEMIST_CACHE_PREFIX = "chemistCache_";
+        const CHEMIST_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+        const chemistListMemory = new Map();
+        let chemistFetchInFlight = null;
+        function normalizeTerritoryId(value) {
+          return String(value || "")
+            .trim()
+            .toUpperCase()
+            .replace(/^N(?=DIN)/, "");
+        }
+        function territoryCacheKey(territoryCode) {
+          return CHEMIST_CACHE_PREFIX + normalizeTerritoryId(territoryCode);
+        }
+        function loadChemistCache(territoryCode) {
+          const key = normalizeTerritoryId(territoryCode);
+          if (!key) return null;
+          if (chemistListMemory.has(key)) return chemistListMemory.get(key);
+          try {
+            const raw = localStorage.getItem(territoryCacheKey(key));
+            if (!raw) return null;
+            const cached = JSON.parse(raw);
+            if (!Array.isArray(cached.list)) return null;
+            if (Date.now() - (cached.ts || 0) > CHEMIST_CACHE_TTL_MS)
+              return null;
+            chemistListMemory.set(key, cached.list);
+            return cached.list;
+          } catch (e) {
+            return null;
+          }
+        }
+        function saveChemistCache(territoryCode, chemists) {
+          const key = normalizeTerritoryId(territoryCode);
+          if (!key) return;
+          chemistListMemory.set(key, chemists);
+          try {
+            localStorage.setItem(
+              territoryCacheKey(key),
+              JSON.stringify({ ts: Date.now(), list: chemists }),
+            );
+          } catch (e) {}
+        }
+        // ---- Google Sheet থেকে JSONP দিয়ে ডাটা আনা (fetch/CORS-এর সমস্যা এড়াতে) ----
+        // ফাইলটা সরাসরি ডাবল-ক্লিক করে (file://...) বা কিছু হোস্টিং থেকে
+        // খুললে origin "null"/অচেনা হয়, আর docs.google.com-এর gviz endpoint
+        // সেই origin-এর জন্য Access-Control-Allow-Origin হেডার পাঠায় না, তাই
+        // fetch() ব্লক হয়ে যায় (কনসোলে CORS এরর)। <script> ট্যাগ দিয়ে লোড করা
+        // (JSONP) CORS-এর আওতায় পড়ে না বলে এভাবে আনা হচ্ছে।
+        function loadChemistSheetJsonp(callbackName, timeoutMs) {
+          return new Promise((resolve, reject) => {
+            let settled = false;
+            const script = document.createElement("script");
+            const cleanup = () => {
+              delete window[callbackName];
+              script.remove();
+              clearTimeout(timer);
+            };
+            window[callbackName] = (data) => {
+              if (settled) return;
+              settled = true;
+              cleanup();
+              resolve(data);
+            };
+            script.src =
+              CHEMIST_SHEET_GVIZ_BASE +
+              "?tqx=out:json;responseHandler:" +
+              callbackName;
+            script.async = true;
+            script.onerror = () => {
+              if (settled) return;
+              settled = true;
+              cleanup();
+              const error = new Error("chemist sheet script load failed");
+              error.code = "http";
+              reject(error);
+            };
+            const timer = setTimeout(() => {
+              if (settled) return;
+              settled = true;
+              cleanup();
+              const error = new Error("chemist sheet jsonp timeout");
+              error.code = "not-public";
+              reject(error);
+            }, timeoutMs || 15000);
+            document.head.appendChild(script);
+          });
+        }
+        // Google Visualization API-এর table.cols/table.rows কাঠামোকে হেডার-কী
+        // দিয়ে সাধারণ অবজেক্টে রূপান্তর করে (আগের CSV-ভিত্তিক rows-এর মতোই)
+        function chemistTableToObjects(table) {
+          const cols = (table && table.cols) || [];
+          const headers = cols.map(
+            (c, i) => (c && c.label && c.label.trim()) || "COL" + i,
+          );
+          return ((table && table.rows) || [])
+            .map((r) => {
+              const obj = {};
+              (r.c || []).forEach((cell, i) => {
+                const key = headers[i];
+                if (!key) return;
+                const raw = cell && cell.v != null ? cell.v : "";
+                obj[key] = String(raw).trim();
+              });
+              return obj;
+            })
+            .filter((obj) => Object.values(obj).some((v) => v !== ""));
+        }
+        // ---- Chemist Sheet একবার লোড করে মেমোরি + localStorage-এ ক্যাশ করা হয় ----
+        let chemistSheetPromise = null;
+        const CHEMIST_SHEET_CACHE_KEY = "chemistSheetCache_v2";
+        async function fetchChemistSheetRows() {
+          if (chemistSheetPromise) return chemistSheetPromise;
+          chemistSheetPromise = (async () => {
+            try {
+              const cachedRaw = localStorage.getItem(CHEMIST_SHEET_CACHE_KEY);
+              if (cachedRaw) {
+                const cached = JSON.parse(cachedRaw);
+                if (
+                  cached &&
+                  Array.isArray(cached.rows) &&
+                  Date.now() - (cached.ts || 0) < CHEMIST_CACHE_TTL_MS
+                ) {
+                  return cached.rows;
+                }
+              }
+            } catch (e) {}
+            const callbackName =
+              "chemistSheetCb_" +
+              Date.now() +
+              "_" +
+              Math.floor(Math.random() * 1e6);
+            let payload;
+            try {
+              payload = await loadChemistSheetJsonp(callbackName, 15000);
+            } catch (e) {
+              throw e;
+            }
+            if (
+              !payload ||
+              payload.status === "error" ||
+              !payload.table ||
+              !Array.isArray(payload.table.rows)
+            ) {
+              // Sheet পাবলিক না থাকলে বা লিংক ভুল হলে সাধারণত এখানেই ধরা পড়ে
+              const error = new Error("chemist sheet bad response");
+              error.code = "not-public";
+              throw error;
+            }
+            const rows = chemistTableToObjects(payload.table);
+            if (!rows.length) {
+              const error = new Error("chemist sheet empty");
+              error.code = "empty";
+              throw error;
+            }
+            const headerSet = new Set(
+              Object.keys(rows[0]).map((h) => h.trim().toUpperCase()),
+            );
+            const hasAnyTerritoryColumn = [
+              "INM TERRITORY ID",
+              "ISV TERRITORY ID",
+              "PHARMA TERRITORY ID",
+            ].some((c) => headerSet.has(c));
+            if (!hasAnyTerritoryColumn) {
+              const error = new Error("chemist sheet headers mismatch");
+              error.code = "bad-headers";
+              throw error;
+            }
+            try {
+              localStorage.setItem(
+                CHEMIST_SHEET_CACHE_KEY,
+                JSON.stringify({ ts: Date.now(), rows }),
+              );
+            } catch (e) {}
+            return rows;
+          })().catch((error) => {
+            chemistSheetPromise = null;
+            throw error;
+          });
+          return chemistSheetPromise;
+        }
+        // Territory Code-এর প্রিফিক্স অনুযায়ী (NDIN => INM, SVD => ISV, বাকি
+        // সব => PHARMA) Sheet-এর কোন Territory ID কলামটা মেলাতে হবে তা ঠিক করে
+        function territoryColumnForCode(territoryCode) {
+          const prefix = invoicePrefix(territoryCode);
+          if (prefix === "INM") return "INM TERRITORY ID";
+          if (prefix === "ISV") return "ISV TERRITORY ID";
+          return "PHARMA TERRITORY ID";
+        }
+        function chemistRecordsFromSheetRows(rows, territoryCode) {
+          const column = territoryColumnForCode(territoryCode);
+          const target = normalizeTerritoryId(territoryCode);
+          return (rows || [])
+            .map((row) => ({
+              code: pickAny(row, ["CLIENT ID", "CHEMIST CODE", "CODE"]),
+              name: pick(row, "NAME"),
+              address: pick(row, "ADDRESS"),
+              territoryId: pick(row, column),
+            }))
+            .filter(
+              (chemist) =>
+                chemist.code &&
+                normalizeTerritoryId(chemist.territoryId) === target,
+            );
+        }
+        async function fetchChemistsForTerritory(territoryCode) {
+          const rows = await fetchChemistSheetRows();
+          const matches = chemistRecordsFromSheetRows(rows, territoryCode);
+          const unique = new Map();
+          matches.forEach((chemist) => unique.set(chemist.code, chemist));
+          return Array.from(unique.values());
+        }
+        async function ensureChemistList(territoryCode) {
+          const key = normalizeTerritoryId(territoryCode);
+          if (!key) return [];
+          const cached = loadChemistCache(key);
+          if (cached) return cached;
+          if (chemistFetchInFlight?.key === key)
+            return chemistFetchInFlight.promise;
+          const promise = fetchChemistsForTerritory(territoryCode)
+            .then((chemists) => {
+              saveChemistCache(key, chemists);
+              return chemists;
+            })
+            .catch((error) => {
+              chemistFetchInFlight = null;
+              throw error;
+            });
+          chemistFetchInFlight = { key, promise };
+          return promise;
+        }
+        function chemistLoadErrorText(error) {
+          const code = error && error.code;
+          if (code === "not-public") {
+            return 'Google Sheet-টা এখনো সবার জন্য খোলা (public) নেই। Sheet-এ গিয়ে Share বাটনে ক্লিক করে "Anyone with the link" + "Viewer" সিলেক্ট করুন, তারপর আবার Search করুন।';
+          }
+          if (code === "bad-headers") {
+            return "Sheet-এর প্রথম সারির হেডার নামগুলো মিলছে না। ঠিক এই নামে কলাম আছে কিনা দেখুন: Client ID, Name, Address, Category Name, ISV Territory ID, INM Territory ID, PHARMA Territory ID";
+          }
+          if (code === "empty") {
+            return "Sheet-এর প্রথম ট্যাব (tab) থেকে কোনো ডাটা পাওয়া যায়নি। ডাটা প্রথম ট্যাবে আছে কিনা, বা হেডারের নিচে সারি আছে কিনা দেখুন।";
+          }
+          return "Google Sheet থেকে Chemist list আনা যায়নি — ইন্টারনেট সংযোগ চেক করে আবার চেষ্টা করুন।";
+        }
+        function renderChemistSuggestions(chemists, query) {
+          const panel = $("chemistSuggestions");
+          const normalizedQuery = (query || "").trim().toUpperCase();
+          if (!chemists || !normalizedQuery) {
+            panel.replaceChildren();
+            panel.classList.remove("show");
+            return;
+          }
+          const matches = chemists
+            .filter(
+              (chemist) =>
+                (chemist.code || "").toUpperCase().includes(normalizedQuery) ||
+                (chemist.name || "").toUpperCase().includes(normalizedQuery),
+            )
+            .slice(0, 24);
+          panel.replaceChildren(
+            ...matches.map((chemist) => {
+              const button = document.createElement("button");
+              button.type = "button";
+              button.className = "chemist-suggestion";
+              button.setAttribute("role", "option");
+              button.setAttribute("aria-selected", "false");
+              button.addEventListener("mousedown", (event) =>
+                event.preventDefault(),
+              );
+              const code = document.createElement("span");
+              code.className = "cs-code";
+              code.textContent = chemist.code || "-";
+              const name = document.createElement("span");
+              name.className = "cs-name";
+              name.textContent = chemist.name || "-";
+              const address = document.createElement("span");
+              address.className = "cs-addr";
+              address.textContent = chemist.address || "";
+              button.append(code, name, address);
+              button.addEventListener("click", () => {
+                $("de_ccode").value = chemist.code || "";
+                $("de_chemist").value = chemist.name || "";
+                $("de_addr").value = chemist.address || "";
+                panel.replaceChildren();
+                panel.classList.remove("show");
+                setSt(
+                  "ok",
+                  "Chemist নির্বাচন করা হয়েছে: " +
+                    (chemist.name || chemist.code) +
+                    " — ঠিক থাকলে Search চাপুন।",
+                );
+                scheduleDraftAutoSave();
+              });
+              return button;
+            }),
+          );
+          panel._activeIndex = -1;
+          panel.classList.toggle("show", matches.length > 0);
+          if (matches.length) placePanels();
+        }
+        let chemistSuggestTimer = null;
+        let chemistSuggestSeq = 0;
+        async function scheduleChemistSuggestions() {
+          clearTimeout(chemistSuggestTimer);
+          const query = ($("de_ccode").value || "").trim();
+          const territoryCode = currentTerritoryCode;
+          const request = ++chemistSuggestSeq;
+          const panel = $("chemistSuggestions");
+          if (!query || !territoryCode) {
+            panel.replaceChildren();
+            panel.classList.remove("show");
+            return;
+          }
+          try {
+            let chemists = loadChemistCache(territoryCode);
+            if (!chemists) {
+              panel.replaceChildren();
+              panel.classList.remove("show");
+              chemists = await ensureChemistList(territoryCode);
+            }
+            if (
+              request !== chemistSuggestSeq ||
+              query !== $("de_ccode").value.trim() ||
+              territoryCode !== currentTerritoryCode
+            )
+              return;
+            renderChemistSuggestions(chemists, query);
+          } catch (error) {
+            if (request !== chemistSuggestSeq) return;
+            panel.replaceChildren();
+            panel.classList.remove("show");
+            setSt("err", chemistLoadErrorText(error));
+          }
+        }
         const productCache = new Map();
         const productPriceBranches = [
           ["Flat_Rate"],
@@ -4109,14 +5241,14 @@
           });
           return fields;
         };
-        const collectProductRecords = (value, records) => {
+        const collectProductRecords = (value, records, priority) => {
           if (!value || typeof value !== "object") return;
           const fields = productFields(value);
           const name = fields["PRODUCT NAME"] || fields["NAME OF PRODUCT"];
-          if (name) records.push({ fields, name });
+          if (name) records.push({ fields, name, priority });
           Object.values(value).forEach((childValue) => {
             if (childValue && typeof childValue === "object") {
-              collectProductRecords(childValue, records);
+              collectProductRecords(childValue, records, priority);
             }
           });
         };
@@ -4127,28 +5259,27 @@
           const records = [];
           await Promise.all(
             categories.flatMap((category) =>
-              productPriceBranches.map(async (branches) => {
-                for (const branch of branches) {
-                  try {
-                    const data = await getJSON(
-                      PRODUCT_ROOT +
-                        "/" +
-                        encodeURIComponent(category) +
-                        "/" +
-                        encodeURIComponent(branch) +
-                        ".json",
-                    );
-                    collectProductRecords(data, records);
-                    break;
-                  } catch (e) {}
-                }
+              productPriceBranches.map(async (branch, priority) => {
+                try {
+                  const data = await getJSON(
+                    PRODUCT_ROOT +
+                      "/" +
+                      encodeURIComponent(category) +
+                      "/" +
+                      encodeURIComponent(branch) +
+                      ".json",
+                  );
+                  collectProductRecords(data, records, priority);
+                } catch (e) {}
               }),
             ),
           );
           const unique = new Map();
           records.forEach((record) => {
             const key = record.name.toUpperCase();
-            if (!unique.has(key)) unique.set(key, record);
+            const existing = unique.get(key);
+            if (!existing || record.priority < existing.priority)
+              unique.set(key, record);
           });
           const values = Array.from(unique.values()).sort((a, b) =>
             a.name.localeCompare(b.name),
@@ -4305,93 +5436,35 @@
             }
           });
         }
-        async function findChemistByTerritory(territoryCode) {
-          const target = (territoryCode || "").trim().toUpperCase();
+        const normalizeChemistCode = (value) =>
+          String(value ?? "")
+            .replace(/\s+/g, "")
+            .trim()
+            .toUpperCase();
+        function findCachedChemist(chemists, chemistCode) {
+          const target = normalizeChemistCode(chemistCode);
           if (!target) return null;
-          const division = /^NDIN/.test(target)
-            ? "inm"
-            : /^SVD/.test(target)
-              ? "isv"
-              : "pharma";
-          const parent = CHEMIST_DB + "/Chemist_List/" + division;
-          const response = await postJSON(parent + ":runQuery", {
-            structuredQuery: {
-              from: [{ collectionId: "clients" }],
-              where: {
-                fieldFilter: {
-                  field: { fieldPath: "`TR CODE`" },
-                  op: "EQUAL",
-                  value: { stringValue: target },
-                },
-              },
-              limit: 1,
-            },
-          });
-          const document = (response || []).find(
-            (item) => item.document,
-          )?.document;
-          return document
-            ? { document, fields: firestoreFields(document), division }
-            : null;
+          return (
+            chemists.find(
+              (chemist) => normalizeChemistCode(chemist.code) === target,
+            ) || null
+          );
         }
         async function findChemistByCode(chemistCode) {
           const target = (chemistCode || "").trim();
           if (!target) return null;
-          const territory = currentTerritoryCode.trim().toUpperCase();
-          const preferred = /^NDIN/.test(territory)
-            ? "inm"
-            : /^SVD/.test(territory)
-              ? "isv"
-              : "pharma";
-          const divisions = [
-            preferred,
-            ...["pharma", "inm", "isv"].filter(
-              (division) => division !== preferred,
-            ),
-          ];
-          for (const division of divisions) {
-            const parent = CHEMIST_DB + "/Chemist_List/" + division;
-            for (const fieldPath of [
-              "CHEMIST CODE",
-              "CODE",
-              "Code",
-              "Chemist Code",
-            ]) {
-              for (const value of [
-                { stringValue: target },
-                { integerValue: target },
-              ]) {
-                try {
-                  const response = await postJSON(parent + ":runQuery", {
-                    structuredQuery: {
-                      from: [{ collectionId: "clients" }],
-                      where: {
-                        fieldFilter: {
-                          field: { fieldPath: "`" + fieldPath + "`" },
-                          op: "EQUAL",
-                          value,
-                        },
-                      },
-                      limit: 1,
-                    },
-                  });
-                  const document = (response || []).find(
-                    (item) => item.document,
-                  )?.document;
-                  if (document) {
-                    return {
-                      document,
-                      fields: firestoreFields(document),
-                      division,
-                    };
-                  }
-                } catch (e) {
-                  if (e.code === "perm") throw e;
-                }
-              }
-            }
-          }
-          return null;
+          let chemists = loadChemistCache(currentTerritoryCode);
+          if (!chemists)
+            chemists = await ensureChemistList(currentTerritoryCode);
+          const chemist = findCachedChemist(chemists, target);
+          if (!chemist) return null;
+          return {
+            fields: {
+              "CLIENT ID": chemist.code || target,
+              NAME: chemist.name || "",
+              ADDRESS: chemist.address || "",
+            },
+          };
         }
         // Chemist সার্চ সফল হলে (বা আগের এন্ট্রি আবার খুললে) Product List দেখায়
         function updateChemistSummary() {
@@ -4433,6 +5506,7 @@
           }
           dlg.classList.add("wide-mode");
           $("entryBlank").hidden = true;
+          $("entryReport").hidden = true;
           setEntrySection("Product List & Summary");
           return true;
         }
@@ -4484,12 +5558,7 @@
               if (target && !target.incomplete) target.empty.select();
             }, 50);
           } catch (e) {
-            setSt(
-              "err",
-              e.code === "perm"
-                ? "Chemist search-এর জন্য Firestore-এ read permission প্রয়োজন।"
-                : "Chemist ডাটাবেসে search করা যায়নি। Firestore project/path যাচাই করুন।",
-            );
+            setSt("err", chemistLoadErrorText(e));
           } finally {
             searchButton.disabled = false;
             searchButton.classList.remove("is-loading");
@@ -4584,6 +5653,9 @@
             currentTerritoryCode = pick(rec, "TERRITORY CODE");
             updateTerritoryFields();
             getProductSuggestions().catch(() => {});
+            ensureChemistList(currentTerritoryCode).catch((error) => {
+              if (mine === seq) setSt("err", chemistLoadErrorText(error));
+            });
             saveEmployee();
             setSt("ok", "");
           } catch (e) {
@@ -4624,6 +5696,10 @@
             tryEmployeeOk();
             return;
           }
+          if (e.target.id === "de_ccode") {
+            searchChemist();
+            return;
+          }
           const all = Array.from(dlg.querySelectorAll("input[type=text]"));
           const i = all.indexOf(e.target);
           if (i > -1 && all[i + 1]) all[i + 1].focus();
@@ -4632,6 +5708,93 @@
         dlg.addEventListener("close", () => {
           document.body.classList.remove("de-open");
         });
+
+        const viewParams = new URLSearchParams(location.search);
+        const viewDate = viewParams.get("viewDate");
+        const viewKey = viewParams.get("viewKey");
+        if (viewDate && viewKey) {
+          document.title = "সেভ করা ফরম";
+          showPage("none");
+          (async () => {
+            try {
+              const date = parseDateInput(viewDate);
+              const url =
+                EXPIRY_DB + "/" + expiryPath(date) + "/" + viewKey + ".json";
+              const entry = await getJSON(url);
+              if (!entry || typeof entry !== "object") {
+                document.body.innerHTML =
+                  '<p style="padding:24px;font-family:sans-serif;font-size:15px">এই এন্ট্রিটি খুঁজে পাওয়া যায়নি।</p>';
+                return;
+              }
+              populateSavedForm(entry);
+              showPage("saved");
+              $("viewFormPrint").hidden = false;
+              $("backToReport").hidden = true;
+            } catch (error) {
+              document.body.innerHTML =
+                '<p style="padding:24px;font-family:sans-serif;font-size:15px">এন্ট্রি লোড করা যায়নি — ইন্টারনেট/সার্ভার সমস্যা।</p>';
+            }
+          })();
+          return;
+        }
+        if (viewParams.get("allPrint") === "1") {
+          document.title = "সব ইনভয়েস প্রিন্ট";
+          showPage("none");
+          (async () => {
+            let entries = [];
+            try {
+              entries = JSON.parse(
+                sessionStorage.getItem("allPrintEntries") || "[]",
+              );
+            } catch (error) {}
+            if (!Array.isArray(entries) || !entries.length) {
+              document.body.innerHTML =
+                '<p style="padding:24px;font-family:sans-serif;font-size:15px">প্রিন্ট করার মতো কোনো এন্ট্রি পাওয়া যায়নি। রিপোর্ট থেকে আবার চেষ্টা করুন।</p>';
+              return;
+            }
+            const stack = document.createElement("div");
+            stack.id = "allPrintStack";
+            let loadedAny = false;
+            for (const item of entries) {
+              try {
+                const date = parseDateInput(item.date);
+                const url =
+                  EXPIRY_DB +
+                  "/" +
+                  expiryPath(date) +
+                  "/" +
+                  encodeURIComponent(item.key) +
+                  ".json";
+                const entry = await getJSON(url);
+                if (!entry || typeof entry !== "object") continue;
+                populateSavedForm(entry);
+                const pageCount = Math.max(
+                  1,
+                  Math.ceil(((entry.rows && entry.rows.length) || 0) / ROWS),
+                );
+                ensureSavedPages(pageCount);
+                for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+                  const clone = savedPages[pageIndex].form.cloneNode(true);
+                  clone.style.display = "";
+                  clone.classList.remove("saved-last");
+                  stack.appendChild(clone);
+                }
+                loadedAny = true;
+              } catch (error) {}
+            }
+            if (!loadedAny) {
+              document.body.innerHTML =
+                '<p style="padding:24px;font-family:sans-serif;font-size:15px">কোনো এন্ট্রি লোড করা যায়নি — ইন্টারনেট/সার্ভার সমস্যা।</p>';
+              return;
+            }
+            stack.lastElementChild?.classList.add("saved-last");
+            document.documentElement.classList.add("two-pages");
+            document.body.appendChild(stack);
+            $("viewFormPrint").hidden = false;
+            $("backToReport").hidden = true;
+          })();
+          return;
+        }
 
         load();
         showPage("none");
@@ -4653,7 +5816,10 @@
           $("de_mpo").value = savedEmp.mpo || "";
           $("de_wp1").value = savedEmp.wp1 || "";
           $("de_wp2").value = savedEmp.wp2 || "";
-          currentTerritoryCode = savedEmp.territoryCode || "";
+          currentTerritoryCode =
+            savedEmp.territoryCode ||
+            savedEmp.employeeInfo?.territoryCode ||
+            "";
           currentEmployeeInfo = {
             ...(savedEmp.employeeInfo || {}),
             amName: hasLegacyAmFormat
@@ -4666,7 +5832,12 @@
           updateTerritoryFields();
           autoName = savedEmp.mpo || "";
           showChemistSection();
-          if (!currentEmployeeInfo.ipi) lookup();
+          if (currentTerritoryCode) {
+            ensureChemistList(currentTerritoryCode).catch((error) =>
+              setSt("err", chemistLoadErrorText(error)),
+            );
+          }
+          if (!currentEmployeeInfo.ipi || !currentTerritoryCode) lookup();
         } else {
           showEmployeeSection();
         }
