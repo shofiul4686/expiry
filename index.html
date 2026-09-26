@@ -498,7 +498,7 @@
       }
 
       table {
-        width: 688px;
+        width: 100%;
         border-collapse: collapse;
         table-layout: fixed;
         font-size: 11px;
@@ -510,13 +510,14 @@
       }
       .grid {
         position: relative;
-        width: 688px;
+        width: 100%;
       }
       .grid > svg.lines {
         position: absolute;
         left: 0;
         top: 0;
-        width: 688px;
+        width: 100%;
+        height: 100%;
         pointer-events: none;
         overflow: visible;
         z-index: 0;
@@ -596,25 +597,25 @@
         background: #f4f9ff;
       }
       col.c-sl {
-        width: 34px;
+        width: 4.94%;
       }
       col.c-name {
-        width: 350px;
+        width: 50.87%;
       }
       col.c-batch {
-        width: 48px;
+        width: 6.98%;
       }
       col.c-mfg {
-        width: 64px;
+        width: 9.3%;
       }
       col.c-exp {
-        width: 64px;
+        width: 9.3%;
       }
       col.c-qty {
-        width: 64px;
+        width: 9.3%;
       }
       col.c-inv {
-        width: 64px;
+        width: 9.3%;
       }
       /* ---- Saved Form শুধু: ২১ সারির নিচে Total সারি (৭ কলাম স্প্যান, "Total" ডানে) ---- */
       .total-row input {
@@ -1615,22 +1616,22 @@
       }
       /* ===== Saved Form শুধু: Code কলাম (Blank Form অপরিবর্তিত) ===== */
       .saved-page col.c-sl {
-        width: 34px;
+        width: 4.94%;
       }
       .saved-page col.c-name {
-        width: 290px;
+        width: 42.15%;
       }
       .saved-page col.c-code {
-        width: 60px;
+        width: 8.72%;
       }
       .saved-page col.c-batch {
-        width: 48px;
+        width: 6.98%;
       }
       .saved-page col.c-mfg,
       .saved-page col.c-exp,
       .saved-page col.c-qty,
       .saved-page col.c-inv {
-        width: 64px;
+        width: 9.3%;
       }
       .saved-page td:nth-child(1),
       .saved-page td:nth-child(2),
@@ -2937,7 +2938,6 @@
         const total = HEAD + visibleRows * ROW;
         const svg = document.createElementNS(NS, "svg");
         svg.setAttribute("class", "lines");
-        svg.setAttribute("width", W);
         svg.setAttribute("height", total);
         svg.setAttribute("aria-hidden", "true");
         const add = (x1, y1, x2, y2) => {
@@ -2948,20 +2948,18 @@
           line.setAttribute("y2", y2);
           svg.appendChild(line);
         };
-        const last = (v) => v - 0.5;
+        const pct = (v) => (v / W) * 100 + "%";
+        add(0, 0, 0, total);
         let x = 0;
-        add(0.5, 0, 0.5, total);
-        widths.forEach((w, i) => {
+        widths.forEach((w) => {
           x += w;
-          const px = i === widths.length - 1 ? last(x) : x + 0.5;
-          add(px, 0, px, total);
+          add(pct(x), 0, pct(x), total);
         });
-        add(0, 0.5, W, 0.5);
-        add(0, HEAD + 0.5, W, HEAD + 0.5);
+        add(0, 0.5, "100%", 0.5);
+        add(0, HEAD + 0.5, "100%", HEAD + 0.5);
         for (let i = 1; i <= visibleRows; i++) {
           const y = HEAD + i * ROW;
-          const py = i === visibleRows ? last(y) : y + 0.5;
-          add(0, py, W, py);
+          add(0, y, "100%", y);
         }
         document.querySelector(".grid").appendChild(svg);
       }
@@ -3101,7 +3099,6 @@
           if (old) old.remove();
           const svg = document.createElementNS(NS2, "svg");
           svg.setAttribute("class", "lines");
-          svg.setAttribute("width", W);
           svg.setAttribute("height", total);
           svg.setAttribute("aria-hidden", "true");
           const add = (x1, y1, x2, y2) => {
@@ -3112,19 +3109,18 @@
             l.setAttribute("y2", y2);
             svg.appendChild(l);
           };
+          const pct = (v) => (v / W) * 100 + "%";
+          add(0, 0, 0, total);
           let x = 0;
-          add(0.5, 0, 0.5, total);
-          widths.forEach((w, i) => {
+          widths.forEach((w) => {
             x += w;
-            const px = i === widths.length - 1 ? x - 0.5 : x + 0.5;
-            add(px, 0, px, total);
+            add(pct(x), 0, pct(x), total);
           });
-          add(0, 0.5, W, 0.5);
-          add(0, HEAD + 0.5, W, HEAD + 0.5);
+          add(0, 0.5, "100%", 0.5);
+          add(0, HEAD + 0.5, "100%", HEAD + 0.5);
           for (let i = 1; i <= rowsN; i++) {
             const y = HEAD + i * ROW;
-            const py = i === rowsN ? y - 0.5 : y + 0.5;
-            add(0, py, W, py);
+            add(0, y, "100%", y);
           }
           grid.appendChild(svg);
         })();
