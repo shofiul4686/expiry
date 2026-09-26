@@ -1518,6 +1518,37 @@
           font-weight: 400;
           color: #555;
         }
+        /* Chemist Code / Name / Address: মোবাইলে Total, Quantity, Invoice
+           Value-এর নিচে, প্রতিটি আলাদা লাইনে দেখানোর জন্য রি-অর্ডার */
+        #entry .db {
+          display: flex;
+          flex-direction: column;
+        }
+        #entry .fields#entryFieldsBlock {
+          order: 1;
+        }
+        #entry .product-type-bar {
+          order: 2;
+        }
+        #entry .pl.hd {
+          order: 3;
+        }
+        #entry #deRows {
+          order: 4;
+        }
+        #entry #deTotals {
+          order: 5;
+        }
+        #entry #chemistSummary {
+          order: 6;
+        }
+        #entry .addbar {
+          order: 7;
+        }
+        #entry .chemist-summary {
+          flex-direction: column;
+          gap: 4px;
+        }
         #entry input[type="text"] {
           font-size: 16px;
         }
@@ -1669,12 +1700,30 @@
       }
       #entry .add-meta {
         display: flex;
-        gap: 14px;
+        align-items: center;
+        gap: 6px;
         color: #555;
         font-size: 12px;
       }
       #entry .add-meta:empty {
         display: none;
+      }
+      #entry .add-meta .am-label {
+        color: #6b7280;
+        font-weight: 500;
+      }
+      #entry .add-meta .am-value {
+        font-weight: 700;
+      }
+      #entry .add-meta .am-pack {
+        color: #0f7a4d;
+      }
+      #entry .add-meta .am-price {
+        color: #c1560c;
+      }
+      #entry .add-meta .am-sep {
+        color: #c2c8d0;
+        margin: 0 6px;
       }
       #entry #cancelEdit {
         border-color: #b33;
@@ -5422,15 +5471,21 @@
                         : Number.isFinite(ppNum)
                           ? ppNum.toFixed(2)
                           : pp;
-                  $("addMeta").textContent =
-                    "Pack Size: " +
-                    (record.fields["PACK SIZE"] || "-") +
-                    " | Per Pcs: " +
-                    (pp === undefined || pp === "" || pp === null
-                      ? "-"
-                      : Number.isFinite(ppNum)
-                        ? ppNum.toFixed(2)
-                        : pp);
+                  {
+                    const packSizeVal = record.fields["PACK SIZE"] || "-";
+                    const perPcsVal =
+                      pp === undefined || pp === "" || pp === null
+                        ? "-"
+                        : Number.isFinite(ppNum)
+                          ? ppNum.toFixed(2)
+                          : pp;
+                    $("addMeta").innerHTML =
+                      '<span class="am-label">Pack Size:</span> <span class="am-value am-pack">' +
+                      packSizeVal +
+                      '</span><span class="am-sep">|</span><span class="am-label">Per Pcs:</span> <span class="am-value am-price">' +
+                      perPcsVal +
+                      "</span>";
+                  }
                   const perPcs = Number(getRecordPrice(record));
                   rowEl.dataset.perPcs = Number.isFinite(perPcs)
                     ? String(perPcs)
