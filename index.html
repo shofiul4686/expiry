@@ -3564,8 +3564,9 @@
               );
               items[idx].scrollIntoView({ block: "nearest" });
             } else if (e.key === "Enter") {
-              const idx = suggestionPanel._activeIndex ?? -1;
-              if (idx > -1 && items[idx]) {
+              const storedIdx = suggestionPanel._activeIndex ?? -1;
+              const idx = storedIdx > -1 ? storedIdx : 0;
+              if (items[idx]) {
                 e.preventDefault();
                 e.stopPropagation();
                 items[idx].click();
@@ -4680,8 +4681,9 @@
             );
             items[index].scrollIntoView({ block: "nearest" });
           } else if (event.key === "Enter") {
-            const index = panel._activeIndex ?? -1;
-            if (index > -1 && items[index]) {
+            const storedIndex = panel._activeIndex ?? -1;
+            const index = storedIndex > -1 ? storedIndex : 0;
+            if (items[index]) {
               event.preventDefault();
               items[index].click();
             }
@@ -4747,8 +4749,9 @@
             });
             items[index].scrollIntoView({ block: "nearest" });
           } else if (event.key === "Enter") {
-            const index = panel._activeIndex ?? -1;
-            if (index > -1 && items[index]) {
+            const storedIndex = panel._activeIndex ?? -1;
+            const index = storedIndex > -1 ? storedIndex : 0;
+            if (items[index]) {
               event.preventDefault();
               event.stopPropagation();
               items[index].click();
