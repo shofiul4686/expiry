@@ -1378,6 +1378,30 @@
           font-size: 11.5px;
         }
         #entry .pl.hd {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 6px;
+          font-size: 10.5px;
+          white-space: normal;
+          line-height: 1.2;
+          padding: 0 6px;
+        }
+        #entry .pl.hd > .n {
+          display: none;
+        }
+        #entry .pl.hd > span:nth-child(3) {
+          grid-column: 1;
+        }
+        #entry .pl.hd > span:nth-child(4) {
+          grid-column: 2;
+        }
+        #entry .pl.hd > span:nth-child(5) {
+          grid-column: 3;
+        }
+        #entry .pl.hd > span:nth-child(6) {
+          grid-column: 4;
+        }
+        #entry .pl.hd > span:nth-child(7) {
           display: none;
         }
         #entry .product-type-bar {
@@ -1470,7 +1494,7 @@
           color: #8a929b;
         }
         #entry .pl-totals {
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: auto 1fr 1fr;
           gap: 4px 8px;
           padding: 10px;
           border: 1px solid #d0d5db;
@@ -1479,9 +1503,10 @@
           margin: 2px 0 10px;
         }
         #entry .pl-totals .tot-label {
-          grid-column: 1 / -1;
+          grid-column: 1;
           text-align: left;
           padding-right: 0;
+          white-space: nowrap;
         }
         #entry .pl-totals .tot-qty::before {
           content: "Quantity: ";
@@ -1527,6 +1552,19 @@
           font-size: 12px;
           font-weight: 700;
           white-space: nowrap;
+        }
+        #entry .pl:not(.hd) > #addMeta {
+          grid-column: 1 / 3;
+          grid-row: 2;
+          min-width: 0;
+          display: block;
+          align-self: center;
+          font-size: 10px;
+          line-height: 1.25;
+          color: #555;
+          white-space: normal;
+          overflow-wrap: break-word;
+          word-break: break-word;
         }
         #entry footer.df.view-moved {
           display: none;
@@ -3346,8 +3384,6 @@
               fieldClass +
               '" autocomplete="off" aria-label="' +
               c +
-              '" placeholder="' +
-              ph[i] +
               '"' +
               (i === 5
                 ? ' inputmode="decimal" readonly tabindex="-1" title="Quantity অনুযায়ী অটো হিসাব হবে"'
@@ -3555,7 +3591,7 @@
             dateInputs[1],
             datePanels[1],
             dateExpValues,
-            null,
+            quantityInput,
             tryMergeDuplicate,
           );
           vals.forEach((v, i) => {
@@ -4609,12 +4645,12 @@
             }
           }, 150);
         });
-        // View: Add করা product-সহ পূর্ণ form preview দেখায়
+        // View: শুধু "Add" চাপা (committed) সারিগুলোই দেখায়; এখনো Add না করা
+        // (হাতে টাইপ করতে থাকা) সারিটা বাদ থাকে ও অটো-কমিট হয় না।
         $("viewAdded").onclick = () => {
-          if (!validateRowsBeforeView()) return;
-          const data = collectEntry(false);
+          const data = collectEntry(true);
           if (!data.rows.length) {
-            alert("View করার জন্য কমপক্ষে একটি পণ্যের সারি পূরণ করুন।");
+            alert('View করার জন্য কমপক্ষে একটি পণ্যের সারি "Add" করুন।');
             return;
           }
           dlg.close();
@@ -5426,10 +5462,11 @@
               );
               items[activeIndex].scrollIntoView({ block: "nearest" });
             } else if (e.key === "Enter") {
-              if (activeIndex > -1 && items[activeIndex]) {
+              const pickIndex = activeIndex > -1 ? activeIndex : 0;
+              if (items[pickIndex]) {
                 e.preventDefault();
                 e.stopPropagation();
-                items[activeIndex].click();
+                items[pickIndex].click();
               }
             } else if (e.key === "Escape") {
               panel.style.display = "none";
@@ -5932,6 +5969,8 @@
         const footer = document.querySelector("#entry footer.df");
         const viewButton = document.getElementById("viewAdded");
         const addButton = document.getElementById("addRow");
+        const addMeta = document.getElementById("addMeta");
+        const cancelEdit = document.getElementById("cancelEdit");
         const rows = document.getElementById("deRows");
         if (!addbar || !footer || !viewButton || !addButton || !rows) return;
         const mobile = window.matchMedia("(max-width: 720px)");
@@ -5941,7 +5980,11 @@
             ":not(.view-all) > .pl:last-child > .row-add",
           );
           const rowAdd = editingAdd || lastRowAdd;
-          if (rowAdd && viewButton.parentElement !== rowAdd.parentElement) {
+          if (!rowAdd) return;
+          if (addMeta && addMeta.parentElement !== rowAdd.parentElement) {
+            rowAdd.insertAdjacentElement("beforebegin", addMeta);
+          }
+          if (viewButton.parentElement !== rowAdd.parentElement) {
             rowAdd.insertAdjacentElement("beforebegin", viewButton);
           }
         }
@@ -5952,6 +5995,9 @@
           } else {
             if (viewButton.parentElement !== footer) {
               footer.appendChild(viewButton);
+            }
+            if (addMeta && cancelEdit && addMeta.parentElement !== addbar) {
+              addbar.insertBefore(addMeta, cancelEdit);
             }
             footer.classList.remove("view-moved");
           }
