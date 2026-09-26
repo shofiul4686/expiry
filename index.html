@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Replacement Request for Date Expired Products – Form-E</title>
+    <title>Expiry Entry Form</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link
       href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@500;700&display=swap"
       rel="stylesheet"
@@ -1446,6 +1447,9 @@
         #entry input[type="text"] {
           font-size: 16px;
         }
+        #entry #chemistFieldsBlock input[type="text"]::placeholder {
+          font-size: 8px;
+        }
         #entry footer.df {
           flex-wrap: wrap;
           gap: 6px;
@@ -2149,7 +2153,7 @@
                     type="text"
                     id="de_ccode"
                     autocomplete="off"
-                    placeholder="Chemist Code লিখুন"
+                    placeholder="Chemist Code type here"
                   />
                   <button
                     type="button"
@@ -2166,7 +2170,7 @@
                   type="text"
                   id="de_chemist"
                   autocomplete="off"
-                  placeholder="Chemist-এর নাম"
+                  placeholder="Chemist Name"
                 />
               </div>
               <div class="wide">
@@ -2175,7 +2179,7 @@
                   type="text"
                   id="de_addr"
                   autocomplete="off"
-                  placeholder="Chemist-এর ঠিকানা"
+                  placeholder="Chemist Address"
                 />
               </div>
             </div>
