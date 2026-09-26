@@ -5249,6 +5249,30 @@
             setSt("err", chemistLoadErrorText(error));
           }
         }
+        // Firebase-এ ফিল্ডের নাম কীভাবে লেখা আছে তা নিশ্চিত না হওয়ায়
+        // (স্পেস/আন্ডারস্কোর/বানান যাই হোক), key-তে "FLAT" শব্দ এবং
+        // RATE/PRICE/SELL এর যেকোনো একটা থাকলেই সেটাকে Flat Rate ফিল্ড
+        // হিসেবে ধরা হচ্ছে — যেমন "FlatSelling Rate", "Flat_Rate",
+        // "Flat Selling Price" ইত্যাদি সবই মিলবে।
+        const findFlatRateValue = (fields) => {
+          if (!fields) return undefined;
+          for (const [key, value] of Object.entries(fields)) {
+            if (value === undefined || value === null || value === "")
+              continue;
+            const compact = key.replace(/\s+/g, "");
+            if (/FLAT/.test(compact) && /(RATE|PRICE|SELL)/.test(compact)) {
+              return value;
+            }
+          }
+          return undefined;
+        };
+        const getRecordPrice = (record) => {
+          if (record && record.priority === 0) {
+            const flat = findFlatRateValue(record.fields);
+            if (flat !== undefined) return flat;
+          }
+          return record ? record.fields["PER PCS"] : undefined;
+        };
         const productCache = new Map();
         const productPriceBranches = [
           ["Flat_Rate"],
@@ -5267,13 +5291,21 @@
           if (!value || typeof value !== "object") return {};
           const fields = {};
           Object.entries(value).forEach(([key, childValue]) => {
-            if (typeof childValue !== "string") return;
+            if (childValue === null || childValue === undefined) return;
+            // Firebase-এ কিছু ফিল্ড string ("100") আর কিছু ফিল্ড number
+            // (100) হিসেবে সেভ থাকতে পারে — দুটোই গ্রহণ করা হচ্ছে,
+            // শুধু nested object (child branch) বাদ দেওয়া হচ্ছে।
+            if (typeof childValue === "object") return;
+            const strValue =
+              typeof childValue === "string"
+                ? childValue.trim()
+                : String(childValue).trim();
             fields[
               key
                 .replace(/[\s_-]+/g, " ")
                 .trim()
                 .toUpperCase()
-            ] = childValue.trim();
+            ] = strValue;
           });
           return fields;
         };
@@ -5310,9 +5342,17 @@
               }),
             ),
           );
+          const dedupeKey = (record) => {
+            const code = record.fields && record.fields.CODE;
+            if (code && code.trim())
+              return "CODE:" + code.toUpperCase().replace(/\s+/g, " ").trim();
+            return (
+              "NAME:" + record.name.toUpperCase().replace(/\s+/g, " ").trim()
+            );
+          };
           const unique = new Map();
           records.forEach((record) => {
-            const key = record.name.toUpperCase();
+            const key = dedupeKey(record);
             const existing = unique.get(key);
             if (!existing || record.priority < existing.priority)
               unique.set(key, record);
@@ -5357,7 +5397,7 @@
                   "Pack Size: " +
                   (record.fields["PACK SIZE"] || "-") +
                   " | PER PCS: " +
-                  (record.fields["PER PCS"] || "-");
+                  (getRecordPrice(record) || "-");
                 button.append(code, name, meta);
                 button.addEventListener("mousedown", (event) =>
                   event.preventDefault(),
@@ -5373,7 +5413,7 @@
                   rowEl.dataset.code = record.fields.CODE || "";
                   rowEl.dataset.pname = record.name;
                   const ppcEl = rowEl.querySelector(".ppc");
-                  const pp = record.fields["PER PCS"];
+                  const pp = getRecordPrice(record);
                   const ppNum = Number(pp);
                   if (ppcEl)
                     ppcEl.textContent =
@@ -5391,7 +5431,7 @@
                       : Number.isFinite(ppNum)
                         ? ppNum.toFixed(2)
                         : pp);
-                  const perPcs = Number(record.fields["PER PCS"]);
+                  const perPcs = Number(getRecordPrice(record));
                   rowEl.dataset.perPcs = Number.isFinite(perPcs)
                     ? String(perPcs)
                     : "";
