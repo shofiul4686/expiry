@@ -4244,11 +4244,7 @@
           }
         });
         $("openBlank").onclick = () => {
-          showPage("main");
-          window.addEventListener("afterprint", returnToChemistSection, {
-            once: true,
-          });
-          setTimeout(() => window.print(), 80);
+          window.open("form-e.pdf", "_blank");
         };
         $("entryBlank").onclick = () => {
           dlg.close();
