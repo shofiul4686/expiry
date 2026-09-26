@@ -1004,6 +1004,30 @@
         grid-template-columns: 1fr 1fr;
         gap: 12px 18px;
       }
+      #entry .emp-row.ipi-row {
+        grid-template-columns: 120px minmax(0, 1fr);
+      }
+      #entry .emp-row.ipi-row > div {
+        min-width: 0;
+      }
+      #entry .employee-lookup-value {
+        display: block;
+        min-height: 33px;
+        padding: 7px 9px;
+        border: 1px solid #9aa3ad;
+        border-radius: 5px;
+        background: #f3f4f6;
+        color: #111;
+        font-size: 14px;
+        line-height: 17px;
+        overflow-wrap: anywhere;
+      }
+      #entry .employee-ipi {
+        margin-left: 6px;
+        color: #1a3f7a;
+        font-size: 10.5px;
+        font-weight: 600;
+      }
       #entry .emp-ok-row {
         display: flex;
         justify-content: flex-end;
@@ -1058,6 +1082,10 @@
         outline: 2px solid #1a3f7a;
         outline-offset: 0;
         border-color: #1a3f7a;
+      }
+      #entry #de_wp1::placeholder,
+      #entry #de_wp2::placeholder {
+        color: #c81e1e;
       }
       #entry h3.sec {
         margin: 20px 0 8px;
@@ -1448,6 +1476,10 @@
           font-size: 16px;
         }
         #entry #chemistFieldsBlock input[type="text"]::placeholder {
+          font-size: 8px;
+        }
+        #entry #de_wp1::placeholder,
+        #entry #de_wp2::placeholder {
           font-size: 8px;
         }
         #entry footer.df {
@@ -2098,40 +2130,82 @@
         </header>
         <div class="db">
           <div class="fields" id="entryFieldsBlock">
-            <div class="section-subtitle employee-section wide">
-              IPI NO দিয়ে কর্মীর তথ্য যাচাই করুন।
-            </div>
             <div id="employeeFieldsBlock">
-              <div class="wide">
-                <label class="f" for="de_ipi">IPI NO</label
-                ><input
-                  type="text"
-                  id="de_ipi"
-                  autocomplete="off"
-                  placeholder="যেমন IPI-001044"
-                  spellcheck="false"
-                />
+              <div class="emp-row ipi-row">
+                <div>
+                  <label class="f" for="de_ipi">IPI NO</label
+                  ><input
+                    type="text"
+                    id="de_ipi"
+                    autocomplete="off"
+                    placeholder="IPI-007048"
+                    spellcheck="false"
+                  />
+                </div>
+                <div>
+                  <label class="f" for="de_mpo">Name of MPO</label
+                  ><input type="text" id="de_mpo" autocomplete="off" readonly />
+                </div>
               </div>
               <div class="emp-row">
                 <div>
-                  <label class="f" for="de_mpo">Name of MPO</label
-                  ><input type="text" id="de_mpo" autocomplete="off" />
+                  <label class="f" for="de_group">GROUP</label>
+                  <output
+                    class="employee-lookup-value"
+                    id="de_group"
+                    aria-live="polite"
+                    >-</output
+                  >
                 </div>
                 <div>
                   <label class="f" for="de_wp1"
                     >Working Period in the territory</label
-                  ><input type="text" id="de_wp1" autocomplete="off" />
+                  ><input
+                    type="text"
+                    id="de_wp1"
+                    autocomplete="off"
+                    placeholder="আপনি কতদিন ধরে এই টেরিটরিতে আছেন?"
+                  />
                 </div>
               </div>
               <div class="emp-row">
                 <div>
-                  <label class="f" for="de_am">Name of AM</label
-                  ><input type="text" id="de_am" autocomplete="off" />
+                  <label class="f" for="de_territoryCode">Territory Code</label>
+                  <output
+                    class="employee-lookup-value"
+                    id="de_territoryCode"
+                    aria-live="polite"
+                    >-</output
+                  >
+                </div>
+                <div>
+                  <label class="f" for="de_territoryName">Territory Name</label>
+                  <output
+                    class="employee-lookup-value"
+                    id="de_territoryName"
+                    aria-live="polite"
+                    >-</output
+                  >
+                </div>
+              </div>
+              <div class="emp-row">
+                <div>
+                  <label class="f" for="de_am"
+                    >Name of AM<span
+                      class="employee-ipi"
+                      id="de_amIpi"
+                    ></span></label
+                  ><input type="text" id="de_am" autocomplete="off" readonly />
                 </div>
                 <div>
                   <label class="f" for="de_wp2"
                     >Working Period in the territory</label
-                  ><input type="text" id="de_wp2" autocomplete="off" />
+                  ><input
+                    type="text"
+                    id="de_wp2"
+                    autocomplete="off"
+                    placeholder="আপনি কতদিন ধরে এই টেরিটরিতে আছেন?"
+                  />
                 </div>
               </div>
               <div
@@ -3861,6 +3935,15 @@
           autoName = "",
           currentTerritoryCode = "",
           currentEmployeeInfo = {};
+        function updateTerritoryFields() {
+          $("de_group").textContent = currentEmployeeInfo.team || "-";
+          $("de_am").value = currentEmployeeInfo.amName || "";
+          $("de_amIpi").textContent = currentEmployeeInfo.amIpi || "";
+          $("de_territoryCode").textContent =
+            currentEmployeeInfo.territoryCode || currentTerritoryCode || "-";
+          $("de_territoryName").textContent =
+            currentEmployeeInfo.territoryName || "-";
+        }
         const dropAuto = () => {
           if (autoName && $("de_mpo").value === autoName)
             $("de_mpo").value = "";
@@ -3895,16 +3978,17 @@
           }
           return "";
         };
-        const formatPerson = (record) => {
-          if (!record) return "";
-          const ipi = pick(record, "IPI NO");
-          const name = pick(record, "NAME");
-          return ipi && name ? ipi + " - " + name : ipi || name;
+        const personInfo = (record) => {
+          if (!record) return null;
+          return {
+            ipi: pick(record, "IPI NO"),
+            name: pick(record, "NAME"),
+          };
         };
-        async function findAmName(obj) {
+        async function findAmInfo(obj) {
           const team = pick(obj, "TEAM");
           if (team && /^area$/i.test(team)) {
-            return formatPerson(obj);
+            return personInfo(obj);
           }
 
           const areaName = pick(obj, "AREA NAME");
@@ -3925,7 +4009,7 @@
                 recordArea.trim().toUpperCase() === targetArea
               );
             });
-          return formatPerson(areaRecord);
+          return personInfo(areaRecord);
         }
 
         async function getJSON(url) {
@@ -4445,6 +4529,7 @@
           const mine = ++seq;
           currentEmployeeInfo = {};
           currentTerritoryCode = "";
+          updateTerritoryFields();
           if (raw.length < 3) {
             dropAuto();
             st.className = "ipiStatus";
@@ -4470,13 +4555,13 @@
               $("de_mpo").value = name;
               autoName = name;
             }
-            const amName = await findAmName(rec);
+            const amInfo = await findAmInfo(rec);
             if (mine !== seq) return;
-            if (amName) $("de_am").value = amName;
             currentEmployeeInfo = {
               ipi: pick(rec, "IPI NO") || ipi,
               mpoName: name,
-              amName,
+              amName: amInfo?.name || "",
+              amIpi: amInfo?.ipi || "",
               territoryCode: pick(rec, "TERRITORY CODE"),
               territoryName: pick(rec, "TERRITORY NAME"),
               areaCode: pick(rec, "AREA CODE"),
@@ -4496,16 +4581,11 @@
               ]),
               recordStatus: pick(rec, "STATUS"),
             };
-            const extra = [
-              pick(rec, "TERRITORY CODE"),
-              pick(rec, "TERRITORY NAME"),
-            ]
-              .filter(Boolean)
-              .join("-");
             currentTerritoryCode = pick(rec, "TERRITORY CODE");
+            updateTerritoryFields();
             getProductSuggestions().catch(() => {});
             saveEmployee();
-            setSt("ok", extra ? "TERRITORY CODE/NAME : " + extra : "");
+            setSt("ok", "");
           } catch (e) {
             if (mine !== seq) return;
             dropAuto();
@@ -4527,6 +4607,7 @@
           seq += 1;
           currentEmployeeInfo = {};
           currentTerritoryCode = "";
+          updateTerritoryFields();
           timer = setTimeout(lookup, 600);
         });
         $("de_ipi").addEventListener("change", () => {
@@ -4564,13 +4645,25 @@
         const savedEmp = loadEmployee();
         const hasEmp = !!(savedEmp && savedEmp.ipi);
         if (hasEmp) {
+          const savedAm = savedEmp.am || savedEmp.employeeInfo?.amName || "";
+          const savedAmSeparator = savedAm.indexOf(" - ");
+          const hasLegacyAmFormat =
+            !savedEmp.employeeInfo?.amIpi && savedAmSeparator !== -1;
           $("de_ipi").value = savedEmp.ipi;
           $("de_mpo").value = savedEmp.mpo || "";
           $("de_wp1").value = savedEmp.wp1 || "";
-          $("de_am").value = savedEmp.am || "";
           $("de_wp2").value = savedEmp.wp2 || "";
           currentTerritoryCode = savedEmp.territoryCode || "";
-          currentEmployeeInfo = savedEmp.employeeInfo || {};
+          currentEmployeeInfo = {
+            ...(savedEmp.employeeInfo || {}),
+            amName: hasLegacyAmFormat
+              ? savedAm.slice(savedAmSeparator + 3)
+              : savedEmp.employeeInfo?.amName || savedAm,
+            amIpi:
+              savedEmp.employeeInfo?.amIpi ||
+              (hasLegacyAmFormat ? savedAm.slice(0, savedAmSeparator) : ""),
+          };
+          updateTerritoryFields();
           autoName = savedEmp.mpo || "";
           showChemistSection();
           if (!currentEmployeeInfo.ipi) lookup();
@@ -4592,7 +4685,13 @@
       (function () {
         const wrapped = [];
         function wrapInput(inp) {
-          if (!inp || inp.dataset.hasClear) return;
+          if (
+            !inp ||
+            inp.dataset.hasClear ||
+            inp.id === "de_mpo" ||
+            inp.id === "de_am"
+          )
+            return;
           inp.dataset.hasClear = "1";
           const wrap = document.createElement("span");
           wrap.className = "clear-x-wrap";
