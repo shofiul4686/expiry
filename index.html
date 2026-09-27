@@ -733,6 +733,17 @@
         border-color: #1a3f7a;
         color: #fff;
       }
+      .toolbar button#summaryPostBtn {
+        background: #1b7a3d;
+        border-color: #1b7a3d;
+        color: #fff;
+      }
+      .toolbar button#summaryPostBtn:disabled {
+        background: #9aa3ad;
+        border-color: #9aa3ad;
+        color: #fff;
+        cursor: default;
+      }
       .page input[readonly] {
         cursor: default;
       }
@@ -842,11 +853,18 @@
         grid-template-columns: 1fr 1fr;
         gap: 12px 18px;
       }
+      #entry .emp-row[hidden] {
+        display: none !important;
+      }
       #entry .emp-row.ipi-row {
         grid-template-columns: 120px minmax(0, 1fr);
       }
       #entry .emp-row.ipi-row > div {
         min-width: 0;
+      }
+      #entry .admin-pass-row > div {
+        grid-column: 1 / -1;
+        max-width: 260px;
       }
       #entry .employee-lookup-value {
         display: block;
@@ -886,7 +904,7 @@
         grid-column: 1 / -1;
         font-size: 12.5px;
         min-height: 0;
-        margin-top: -4px;
+        margin-top: 3px;
       }
       #entry .ipiStatus:empty {
         display: none;
@@ -924,6 +942,7 @@
       #entry #de_wp_mpo::placeholder,
       #entry #de_wp_am::placeholder {
         color: #c81e1e;
+        opacity: 0.45;
       }
       #entry h3.sec {
         margin: 20px 0 8px;
@@ -1454,6 +1473,29 @@
         .saved-page col.c-inv {
           width: 16%;
         }
+        /* ===== Summary Form শুধু: নতুন "Code" কলাম ও Per Pc/Box/Loose কলাম যোগ হওয়ায় প্রিন্টেও widths আলাদা ===== */
+        .summary-page col.c-sl {
+          width: 5%;
+        }
+        .summary-page col.c-code {
+          width: 10%;
+        }
+        .summary-page col.c-name {
+          width: 33%;
+        }
+        .summary-page col.c-ppc {
+          width: 10%;
+        }
+        .summary-page col.c-box,
+        .summary-page col.c-loose {
+          width: 8%;
+        }
+        .summary-page col.c-qty {
+          width: 10%;
+        }
+        .summary-page col.c-inv {
+          width: 16%;
+        }
       }
       /* ===== Saved Form শুধু: Code কলাম বাদ, Batch No./Invoice Value বড় =====
       কলামের এই অনুপাত (5:36:13:10:10:10:16, অর্থাৎ 25:180:65:50:50:50:80)
@@ -1502,6 +1544,71 @@
       .saved-page th:nth-child(7),
       .saved-page td:nth-child(7),
       .saved-page td:nth-child(7) input {
+        white-space: nowrap;
+      }
+      /* ===== Summary Form শুধু: "Code" কলাম যোগ + Batch No./Date of Mfg./Date
+      of Exp সরিয়ে তার জায়গায় "Per Pc" / "Box" / "Loose" কলাম (Sl, Code, Name,
+      Per Pc, Box, Loose, Qty, Inv = ৮ কলাম) widths ও alignment আলাদাভাবে সেট
+      করা, যাতে Saved Form (৭ কলাম, Batch/Mfg/Exp-সহ, উপরের নিয়ম) কোনোভাবেই
+      প্রভাবিত না হয় ===== */
+      .summary-page col.c-sl {
+        width: 5%;
+      }
+      .summary-page col.c-code {
+        width: 10%;
+      }
+      .summary-page col.c-name {
+        width: 33%;
+      }
+      .summary-page col.c-ppc {
+        width: 10%;
+      }
+      .summary-page col.c-box,
+      .summary-page col.c-loose {
+        width: 8%;
+      }
+      .summary-page col.c-qty {
+        width: 10%;
+      }
+      .summary-page col.c-inv {
+        width: 16%;
+      }
+      .summary-page td:nth-child(1),
+      .summary-page td:nth-child(2),
+      .summary-page td:nth-child(2) input,
+      .summary-page td:nth-child(5),
+      .summary-page td:nth-child(5) input,
+      .summary-page td:nth-child(6),
+      .summary-page td:nth-child(6) input,
+      .summary-page td:nth-child(7),
+      .summary-page td:nth-child(7) input {
+        text-align: center;
+      }
+      .summary-page td:nth-child(3),
+      .summary-page td:nth-child(3) input {
+        text-align: left;
+      }
+      .summary-page td:nth-child(4),
+      .summary-page td:nth-child(4) input,
+      .summary-page td:nth-child(8),
+      .summary-page td:nth-child(8) input {
+        text-align: right;
+      }
+      .summary-page th:nth-child(2),
+      .summary-page td:nth-child(2),
+      .summary-page td:nth-child(2) input,
+      .summary-page th:nth-child(4),
+      .summary-page td:nth-child(4),
+      .summary-page td:nth-child(4) input,
+      .summary-page th:nth-child(5),
+      .summary-page td:nth-child(5),
+      .summary-page td:nth-child(5) input,
+      .summary-page th:nth-child(6),
+      .summary-page td:nth-child(6),
+      .summary-page td:nth-child(6) input,
+      .summary-page th:nth-child(8),
+      .summary-page td:nth-child(8),
+      .summary-page td:nth-child(8) input {
         white-space: nowrap;
       }
       /* ===== Saved Form শুধু: অটো Invoice No ব্যাজ (Blank Form-এ থাকবে না) ===== */
@@ -1899,23 +2006,34 @@
       }
       #reportDlg th:nth-child(1),
       #reportDlg td:nth-child(1) {
+        width: 28px;
+        white-space: nowrap;
+        text-align: center;
+      }
+      #reportDlg th:nth-child(2),
+      #reportDlg td:nth-child(2) {
         width: 32px;
         white-space: nowrap;
         text-align: center;
       }
-      #reportDlg th:nth-child(3),
-      #reportDlg td:nth-child(3) {
+      #reportDlg th:nth-child(4),
+      #reportDlg td:nth-child(4) {
         width: 34%;
-      }
-      #reportDlg th:nth-child(5),
-      #reportDlg td:nth-child(5) {
-        width: 90px;
-        text-align: right;
       }
       #reportDlg th:nth-child(6),
       #reportDlg td:nth-child(6) {
+        width: 90px;
+        text-align: right;
+      }
+      #reportDlg th:nth-child(7),
+      #reportDlg td:nth-child(7) {
         width: 80px;
         text-align: center;
+      }
+      #reportDlg .rd-check {
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
       }
       #reportDlg .rd-view-btn {
         padding: 4px 8px;
@@ -2012,11 +2130,17 @@
       #allPrintStack .saved-page + .saved-page {
         margin-top: 16px;
       }
+      #summaryPrintStack .saved-page + .saved-page {
+        margin-top: 16px;
+      }
       @media print {
         dialog#reportDlg {
           display: none !important;
         }
         #allPrintStack .saved-page + .saved-page {
+          margin-top: 0;
+        }
+        #summaryPrintStack .saved-page + .saved-page {
           margin-top: 0;
         }
         dialog#saveDlg {
@@ -2150,20 +2274,26 @@
         }
         #reportDlg th:nth-child(1),
         #reportDlg td:nth-child(1) {
+          width: 22px;
+          white-space: nowrap;
+          text-align: center;
+        }
+        #reportDlg th:nth-child(2),
+        #reportDlg td:nth-child(2) {
           width: 26px;
           white-space: nowrap;
           text-align: center;
         }
-        #reportDlg th:nth-child(3),
-        #reportDlg td:nth-child(3) {
+        #reportDlg th:nth-child(4),
+        #reportDlg td:nth-child(4) {
           width: 32%;
-        }
-        #reportDlg th:nth-child(5),
-        #reportDlg td:nth-child(5) {
-          width: 56px;
         }
         #reportDlg th:nth-child(6),
         #reportDlg td:nth-child(6) {
+          width: 56px;
+        }
+        #reportDlg th:nth-child(7),
+        #reportDlg td:nth-child(7) {
           width: 50px;
         }
         #reportDlg .rd-view-btn {
@@ -2438,6 +2568,11 @@
     <div class="toolbar">
       <button type="button" id="openEntry" class="primary">New Entry</button>
       <button type="button" id="viewFormPrint" hidden>প্রিন্ট করুন</button>
+      <button type="button" id="summaryPostBtn" hidden>Post</button>
+      <span
+        id="summaryPostStatus"
+        style="margin-left: 8px; font-size: 13px; color: #1a3f7a"
+      ></span>
       <button type="button" id="backToReport" class="primary" hidden>
         রিপোর্টে ফিরুন
       </button>
@@ -2593,11 +2728,11 @@
                   />
                 </div>
                 <div>
-                  <label class="f" for="de_mpo">Name of MPO</label
+                  <label class="f" id="mpoLabel" for="de_mpo">Name of MPO</label
                   ><input type="text" id="de_mpo" autocomplete="off" readonly />
                 </div>
               </div>
-              <div class="emp-row">
+              <div class="emp-row employee-extra">
                 <div>
                   <label class="f" for="de_group">GROUP</label>
                   <output
@@ -2618,7 +2753,7 @@
                   />
                 </div>
               </div>
-              <div class="emp-row">
+              <div class="emp-row employee-extra">
                 <div>
                   <label class="f" for="de_territoryCode">Territory Code</label>
                   <output
@@ -2638,7 +2773,7 @@
                   >
                 </div>
               </div>
-              <div class="emp-row">
+              <div class="emp-row employee-extra">
                 <div>
                   <label class="f" for="de_am"
                     >Name of AM<span
@@ -2658,6 +2793,28 @@
                   />
                 </div>
               </div>
+              <div class="emp-row admin-info-row" id="adminInfoRow" hidden>
+                <div>
+                  <label class="f" for="de_adminDesignation">Designation</label>
+                  <output
+                    class="employee-lookup-value"
+                    id="de_adminDesignation"
+                    aria-live="polite"
+                    >-</output
+                  >
+                </div>
+              </div>
+              <div class="emp-row admin-pass-row" id="adminPassRow" hidden>
+                <div>
+                  <label class="f" for="de_adminPass">Admin Password</label
+                  ><input
+                    type="password"
+                    id="de_adminPass"
+                    autocomplete="off"
+                    placeholder="পাসওয়ার্ড দিন"
+                  />
+                </div>
+              </div>
               <div
                 class="ipiStatus wide"
                 id="ipiStatus"
@@ -2670,6 +2827,23 @@
             </div>
 
             <div id="chemistFieldsBlock" class="pre-ok-hidden">
+              <div class="wide admin-chemist-ipi-row" id="adminChemistIpiRow" hidden>
+                <label class="f" for="de_adminChemistIpi"
+                  >Entry-এর জন্য MPO-এর IPI No</label
+                ><input
+                  type="text"
+                  id="de_adminChemistIpi"
+                  autocomplete="off"
+                  placeholder="IPI-007048"
+                  spellcheck="false"
+                />
+                <div
+                  class="ipiStatus"
+                  id="adminChemistIpiStatus"
+                  role="status"
+                  aria-live="polite"
+                ></div>
+              </div>
               <div class="wide">
                 <label class="f" for="de_ccode">Chemist Code</label>
                 <div class="search-field">
@@ -2884,6 +3058,7 @@
             />
           </label>
           <button type="button" id="rdGenerate">Generate</button>
+          <button type="button" id="rdSummaryBtn">Summary</button>
         </div>
         <p class="rd-status" id="rdStatus" role="status" aria-live="polite"></p>
         <div class="rd-summary" id="rdSummary" hidden>
@@ -2906,6 +3081,14 @@
           <table>
             <thead>
               <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    id="rdCheckAll"
+                    class="rd-check"
+                    title="সব নির্বাচন"
+                  />
+                </th>
                 <th>Sl.</th>
                 <th>Invoice No</th>
                 <th>Chemist code &amp; Name</th>
@@ -2917,7 +3100,7 @@
             <tbody id="rdRows"></tbody>
             <tfoot>
               <tr class="grand-row">
-                <td colspan="4">Grand Total</td>
+                <td colspan="5">Grand Total</td>
                 <td id="rdGrandValue">0</td>
                 <td></td>
               </tr>
@@ -3303,6 +3486,173 @@
         }
         let savedPageCount = 1;
 
+        // ===== Summary-র জন্য সম্পূর্ণ আলাদা, স্বাধীন একটা কপি =====
+        // উপরের "savedForm/savedPages/populateSavedForm" ব্যবহার হয় সেভ করার
+        // পর ফর্ম দেখাতে, "View" বাটনে, আর আগের "All Print"-এ। Summary বাটনের
+        // জন্য এখানে হুবহু একই স্ট্রাকচার আলাদাভাবে (মূল mainForm থেকে নতুন
+        // করে ক্লোন করে) বানানো হলো, যাতে ভবিষ্যতে Summary-র ফরম্যাট
+        // (লেআউট/কলাম/স্টাইল) বদলালে সেটা উপরের savedForm-কে কোনোভাবেই
+        // প্রভাবিত না করে, আর উল্টোটাও সত্যি।
+        const summaryForm = mainForm.cloneNode(true);
+        // "saved-page" ক্লাসও যোগ করা হলো যাতে বর্তমান টেবিল/প্রিন্ট CSS
+        // এখনই একইভাবে কাজ করে; ভবিষ্যতে চাইলে শুধু ".summary-page" টার্গেট
+        // করে আলাদা স্টাইল দেওয়া যাবে, savedForm-কে স্পর্শ না করেই।
+        summaryForm.classList.add("saved-page", "summary-page");
+        summaryForm.dataset.form = "Summary Form";
+        summaryForm.style.display = "none";
+        const summaryFieldEls = {};
+        ["mpo", "am", "ccode", "chemist", "wp_mpo", "wp_am", "addr"].forEach(
+          (k) => {
+            summaryFieldEls[k] = summaryForm.querySelector("#" + k);
+          },
+        );
+        const summaryTbody = summaryForm.querySelector("#rows");
+
+        // ---- Summary Form শুধু: বাম দিকে (Sl.-এর পরে) নতুন "Code" কলাম যোগ —
+        // colgroup, হেডার, এবং প্রতিটা সারিতে একটা করে input যোগ করা হলো।
+        // savedForm/mainForm-কে এটা কোনোভাবেই স্পর্শ করে না। ----
+        (function () {
+          const colgroup = summaryForm.querySelector("colgroup");
+          const slCol = colgroup.querySelector("col.c-sl");
+          const codeCol = document.createElement("col");
+          codeCol.className = "c-code";
+          slCol.insertAdjacentElement("afterend", codeCol);
+
+          const headRow = summaryForm.querySelector("thead tr");
+          const codeTh = document.createElement("th");
+          codeTh.textContent = "Code";
+          headRow.insertBefore(codeTh, headRow.children[1]);
+
+          Array.from(summaryTbody.querySelectorAll("tr")).forEach((tr, i) => {
+            const slTd = tr.querySelector("td.sl");
+            if (!slTd) return;
+            const codeTd = document.createElement("td");
+            codeTd.innerHTML =
+              '<input type="text" aria-label="Code row ' + (i + 1) + '">';
+            slTd.insertAdjacentElement("afterend", codeTd);
+          });
+        })();
+
+        // ---- Summary Form শুধু: Batch No./Date of Mfg./Date of Exp কলাম সরিয়ে
+        // তার জায়গায় "Per Pc" (প্রতি পিসের দাম), "Box" ও "Loose" (Quantity ও
+        // Box Size থেকে হিসাব করা বক্স-সংখ্যা ও অবশিষ্ট লুজ পিস) কলাম বসানো
+        // হলো। savedForm/mainForm অপরিবর্তিত থাকে। ----
+        (function () {
+          const colgroup = summaryForm.querySelector("colgroup");
+          const batchCol = colgroup.querySelector("col.c-batch");
+          const mfgCol = colgroup.querySelector("col.c-mfg");
+          const expCol = colgroup.querySelector("col.c-exp");
+          const colFrag = document.createDocumentFragment();
+          ["c-ppc", "c-box", "c-loose"].forEach((cls) => {
+            const col = document.createElement("col");
+            col.className = cls;
+            colFrag.appendChild(col);
+          });
+          colgroup.insertBefore(colFrag, batchCol);
+          [batchCol, mfgCol, expCol].forEach((c) => c.remove());
+
+          const headRow = summaryForm.querySelector("thead tr");
+          const ths = Array.from(headRow.children);
+          // ইনডেক্স: 0 Sl, 1 Code, 2 Name, 3 Batch, 4 Mfg, 5 Exp, 6 Qty, 7 Inv
+          const batchTh = ths[3],
+            mfgTh = ths[4],
+            expTh = ths[5];
+          const thFrag = document.createDocumentFragment();
+          ["Per Pc", "Box", "Loose"].forEach((label) => {
+            const th = document.createElement("th");
+            th.textContent = label;
+            thFrag.appendChild(th);
+          });
+          headRow.insertBefore(thFrag, batchTh);
+          [batchTh, mfgTh, expTh].forEach((t) => t.remove());
+
+          Array.from(summaryTbody.querySelectorAll("tr")).forEach((tr, i) => {
+            const tds = Array.from(tr.children);
+            if (tds.length < 8) return; // total-row (তখনো তৈরি হয়নি) হলে স্কিপ
+            const batchTd = tds[3],
+              mfgTd = tds[4],
+              expTd = tds[5];
+            const tdFrag = document.createDocumentFragment();
+            [
+              ["Per Pc", "ppc"],
+              ["Box", "box"],
+              ["Loose", "loose"],
+            ].forEach(([label]) => {
+              const td = document.createElement("td");
+              td.innerHTML =
+                '<input type="text" aria-label="' +
+                label +
+                " row " +
+                (i + 1) +
+                '">';
+              tdFrag.appendChild(td);
+            });
+            tr.insertBefore(tdFrag, batchTd);
+            [batchTd, mfgTd, expTd].forEach((c) => c.remove());
+          });
+        })();
+
+        summaryForm
+          .querySelectorAll("[id]")
+          .forEach((el) => el.removeAttribute("id"));
+        // ---- Summary Form শুধু: সব ইনপুট read-only, কোনো ডাটা এডিট/পরিবর্তন করা যাবে না ----
+        summaryForm.querySelectorAll("input").forEach((inp) => {
+          inp.readOnly = true;
+          inp.tabIndex = -1;
+        });
+
+        // ---- Summary Form শুধু: ২১ সারির নিচে Total সারি (Code কলাম যোগ হওয়ায়
+        // এখানে colspan ৭, কারণ এখন Invoice Value-এর আগে ৭টা কলাম আছে) ----
+        (function () {
+          const tr = document.createElement("tr");
+          tr.className = "total-row";
+          tr.innerHTML =
+            '<td colspan="7" class="total-label-cell"><input type="text" readonly tabindex="-1" value="Total" aria-label="Total"></td>' +
+            '<td class="inv-total-cell"><div class="inv-breakdown" aria-hidden="true"></div><input type="text" readonly tabindex="-1" aria-label="Total invoice value"></td>';
+          summaryTbody.appendChild(tr);
+        })();
+
+        // ---- Summary Form শুধু: অটো তৈরি Invoice No দেখানোর ব্যাজ (টেবিলের ঠিক উপরে) ----
+        (function () {
+          const badge = document.createElement("div");
+          badge.className = "inv-no-badge";
+          const tableWrap = summaryForm.querySelector(".table-wrap");
+          tableWrap.insertAdjacentElement("beforebegin", badge);
+        })();
+        savedForm.insertAdjacentElement("afterend", summaryForm);
+
+        // ---- Summary Form-এর পাতাগুলো: প্রতি পাতায় ২১ সারি; সারি বেশি হলে দরকার মতো
+        // নতুন পাতা তৈরি হয় (কোনো সীমা নেই) ----
+        const summaryInputs1 = Array.from(summaryForm.querySelectorAll("input"));
+        const summaryPages = [
+          { form: summaryForm, fields: summaryFieldEls, tbody: summaryTbody },
+        ];
+        function ensureSummaryPages(n) {
+          while (summaryPages.length < n) {
+            const form = summaryForm.cloneNode(true);
+            form.classList.add("summary-extra");
+            form.dataset.form =
+              "Summary Form (Page " + (summaryPages.length + 1) + ")";
+            form.style.display = "none";
+            const ins = Array.from(form.querySelectorAll("input"));
+            const fields = {};
+            Object.keys(summaryFieldEls).forEach((k) => {
+              const i = summaryInputs1.indexOf(summaryFieldEls[k]);
+              fields[k] = i > -1 ? ins[i] : null;
+            });
+            summaryPages[summaryPages.length - 1].form.insertAdjacentElement(
+              "afterend",
+              form,
+            );
+            summaryPages.push({
+              form,
+              fields,
+              tbody: form.querySelector("tbody"),
+            });
+          }
+        }
+        let summaryPageCount = 1;
+
         function getSavedEntry() {
           if (savedEntry) return savedEntry;
           try {
@@ -3325,6 +3675,7 @@
                 wp_am: $("de_wp_am").value.trim(),
                 territoryCode: currentTerritoryCode || "",
                 employeeInfo: { ...currentEmployeeInfo },
+                isAdmin: !!isAdmin,
               }),
             );
           } catch (e) {}
@@ -3365,6 +3716,9 @@
         function showChemistSection() {
           $("employeeFieldsBlock").classList.add("pre-ok-hidden");
           $("chemistFieldsBlock").classList.remove("pre-ok-hidden");
+          // Admin মোডে নিজের কোনো টেরিটরি/AM নেই, তাই কোন MPO-এর হয়ে এন্ট্রি
+          // হচ্ছে সেটা এখানে IPI No দিয়ে বেছে নিতে হয়
+          $("adminChemistIpiRow").hidden = !isAdmin;
           $("entryBlank").hidden = false;
           $("entryReport").hidden = false;
           document
@@ -3391,19 +3745,41 @@
           const ipi = $("de_ipi").value.trim();
           const mpo = $("de_mpo").value.trim();
           const am = $("de_am").value.trim();
-          if (!ipi || !mpo || !am) {
+          // Admin মোডে AM ঘর দেখানোই হয় না, তাই সেটা বাধ্যতামূলক নয়
+          if (!ipi || !mpo || (!pendingAdminRecord && !am)) {
             setSt(
               "err",
-              "IPI NO, Name of MPO ও Name of AM পূরণ করুন, তারপর OK চাপুন।",
+              pendingAdminRecord
+                ? "IPI NO ও Name পূরণ করুন, তারপর OK চাপুন।"
+                : "IPI NO, Name of MPO ও Name of AM পূরণ করুন, তারপর OK চাপুন।",
             );
             (!ipi ? $("de_ipi") : !mpo ? $("de_mpo") : $("de_am")).focus();
             return;
+          }
+          if (pendingAdminRecord) {
+            const enteredPass = $("de_adminPass").value.trim();
+            const storedPass = pick(pendingAdminRecord, "PASSWORD");
+            if (!enteredPass) {
+              setSt("err", "Admin পাসওয়ার্ড দিন।");
+              $("de_adminPass").focus();
+              return;
+            }
+            if (enteredPass !== storedPass) {
+              setSt("err", "পাসওয়ার্ড সঠিক নয়।");
+              $("de_adminPass").value = "";
+              $("de_adminPass").focus();
+              return;
+            }
+            isAdmin = true;
+          } else {
+            isAdmin = false;
           }
           saveEmployee();
           showChemistSection();
           st.className = "ipiStatus";
           st.textContent = "";
-          $("de_ccode").focus();
+          if (isAdmin) $("de_adminChemistIpi").focus();
+          else $("de_ccode").focus();
         }
 
         function populateSavedForm(data) {
@@ -3466,6 +3842,105 @@
                 if (n > 1 && p === n - 1) {
                   // শেষ পাতার (page 3) নিজের মান আগে থেকেই Total সেলে আছে,
                   // তাই breakdown-এ শুধু আগের পাতাগুলো (২,১...) "+" দিয়ে দেখানো হয়
+                  const priorPages = pageInvTotals.slice(0, -1).reverse();
+                  const lines = priorPages
+                    .map((v) => "<div>+ " + Math.round(v) + "</div>")
+                    .join("");
+                  bd.innerHTML =
+                    lines +
+                    '<div class="grand-line"></div>' +
+                    '<div class="grand">TOTAL&nbsp;&nbsp;=&nbsp;&nbsp;' +
+                    Math.round(invSum) +
+                    "</div>";
+                } else {
+                  bd.innerHTML = "";
+                }
+              }
+            }
+          });
+        }
+
+        // ===== populateSavedForm-এর হুবহু আলাদা কপি — শুধু summaryPages-এ কাজ করে =====
+        // savedPages/savedPageCount-কে একদমই স্পর্শ করে না, তাই এটার ভবিষ্যৎ
+        // পরিবর্তন উপরের সেভ ফরমকে প্রভাবিত করবে না।
+        function populateSummaryForm(data) {
+          const total = (data.rows && data.rows.length) || 0;
+          const n = Math.max(1, Math.ceil(total / ROWS));
+          ensureSummaryPages(n);
+          summaryPageCount = n;
+          let qtySum = 0,
+            invSum = 0;
+          const pageInvTotals = [];
+          summaryPages.forEach((pg, p) => {
+            const pageNo = pg.form.querySelector(".pageno");
+            if (pageNo) pageNo.textContent = "Page " + (p + 1) + " of " + n;
+            const invBeforePage = invSum;
+            Object.keys(pg.fields).forEach((k) => {
+              if (pg.fields[k])
+                pg.fields[k].value = (data.fields && data.fields[k]) || "";
+            });
+            const b = pg.form.querySelector(".inv-no-badge");
+            if (b) {
+              b.textContent = "";
+              if (data.invoiceNo) {
+                b.appendChild(
+                  document.createTextNode("Invoice No: " + data.invoiceNo),
+                );
+              }
+            }
+            Array.from(pg.tbody.children).forEach((tr, i) => {
+              if (tr.classList.contains("total-row")) return;
+              const idx = p * ROWS + i;
+              tr.querySelector("td").textContent = idx + 1;
+              const inputs = tr.querySelectorAll("input");
+              const r = (data.rows && data.rows[idx]) || [];
+              // Summary Form শুধু: কলাম এখন Code, Name, Per Pc, Box, Loose,
+              // Quantity, Invoice Value — এই ক্রমে সাজানো।
+              // r[] গঠন (collectEntry অনুযায়ী): 0 name, 1 batch, 2 mfg,
+              // 3 exp, 4 qty, 5 invoice, 6 box size, 7 pack size, 8 per pcs
+              const code = (data.codes && data.codes[idx]) || "";
+              let perPc = "",
+                boxCount = "",
+                looseCount = "";
+              if (r.length) {
+                const perPcNum = Number(r[8]);
+                perPc = Number.isFinite(perPcNum)
+                  ? perPcNum.toFixed(2)
+                  : r[8] || "";
+                const qtyNum = Number((r[4] || "").toString().trim());
+                const boxSizeNum = Number((r[6] || "").toString().trim());
+                if (
+                  Number.isFinite(qtyNum) &&
+                  Number.isFinite(boxSizeNum) &&
+                  boxSizeNum > 0
+                ) {
+                  boxCount = String(Math.floor(qtyNum / boxSizeNum));
+                  looseCount = String(qtyNum % boxSizeNum);
+                }
+              }
+              const rowVals = r.length
+                ? [code, r[0], perPc, boxCount, looseCount, r[4], r[5]]
+                : [];
+              inputs.forEach((inp, j) => {
+                inp.value = rowVals[j] || "";
+              });
+              const q = Number((r[4] || "").toString().trim());
+              const v = Number((r[5] || "").toString().trim());
+              if (r.length && Number.isFinite(q)) qtySum += q;
+              if (r.length && Number.isFinite(v)) invSum += v;
+            });
+            const pageOwnInv = invSum - invBeforePage;
+            pageInvTotals.push(pageOwnInv);
+            const totRow = pg.tbody.querySelector(".total-row");
+            if (totRow) {
+              const invInput = totRow.querySelector(".inv-total-cell input");
+              if (invInput)
+                invInput.value = pageOwnInv
+                  ? String(Math.round(pageOwnInv))
+                  : "0";
+              const bd = totRow.querySelector(".inv-breakdown");
+              if (bd) {
+                if (n > 1 && p === n - 1) {
                   const priorPages = pageInvTotals.slice(0, -1).reverse();
                   const lines = priorPages
                     .map((v) => "<div>+ " + Math.round(v) + "</div>")
@@ -4608,7 +5083,13 @@
           $("rdActions").hidden = true;
           $("rdRows").replaceChildren();
           $("rdGrandValue").textContent = "0";
+          $("rdCheckAll").checked = false;
+          $("rdCheckAll").indeterminate = false;
           lastReportEntries = [];
+          reportMode = "raw";
+          // Generate/All Print সবার জন্য উন্মুক্ত, কিন্তু Summary (ও তার
+          // ভেতরের Post) শুধু Admin-এর জন্যই দেখা যাবে।
+          $("rdSummaryBtn").hidden = !isAdmin;
           reportDlg.showModal();
         };
         $("rdClose").onclick = () => reportDlg.close();
@@ -4628,6 +5109,33 @@
         }
         const MAX_REPORT_DAYS = 92;
         let lastReportEntries = [];
+        // reportMode ঠিক করে "All Print" চাপলে কী হবে: "raw" হলে আগের মতো
+        // মূল সেভ-ফরম্যাটে প্রিন্ট (allPrint=1), "summary" হলে Summary
+        // ফরম্যাটে ভিউ/প্রিন্ট (summaryPrint=1)। ডিফল্ট "raw"।
+        let reportMode = "raw";
+        function updateRdCheckAllState() {
+          const boxes = Array.from(
+            document.querySelectorAll("#rdRows .rd-row-check"),
+          );
+          const checkAll = $("rdCheckAll");
+          if (!boxes.length) {
+            checkAll.checked = false;
+            checkAll.indeterminate = false;
+            return;
+          }
+          const checkedCount = boxes.filter((b) => b.checked).length;
+          checkAll.checked = checkedCount === boxes.length;
+          checkAll.indeterminate =
+            checkedCount > 0 && checkedCount < boxes.length;
+        }
+        $("rdCheckAll").onchange = () => {
+          const checked = $("rdCheckAll").checked;
+          document
+            .querySelectorAll("#rdRows .rd-row-check")
+            .forEach((box) => {
+              box.checked = checked;
+            });
+        };
         async function generateReport() {
           const fromValue = $("rdFrom").value;
           const toValue = $("rdTo").value;
@@ -4687,6 +5195,10 @@
               if (!docs) return;
               docs.forEach(({ id, data }) => {
                 if (data && typeof data === "object") {
+                  // Summary মোডে যেগুলো আগে "Post" করা হয়ে গেছে, সেগুলো আর
+                  // Summary টেবিলে দেখানো হয় না (raw/"Generate" মোডে সব
+                  // এন্ট্রিই দেখা যাবে, যেমন আগে ছিল)।
+                  if (reportMode === "summary" && data.posted) return;
                   entries.push({ date, key: id, entry: data });
                 }
               });
@@ -4711,6 +5223,15 @@
                 }
               });
               const rowElement = document.createElement("tr");
+              const checkCell = document.createElement("td");
+              const checkInput = document.createElement("input");
+              checkInput.type = "checkbox";
+              checkInput.className = "rd-check rd-row-check";
+              checkInput.checked = false;
+              checkInput.dataset.idx = String(index);
+              checkInput.addEventListener("change", updateRdCheckAllState);
+              checkCell.appendChild(checkInput);
+              rowElement.appendChild(checkCell);
               const chemist =
                 [fields.ccode, fields.chemist]
                   .filter((value) => value && String(value).trim())
@@ -4739,6 +5260,8 @@
               return rowElement;
             });
             $("rdRows").replaceChildren(...reportRows);
+            $("rdCheckAll").checked = false;
+            $("rdCheckAll").indeterminate = false;
             $("rdGrandValue").textContent = String(Math.round(valueTotal));
             $("rdCount").textContent = String(entries.length);
             $("rdSumQty").textContent = String(quantityTotal);
@@ -4746,6 +5269,8 @@
             $("rdSummary").hidden = false;
             lastReportEntries = entries.map(({ date, key }) => ({ date, key }));
             $("rdActions").hidden = entries.length === 0;
+            $("rdPrintAll").textContent =
+              reportMode === "summary" ? "Summary View/Print" : "All Print";
             if (failed) {
               status.className = "rd-status err";
               status.textContent =
@@ -4761,7 +5286,19 @@
             generateButton.disabled = false;
           }
         }
-        $("rdGenerate").onclick = generateReport;
+        $("rdGenerate").onclick = () => {
+          reportMode = "raw";
+          generateReport();
+        };
+
+        // ===== Summary বাটন: এখন আর সরাসরি প্রিন্ট না খুলে, Generate-এর মতোই
+        // চেকবক্সসহ রিপোর্ট টেবিল দেখায়। এরপর প্রতিটি রো-তে চেক দিয়ে বা
+        // "সব নির্বাচন" চেক দিয়ে "All Print"-এ ক্লিক করলে, শুধু নির্বাচিত
+        // এন্ট্রিগুলো Summary ফরম্যাটে ভিউ হবে — তখন প্রিন্ট করা যাবে। =====
+        $("rdSummaryBtn").onclick = () => {
+          reportMode = "summary";
+          generateReport();
+        };
 
         function openEntryInNewTab(date, key) {
           const url = new URL(location.href);
@@ -4772,11 +5309,27 @@
         }
         $("rdPrintAll").onclick = () => {
           if (!lastReportEntries.length) return;
+          const checkedIdx = Array.from(
+            document.querySelectorAll("#rdRows .rd-row-check"),
+          )
+            .filter((box) => box.checked)
+            .map((box) => Number(box.dataset.idx));
+          const selectedEntries = lastReportEntries.filter((_, i) =>
+            checkedIdx.includes(i),
+          );
+          if (!selectedEntries.length) {
+            $("rdStatus").className = "rd-status err";
+            $("rdStatus").textContent =
+              "প্রিন্ট করার জন্য অন্তত একটি এন্ট্রি নির্বাচন করুন।";
+            return;
+          }
+          const storageKey =
+            reportMode === "summary" ? "summaryPrintEntries" : "allPrintEntries";
           try {
             sessionStorage.setItem(
-              "allPrintEntries",
+              storageKey,
               JSON.stringify(
-                lastReportEntries.map(({ date, key }) => ({
+                selectedEntries.map(({ date, key }) => ({
                   date: isoDateStr(date),
                   key,
                 })),
@@ -4784,7 +5337,7 @@
             );
           } catch (e) {}
           const url = new URL(location.href);
-          url.search = "?allPrint=1";
+          url.search = reportMode === "summary" ? "?summaryPrint=1" : "?allPrint=1";
           window.open(url.href, "_blank");
         };
         $("viewFormPrint").onclick = () => window.print();
@@ -4796,14 +5349,20 @@
         };
 
         $("openEntry").onclick = () => {
-          // "All Print" ও "দেখুন" পেজে (viewDate/viewKey বা allPrint=1)
-          // localStorage থেকে IPI/MPO/AM ফিরিয়ে আনার কোড এবং dlg.showModal()
-          // কখনো চলে না (নিচের return-এর কারণে), তাই এখানে সরাসরি New Entry
-          // চাপলে খালি Employee Information সেকশনে নিয়ে যেত। এই গার্ডটা সেই
-          // পেজ থেকে পরিষ্কার URL-এ (প্যারামিটার ছাড়া) নিয়ে গিয়ে অ্যাপ নতুন
-          // করে লোড করায়, যাতে সেভ করা IPI/MPO/AM ঠিকমতো ফিরে আসে।
+          // "All Print", "Summary" ও "দেখুন" পেজে (viewDate/viewKey বা
+          // allPrint=1/summaryPrint=1) localStorage থেকে IPI/MPO/AM ফিরিয়ে
+          // আনার কোড এবং dlg.showModal() কখনো চলে না (নিচের return-এর
+          // কারণে), তাই এখানে সরাসরি New Entry চাপলে খালি Employee
+          // Information সেকশনে নিয়ে যেত। এই গার্ডটা সেই পেজ থেকে পরিষ্কার
+          // URL-এ (প্যারামিটার ছাড়া) নিয়ে গিয়ে অ্যাপ নতুন করে লোড করায়,
+          // যাতে সেভ করা IPI/MPO/AM ঠিকমতো ফিরে আসে।
           const p = new URLSearchParams(location.search);
-          if (p.get("viewDate") || p.get("viewKey") || p.get("allPrint")) {
+          if (
+            p.get("viewDate") ||
+            p.get("viewKey") ||
+            p.get("allPrint") ||
+            p.get("summaryPrint")
+          ) {
             location.href = location.pathname;
             return;
           }
@@ -5211,7 +5770,12 @@
           timer = null,
           autoName = "",
           currentTerritoryCode = "",
-          currentEmployeeInfo = {};
+          currentEmployeeInfo = {},
+          // ---- Admin স্বীকৃতি: IPI নাম্বার PRODUCT_DB-এর
+          // "DINAJPUR/Emp_Password" নোডে পাওয়া গেলে, OK চাপার আগে পাসওয়ার্ড
+          // চাওয়া হয় ও যাচাই হয় ----
+          isAdmin = false,
+          pendingAdminRecord = null;
         function updateTerritoryFields() {
           $("de_group").textContent = currentEmployeeInfo.team || "-";
           $("de_am").value = currentEmployeeInfo.amName || "";
@@ -5225,6 +5789,29 @@
           if (autoName && $("de_mpo").value === autoName)
             $("de_mpo").value = "";
           autoName = "";
+        };
+        // ---- Admin মোডে ডায়ালগ বদলে যাওয়া: এমপ্লয়ির GROUP/Territory/AM
+        // ঘরগুলো লুকিয়ে Admin-এর নাম ও Designation দেখানো হয়। rec থাকলে
+        // সেই তথ্য দিয়ে ঘর ভরে দেওয়া হয়, নাহলে আগের এমপ্লয়ি-ডায়ালগে ফেরত ----
+        const setAdminMode = (on, rec) => {
+          document
+            .querySelectorAll(".employee-extra")
+            .forEach((el) => (el.hidden = on));
+          $("adminInfoRow").hidden = !on;
+          $("adminPassRow").hidden = !on;
+          $("mpoLabel").textContent = on ? "Name (Admin)" : "Name of MPO";
+          if (on) {
+            const adminName = pick(rec, "USER NAME") || pick(rec, "NAME");
+            if (adminName) {
+              $("de_mpo").value = adminName;
+              autoName = adminName;
+            }
+            $("de_adminDesignation").textContent =
+              pick(rec, "DESIGNATION") || "-";
+          } else {
+            $("de_adminPass").value = "";
+            $("de_adminDesignation").textContent = "-";
+          }
         };
         const st = $("ipiStatus");
         const setSt = (cls, txt) => {
@@ -5978,6 +6565,22 @@
           $("summaryAddress").textContent = $("de_addr").value.trim() || "-";
         }
         function validateChemistFields() {
+          // Admin মোডে আগে MPO-এর IPI No দিয়ে টেরিটরি/পরিচয় বেছে না নিলে
+          // এন্ট্রি এগোনো যাবে না — নাহলে রেকর্ডে কোনো MPO/টেরিটরি জমা হবে না
+          if (isAdmin && !currentTerritoryCode) {
+            showMessage(
+              "আগে Entry-এর জন্য MPO-এর IPI No দিন, তারপর Product List-এ যান।",
+              "warning",
+            );
+            $("entryFieldsBlock").classList.remove("post-search-hidden");
+            document
+              .querySelectorAll(".product-list-group")
+              .forEach((el) => el.classList.add("post-search-hidden"));
+            dlg.classList.remove("wide-mode");
+            showChemistSection();
+            $("de_adminChemistIpi").focus();
+            return false;
+          }
           const fields = [
             { input: $("de_ccode"), label: "Chemist Code" },
             { input: $("de_chemist"), label: "Name of Chemist" },
@@ -6101,6 +6704,31 @@
           return rec || null;
         }
 
+        // ---- Admin রেকর্ড খোঁজা: PRODUCT_DB-এর "DINAJPUR/Emp_Password"
+        // নোডে ঠিক এই IPI (norm() করা, যেমন "IPI-004686") দিয়ে শুরু হওয়া
+        // কোনো key থাকলে সেটাই Admin রেকর্ড (key ফরম্যাট:
+        // "IPI-004686_নাম", ভেতরে DESIGNATION/PASSWORD/USER ID/USER NAME
+        // ফিল্ড থাকে)। এই DB/নোড না পাওয়া গেলে বা এরর হলে চুপচাপ non-admin
+        // হিসেবে ধরা হয় — সাধারণ ইউজারের ফ্লোতে কোনো প্রভাব পড়ে না।
+        const ADMIN_PATH = "DINAJPUR/Emp_Password";
+        async function findAdminRecord(ipi) {
+          const base = PRODUCT_DB + "/" + ADMIN_PATH + ".json";
+          const q =
+            "?orderBy=" +
+            encodeURIComponent('"$key"') +
+            "&startAt=" +
+            encodeURIComponent('"' + ipi + '"') +
+            "&endAt=" +
+            encodeURIComponent('"' + ipi + '\uf8ff"');
+          try {
+            const data = await getJSON(base + q);
+            const keys = Object.keys(data || {});
+            return keys.length ? data[keys[0]] : null;
+          } catch (e) {
+            return null;
+          }
+        }
+
         async function lookup() {
           const raw = $("de_ipi").value.trim();
           const mine = ++seq;
@@ -6109,21 +6737,55 @@
           updateTerritoryFields();
           if (raw.length < 3) {
             dropAuto();
+            setAdminMode(false);
+            pendingAdminRecord = null;
             st.className = "ipiStatus";
             st.textContent = "";
             return;
           }
           const ipi = norm(raw);
           setSt("load", "খোঁজা হচ্ছে…");
+          // ---- Admin চেক: রেগুলার এমপ্লয়ি লুকআপের পাশাপাশি, IPI নাম্বারটা
+          // Emp_Password নোডে আছে কি না দেখা হয়। থাকলে ডায়ালগ Admin মোডে
+          // বদলে গিয়ে নাম/Designation ও পাসওয়ার্ড ঘর দেখানো হয়, OK চাপার
+          // সময় পাসওয়ার্ড যাচাই হবে (tryEmployeeOk-এ)।
+          const adminPromise = findAdminRecord(ipi)
+            .then((rec) => {
+              if ($("de_ipi").value.trim() && norm($("de_ipi").value) !== ipi)
+                return null; // ততক্ষণে IPI বদলে গেলে পুরনো ফলাফল উপেক্ষা
+              pendingAdminRecord = rec;
+              setAdminMode(!!rec, rec);
+              return rec;
+            })
+            .catch(() => {
+              pendingAdminRecord = null;
+              setAdminMode(false);
+              return null;
+            });
           try {
             const rec = await findRecord(ipi);
+            const adminRec = await adminPromise;
             if (mine !== seq) return;
             if (!rec) {
-              dropAuto();
-              setSt(
-                "err",
-                ipi + " নম্বরে কোনো কর্মী পাওয়া যায়নি। নাম নিজে লিখুন।",
-              );
+              if (adminRec) {
+                // অ্যাডমিন-শুধু IPI (রেগুলার এমপ্লয়ি তালিকায় নেই) —
+                // এটা এরর নয়, Admin মোডেই এগোনো যাবে
+                setSt("ok", "");
+              } else {
+                dropAuto();
+                setSt(
+                  "err",
+                  ipi + " নম্বরে কোনো কর্মী পাওয়া যায়নি। নাম নিজে লিখুন।",
+                );
+              }
+              return;
+            }
+            if (adminRec) {
+              // এই IPI এমপ্লয়ি তালিকা ও Admin তালিকা দুটোতেই আছে —
+              // Admin মোডই বহাল থাকবে, তাই এমপ্লয়ি রেকর্ডের বাকি তথ্য
+              // (territory/AM ইত্যাদি) দিয়ে আর কাজ নেই
+              currentEmployeeInfo = { ipi: pick(rec, "IPI NO") || ipi };
+              setSt("ok", "");
               return;
             }
             $("de_ipi").value = pick(rec, "IPI NO") || ipi;
@@ -6182,12 +6844,173 @@
           }
         }
 
+        // ---- Admin মোডে Chemist সেকশনে MPO-এর IPI No দিয়ে খোঁজা: Admin
+        // নিজে কোনো টেরিটরির মালিক নয়, তাই এন্ট্রিটা আসলে কোন MPO-এর হয়ে
+        // হচ্ছে সেটা এখানে বেছে নিতে হয়। মিললে de_ipi/de_mpo/de_am ও
+        // currentTerritoryCode/currentEmployeeInfo সেই MPO-এর তথ্য দিয়ে
+        // ভরে যায় (isAdmin অপরিবর্তিত থাকে), তারপর সেই টেরিটরির Chemist
+        // লিস্ট লোড হয়।
+        let adminChemistTimer = null,
+          adminChemistSeq = 0,
+          // মিললে ইনপুট বক্সের ভিতরেই "নাম — টেরিটরি" লেখা বসে যায় (raw
+          // IPI নম্বরটা আড়ালে থেকে যায়); ফোকাস করলে আবার raw IPI ফিরিয়ে
+          // এডিট করা যায়
+          adminChemistResolved = null;
+        async function adminChemistLookup() {
+          const raw = $("de_adminChemistIpi").value.trim();
+          const mine = ++adminChemistSeq;
+          const stEl = $("adminChemistIpiStatus");
+          // ইনপুট বক্সে ইতিমধ্যে resolved label ("নাম — টেরিটরি") বসানো
+          // থাকলে সেটাকে নতুন IPI নম্বর ধরে আবার সার্চ চালানো ঠিক না (blur
+          // এ এটা ঘটত, কারণ debounced search ফোকাসে থাকা অবস্থাতেই বক্সে
+          // label বসিয়ে দেয়, ফলে পরে blur হলে raw IPI-এর বদলে label-টাই
+          // আবার সার্চ হয়ে "কোনো MPO পাওয়া যায়নি" দেখাত)
+          if (adminChemistResolved && raw === adminChemistResolved.label) {
+            stEl.className = "ipiStatus ok";
+            stEl.textContent = adminChemistResolved.statusText || "";
+            return;
+          }
+          if (raw.length < 3) {
+            stEl.className = "ipiStatus";
+            stEl.textContent = "";
+            adminChemistResolved = null;
+            currentTerritoryCode = "";
+            currentEmployeeInfo = {};
+            updateTerritoryFields();
+            return;
+          }
+          const ipi = norm(raw);
+          // আগে থেকে resolve করা থাকলে (ফোকাসে raw IPI ফিরিয়ে এনে বিনা
+          // এডিটে আবার ফোকাস বাইরে গেলে) নতুন করে নেটওয়ার্ক কল না করে
+          // সরাসরি লেবেলটা ফিরিয়ে দেওয়া হয়
+          if (adminChemistResolved && ipi === adminChemistResolved.ipi) {
+            $("de_adminChemistIpi").value = adminChemistResolved.label;
+            stEl.className = "ipiStatus ok";
+            stEl.textContent = adminChemistResolved.statusText || "";
+            return;
+          }
+          stEl.className = "ipiStatus load";
+          stEl.textContent = "খোঁজা হচ্ছে…";
+          try {
+            const rec = await findRecord(ipi);
+            if (mine !== adminChemistSeq) return;
+            if (
+              $("de_adminChemistIpi").value.trim() &&
+              norm($("de_adminChemistIpi").value) !== ipi
+            )
+              return;
+            if (!rec) {
+              adminChemistResolved = null;
+              currentTerritoryCode = "";
+              currentEmployeeInfo = {};
+              updateTerritoryFields();
+              stEl.className = "ipiStatus err";
+              stEl.textContent = ipi + " নম্বরে কোনো MPO পাওয়া যায়নি।";
+              return;
+            }
+            const name = pick(rec, "NAME");
+            const territoryName = pick(rec, "TERRITORY NAME");
+            const amInfo = await findAmInfo(rec);
+            if (mine !== adminChemistSeq) return;
+            $("de_ipi").value = pick(rec, "IPI NO") || ipi;
+            $("de_mpo").value = name;
+            $("de_am").value = amInfo?.name || "";
+            currentEmployeeInfo = {
+              ipi: pick(rec, "IPI NO") || ipi,
+              mpoName: name,
+              amName: amInfo?.name || "",
+              amIpi: amInfo?.ipi || "",
+              territoryCode: pick(rec, "TERRITORY CODE"),
+              territoryName: pick(rec, "TERRITORY NAME"),
+              areaCode: pick(rec, "AREA CODE"),
+              areaName: pick(rec, "AREA NAME"),
+              regionCode: pick(rec, "REGION CODE"),
+              regionName: pick(rec, "REGION NAME"),
+              zoneCode: pick(rec, "ZONE CODE"),
+              zoneName: pick(rec, "ZONE NAME"),
+              depotName: pick(rec, "DEPOT NAME"),
+              category: pick(rec, "CATEGORY"),
+              designation: pick(rec, "DESIGNATION"),
+              team: pick(rec, "TEAM"),
+              routeName: pick(rec, "ROUTE NAME"),
+              employeeStatus: pickAny(rec, [
+                "EMPLOYEE STATUS",
+                "EMPLOYEESTATUS",
+              ]),
+              recordStatus: pick(rec, "STATUS"),
+            };
+            currentTerritoryCode = pick(rec, "TERRITORY CODE");
+            updateTerritoryFields();
+            // ইনপুট বক্সের ভিতরেই "নাম — টেরিটরি" বসিয়ে দেওয়া হয়; raw IPI
+            // নম্বরটা adminChemistResolved-এ রাখা থাকে, ফোকাস করলে ফিরে আসবে
+            const label =
+              (name || "-") + (territoryName ? " — " + territoryName : "");
+            const territoryCode = pick(rec, "TERRITORY CODE");
+            // ইনপুটের নিচে AM Name ও Territory (Code & Name) একসাথে দেখানো হয়
+            const statusText =
+              "AM NAME: " +
+              (amInfo?.name || "-") +
+              "   |   Territory: " +
+              (territoryCode || "-") +
+              " - " +
+              (territoryName || "-");
+            adminChemistResolved = { ipi, label, statusText };
+            $("de_adminChemistIpi").value = label;
+            stEl.className = "ipiStatus ok";
+            stEl.textContent = statusText;
+            getProductSuggestions().catch(() => {});
+            ensureChemistList(currentTerritoryCode).catch((error) => {
+              if (mine === adminChemistSeq)
+                setStStatus(stEl, "err", chemistLoadErrorText(error));
+            });
+            saveEmployee();
+          } catch (e) {
+            if (mine !== adminChemistSeq) return;
+            adminChemistResolved = null;
+            currentTerritoryCode = "";
+            currentEmployeeInfo = {};
+            updateTerritoryFields();
+            stEl.className = "ipiStatus err";
+            stEl.textContent =
+              e.code === "perm"
+                ? "ডাটাবেস পড়ার অনুমতি নেই (Firebase Rules-এ read চালু করতে হবে)।"
+                : "তথ্য আনা যায়নি (ইন্টারনেট/ডাটাবেস সমস্যা)।";
+          }
+        }
+        function setStStatus(el, cls, txt) {
+          el.className = "ipiStatus " + cls;
+          el.textContent = txt;
+        }
+        $("de_adminChemistIpi").addEventListener("focus", () => {
+          // ইনপুটে এখন "নাম — টেরিটরি" লেখা থাকলে, এডিট করার জন্য raw IPI
+          // নম্বরটা ফিরিয়ে এনে পুরোটা সিলেক্ট করে দেওয়া হয়
+          if (
+            adminChemistResolved &&
+            $("de_adminChemistIpi").value === adminChemistResolved.label
+          ) {
+            $("de_adminChemistIpi").value = adminChemistResolved.ipi;
+            $("de_adminChemistIpi").select();
+            $("adminChemistIpiStatus").className = "ipiStatus";
+            $("adminChemistIpiStatus").textContent = "";
+          }
+        });
+        $("de_adminChemistIpi").addEventListener("input", () => {
+          clearTimeout(adminChemistTimer);
+          adminChemistTimer = setTimeout(adminChemistLookup, 600);
+        });
+        $("de_adminChemistIpi").addEventListener("blur", () => {
+          clearTimeout(adminChemistTimer);
+          adminChemistLookup();
+        });
+
         $("de_ipi").addEventListener("input", () => {
           clearTimeout(timer);
           seq += 1;
           currentEmployeeInfo = {};
           currentTerritoryCode = "";
           updateTerritoryFields();
+          pendingAdminRecord = null;
+          setAdminMode(false);
           timer = setTimeout(lookup, 600);
         });
         $("de_ipi").addEventListener("change", () => {
@@ -6200,7 +7023,7 @@
           e.preventDefault();
           // Employee section-এর শেষ ঘর (Working Period AM)-এ Enter দিলে সরাসরি
           // OK চাপার মতো কাজ করবে, যাতে মাউস ছাড়াই কীবোর্ড দিয়ে এগোনো যায়
-          if (e.target.id === "de_wp_am") {
+          if (e.target.id === "de_wp_am" || e.target.id === "de_adminPass") {
             tryEmployeeOk();
             return;
           }
@@ -6296,6 +7119,107 @@
           })();
           return;
         }
+        if (viewParams.get("summaryPrint") === "1") {
+          // ===== Summary বাটনের পেজ — allPrint ব্লকের হুবহু আলাদা কপি =====
+          // এখানে populateSummaryForm/summaryPages/ensureSummaryPages
+          // ব্যবহার হচ্ছে (savedForm/savedPages নয়), তাই ভবিষ্যতে এই
+          // Summary ভিউ বদলালে উপরের "All Print"/"View" ফরম্যাট অক্ষত থাকবে।
+          document.title = "সামারি";
+          showPage("none");
+          (async () => {
+            let entries = [];
+            try {
+              entries = JSON.parse(
+                sessionStorage.getItem("summaryPrintEntries") || "[]",
+              );
+            } catch (error) {}
+            if (!Array.isArray(entries) || !entries.length) {
+              document.body.innerHTML =
+                '<p style="padding:24px;font-family:sans-serif;font-size:15px">সামারি করার মতো কোনো এন্ট্রি পাওয়া যায়নি। রিপোর্ট থেকে আবার চেষ্টা করুন।</p>';
+              return;
+            }
+            const stack = document.createElement("div");
+            stack.id = "summaryPrintStack";
+            let loadedAny = false;
+            // পরে "Post" চাপলে ঠিক কোন কোন ডকুমেন্টে posted:true লিখতে হবে,
+            // তার জন্য পাথ ও সেভ করা পুরো ডেটা এখানে জমা রাখা হয় (partial
+            // write দিলে বাকি ফিল্ড হারিয়ে যাওয়ার ঝুঁকি থাকে, তাই পুরো
+            // entry অবজেক্ট + posted:true একসাথে সেভ করা হবে)।
+            const postRefs = [];
+            for (const item of entries) {
+              try {
+                const date = parseDateInput(item.date);
+                const path = expiryPath(date) + "/" + item.key;
+                const entry = await firestoreGetDoc(path);
+                if (!entry || typeof entry !== "object") continue;
+                populateSummaryForm(entry);
+                const pageCount = Math.max(
+                  1,
+                  Math.ceil(((entry.rows && entry.rows.length) || 0) / ROWS),
+                );
+                ensureSummaryPages(pageCount);
+                for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+                  const clone = summaryPages[pageIndex].form.cloneNode(true);
+                  clone.style.display = "";
+                  clone.classList.remove("saved-last");
+                  stack.appendChild(clone);
+                }
+                postRefs.push({ path, entry });
+                loadedAny = true;
+              } catch (error) {}
+            }
+            if (!loadedAny) {
+              document.body.innerHTML =
+                '<p style="padding:24px;font-family:sans-serif;font-size:15px">কোনো এন্ট্রি লোড করা যায়নি — ইন্টারনেট/সার্ভার সমস্যা।</p>';
+              return;
+            }
+            stack.lastElementChild?.classList.add("saved-last");
+            document.documentElement.classList.add("two-pages");
+            document.body.appendChild(stack);
+            $("viewFormPrint").hidden = false;
+            $("backToReport").hidden = true;
+            const postBtn = $("summaryPostBtn");
+            const postStatus = $("summaryPostStatus");
+            const alreadyPosted = postRefs.every((r) => r.entry.posted);
+            if (alreadyPosted) {
+              postStatus.textContent = "এই এন্ট্রিগুলো আগেই Post করা হয়েছে।";
+            }
+            postBtn.hidden = false;
+            postBtn.disabled = alreadyPosted;
+            postBtn.textContent = alreadyPosted ? "Posted" : "Post";
+            postBtn.onclick = async () => {
+              postBtn.disabled = true;
+              postStatus.style.color = "#1a3f7a";
+              postStatus.textContent = "Post হচ্ছে…";
+              let failCount = 0;
+              for (const ref of postRefs) {
+                try {
+                  await firestoreSetDoc(ref.path, {
+                    ...ref.entry,
+                    posted: true,
+                    postedAt: new Date().toISOString(),
+                  });
+                } catch (error) {
+                  failCount += 1;
+                }
+              }
+              if (failCount) {
+                postStatus.style.color = "#b00020";
+                postStatus.textContent =
+                  failCount +
+                  "টি এন্ট্রি Post করা যায়নি — ইন্টারনেট/সার্ভার সমস্যা।";
+                postBtn.disabled = false;
+              } else {
+                postStatus.style.color = "#1a3f7a";
+                postStatus.textContent =
+                  "Post সম্পন্ন — এগুলো এখন থেকে Summary টেবিলে আর দেখাবে না।";
+                postBtn.textContent = "Posted";
+                postBtn.disabled = true;
+              }
+            };
+          })();
+          return;
+        }
 
         load();
         showPage("none");
@@ -6332,6 +7256,7 @@
           };
           updateTerritoryFields();
           autoName = savedEmp.mpo || "";
+          isAdmin = !!savedEmp.isAdmin;
           showChemistSection();
           if (currentTerritoryCode) {
             ensureChemistList(currentTerritoryCode).catch((error) =>
