@@ -1788,8 +1788,9 @@
         border: 0;
         border-radius: 10px;
         padding: 0;
-        width: min(820px, 96vw);
-        max-height: 92vh;
+        width: min(980px, 96vw);
+        height: min(760px, 97vh);
+        max-height: 97vh;
         color: #111;
         font-family: "Noto Sans Bengali", Arial, Helvetica, sans-serif;
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
@@ -1800,6 +1801,10 @@
       #reportDlg .rd-body {
         padding: 18px 20px 8px;
         overflow: auto;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
       }
       #reportDlg h2 {
         margin: 0 0 12px;
@@ -1825,15 +1830,6 @@
         font-size: 12px;
         font-weight: 700;
         white-space: nowrap;
-      }
-      #reportDlg .rd-range input[type="date"] {
-        width: 100%;
-        min-width: 0;
-        padding: 6px 4px;
-        border: 1px solid #999;
-        border-radius: 5px;
-        font: inherit;
-        font-size: 13px;
       }
       #reportDlg .rd-range button,
       #reportDlg .rd-actions button {
@@ -1872,11 +1868,10 @@
         background: #f3f5f8;
         font-size: 13px;
       }
-      #reportDlg .rd-actions {
-        margin-bottom: 10px;
-      }
       #reportDlg .rd-table-wrap {
-        overflow-x: auto;
+        overflow: auto;
+        flex: 1 1 auto;
+        min-height: 0;
       }
       #reportDlg table {
         width: 100%;
@@ -1895,6 +1890,16 @@
         background: #f3f5f8;
         color: #1a3f7a;
         font-weight: 700;
+      }
+      #reportDlg th:nth-child(1),
+      #reportDlg td:nth-child(1) {
+        width: 32px;
+        white-space: nowrap;
+        text-align: center;
+      }
+      #reportDlg th:nth-child(3),
+      #reportDlg td:nth-child(3) {
+        width: 34%;
       }
       #reportDlg th:nth-child(5),
       #reportDlg td:nth-child(5) {
@@ -1927,10 +1932,9 @@
         justify-content: flex-end;
         gap: 8px;
         align-items: center;
-        padding: 12px 20px;
-        border-top: 1px solid #ddd;
-        background: #f6f7f9;
-        border-radius: 0 0 10px 10px;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ddd;
       }
       #reportDlg footer button {
         padding: 8px 16px;
@@ -2106,9 +2110,13 @@
         #reportDlg .rd-range .f {
           font-size: 10.5px;
         }
-        #reportDlg .rd-range input[type="date"] {
-          padding: 5px 2px;
-          font-size: 12px;
+        #reportDlg .rd-field.rd-date-field {
+          width: 92px;
+        }
+        .cdate-input {
+          padding: 5px 20px 5px 5px;
+          font-size: 10.5px;
+          background-size: 11px;
         }
         #reportDlg .rd-range button {
           padding: 7px 8px;
@@ -2136,8 +2144,13 @@
         }
         #reportDlg th:nth-child(1),
         #reportDlg td:nth-child(1) {
-          width: 28px;
+          width: 26px;
+          white-space: nowrap;
           text-align: center;
+        }
+        #reportDlg th:nth-child(3),
+        #reportDlg td:nth-child(3) {
+          width: 32%;
         }
         #reportDlg th:nth-child(5),
         #reportDlg td:nth-child(5) {
@@ -2152,7 +2165,8 @@
           font-size: 9.5px;
         }
         #reportDlg footer {
-          padding: 10px 14px;
+          margin-bottom: 8px;
+          padding-bottom: 8px;
         }
       }
       /* ---- Hidden until Chemist Code search succeeds ---- */
@@ -2232,6 +2246,185 @@
         .clear-x-wrap > input {
           padding-right: 2px;
         }
+      }
+
+      /* ---- কাস্টম ডেটপিকার (Report ডায়ালগের From/To) ---- */
+      #reportDlg .rd-field {
+        position: relative;
+      }
+      #reportDlg .rd-range {
+        align-items: flex-end;
+      }
+      #reportDlg .rd-field.rd-date-field {
+        flex: 0 0 auto;
+        width: 108px;
+      }
+      .cdate-input {
+        width: 100%;
+        min-width: 0;
+        padding: 5px 6px;
+        border: 1px solid #999;
+        border-radius: 5px;
+        font: inherit;
+        font-size: 11.5px;
+        background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='13' height='13'%3E%3Cpath fill='%231a3f7a' d='M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zm12 8v10H5V10h14z'/%3E%3C/svg%3E")
+          no-repeat right 6px center;
+        background-size: 13px;
+        padding-right: 22px;
+        cursor: pointer;
+        caret-color: transparent;
+      }
+      .cdp-pop {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        z-index: 60;
+        width: 200px;
+        background: #fff;
+        border: 1px solid #99a3b0;
+        border-radius: 8px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+        padding: 8px;
+        font-size: 11.5px;
+      }
+      .cdp-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+      .cdp-title {
+        font-weight: 700;
+        color: #1a3f7a;
+      }
+      .cdp-nav {
+        border: 1px solid #ccd3db;
+        background: #f3f5f8;
+        color: #1a3f7a;
+        border-radius: 4px;
+        width: 22px;
+        height: 22px;
+        line-height: 1;
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .cdp-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+        text-align: center;
+      }
+      .cdp-dow {
+        color: #667;
+        font-size: 10px;
+        font-weight: 700;
+        padding-bottom: 3px;
+      }
+      .cdp-day {
+        padding: 4px 0;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .cdp-day:hover {
+        background: #eef2f8;
+      }
+      .cdp-day.other {
+        color: #c3c8d0;
+        cursor: default;
+      }
+      .cdp-day.other:hover {
+        background: none;
+      }
+      .cdp-day.today {
+        border: 1px solid #1a3f7a;
+      }
+      .cdp-day.sel {
+        background: #1a3f7a;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* ---- কাস্টম মেসেজ বক্স (alert/confirm-এর বদলে) ---- */
+      .cmsg-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 22, 28, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 16px;
+      }
+      .cmsg-box {
+        width: 100%;
+        max-width: 340px;
+        background: #fff;
+        border-radius: 10px;
+        border-top: 5px solid #1a3f7a;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+        padding: 18px 18px 14px;
+        text-align: center;
+        font-family: inherit;
+      }
+      .cmsg-box.cmsg-error {
+        border-top-color: #b3261e;
+      }
+      .cmsg-box.cmsg-warning {
+        border-top-color: #b8860b;
+      }
+      .cmsg-box.cmsg-success {
+        border-top-color: #1e8e3e;
+      }
+      .cmsg-icon {
+        width: 40px;
+        height: 40px;
+        line-height: 38px;
+        margin: 0 auto 10px;
+        border-radius: 50%;
+        font-size: 20px;
+        font-weight: 700;
+        background: #eef2f8;
+        color: #1a3f7a;
+      }
+      .cmsg-box.cmsg-error .cmsg-icon {
+        background: #fbeceb;
+        color: #b3261e;
+      }
+      .cmsg-box.cmsg-warning .cmsg-icon {
+        background: #fbf3e0;
+        color: #b8860b;
+      }
+      .cmsg-box.cmsg-success .cmsg-icon {
+        background: #e8f5ea;
+        color: #1e8e3e;
+      }
+      .cmsg-text {
+        font-size: 13.5px;
+        color: #222;
+        line-height: 1.55;
+        white-space: pre-line;
+        margin-bottom: 14px;
+      }
+      .cmsg-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+      .cmsg-actions button {
+        padding: 8px 20px;
+        border-radius: 6px;
+        border: 1px solid #1a3f7a;
+        background: #1a3f7a;
+        color: #fff;
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .cmsg-actions button.cmsg-cancel {
+        background: #fff;
+        color: #444;
+        border-color: #999;
       }
     </style>
   </head>
@@ -2660,13 +2853,27 @@
       <div class="rd-body">
         <h2 id="rdTitle">Report</h2>
         <div class="rd-range">
-          <label class="rd-field" for="rdFrom">
+          <label class="rd-field rd-date-field" for="rdFrom">
             <span class="f">From</span>
-            <input type="date" id="rdFrom" />
+            <input
+              type="text"
+              id="rdFrom"
+              class="cdate-input"
+              readonly
+              autocomplete="off"
+              placeholder="তারিখ"
+            />
           </label>
-          <label class="rd-field" for="rdTo">
+          <label class="rd-field rd-date-field" for="rdTo">
             <span class="f">To</span>
-            <input type="date" id="rdTo" />
+            <input
+              type="text"
+              id="rdTo"
+              class="cdate-input"
+              readonly
+              autocomplete="off"
+              placeholder="তারিখ"
+            />
           </label>
           <button type="button" id="rdGenerate">Generate</button>
         </div>
@@ -2681,9 +2888,12 @@
             <span id="rdSumValue">0</span>
           </span>
         </div>
-        <div class="rd-actions" id="rdActions" hidden>
-          <button type="button" id="rdPrintAll">All Print</button>
-        </div>
+        <footer>
+          <button type="button" id="rdClose">Close</button>
+          <div class="rd-actions" id="rdActions" hidden>
+            <button type="button" id="rdPrintAll">All Print</button>
+          </div>
+        </footer>
         <div class="rd-table-wrap">
           <table>
             <thead>
@@ -2693,7 +2903,7 @@
                 <th>Chemist code &amp; Name</th>
                 <th>MPO Name</th>
                 <th>Value</th>
-                <th>ফরম দেখুন</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody id="rdRows"></tbody>
@@ -2707,9 +2917,6 @@
           </table>
         </div>
       </div>
-      <footer>
-        <button type="button" id="rdClose">Close</button>
-      </footer>
     </dialog>
 
     <script>
@@ -2790,6 +2997,215 @@
         const PRODUCT_DB = "https://shofiul4686-default-rtdb.firebaseio.com";
         const PRODUCT_ROOT = PRODUCT_DB + "/PRICE_LIST";
         const $ = (id) => document.getElementById(id);
+
+        // ---- কাস্টম মেসেজ বক্স (alert/confirm-এর বদলে) ----
+        function showMessage(text, type = "warning") {
+          return new Promise((resolve) => {
+            const icons = {
+              error: "✕",
+              warning: "!",
+              success: "✓",
+              info: "i",
+            };
+            const overlay = document.createElement("div");
+            overlay.className = "cmsg-overlay";
+            overlay.innerHTML =
+              '<div class="cmsg-box cmsg-' +
+              type +
+              '" role="alertdialog" aria-modal="true">' +
+              '<div class="cmsg-icon">' +
+              (icons[type] || icons.warning) +
+              "</div>" +
+              '<div class="cmsg-text"></div>' +
+              '<div class="cmsg-actions"><button type="button" class="cmsg-ok">ঠিক আছে</button></div>' +
+              "</div>";
+            overlay.querySelector(".cmsg-text").textContent = text;
+            document.body.appendChild(overlay);
+            const okBtn = overlay.querySelector(".cmsg-ok");
+            okBtn.focus();
+            function close() {
+              overlay.remove();
+              document.removeEventListener("keydown", onKey);
+              resolve();
+            }
+            function onKey(e) {
+              if (e.key === "Escape" || e.key === "Enter") close();
+            }
+            document.addEventListener("keydown", onKey);
+            okBtn.addEventListener("click", close);
+            overlay.addEventListener("mousedown", (e) => {
+              if (e.target === overlay) close();
+            });
+          });
+        }
+        function showConfirm(text) {
+          return new Promise((resolve) => {
+            const overlay = document.createElement("div");
+            overlay.className = "cmsg-overlay";
+            overlay.innerHTML =
+              '<div class="cmsg-box cmsg-warning" role="alertdialog" aria-modal="true">' +
+              '<div class="cmsg-icon">!</div>' +
+              '<div class="cmsg-text"></div>' +
+              '<div class="cmsg-actions">' +
+              '<button type="button" class="cmsg-cancel">না</button>' +
+              '<button type="button" class="cmsg-ok">হ্যাঁ</button>' +
+              "</div>" +
+              "</div>";
+            overlay.querySelector(".cmsg-text").textContent = text;
+            document.body.appendChild(overlay);
+            const okBtn = overlay.querySelector(".cmsg-ok");
+            const cancelBtn = overlay.querySelector(".cmsg-cancel");
+            okBtn.focus();
+            function finish(result) {
+              overlay.remove();
+              document.removeEventListener("keydown", onKey);
+              resolve(result);
+            }
+            function onKey(e) {
+              if (e.key === "Escape") finish(false);
+              if (e.key === "Enter") finish(true);
+            }
+            document.addEventListener("keydown", onKey);
+            okBtn.addEventListener("click", () => finish(true));
+            cancelBtn.addEventListener("click", () => finish(false));
+            overlay.addEventListener("mousedown", (e) => {
+              if (e.target === overlay) finish(false);
+            });
+          });
+        }
+
+        // ---- কাস্টম ডেটপিকার (Report ডায়ালগের From/To) ----
+        function initDatePicker(id) {
+          const input = $(id);
+          if (!input) return;
+          const field = input.closest(".rd-field");
+          let pop = null;
+          let viewDate = new Date();
+          const monthNames = [
+            "জানুয়ারি",
+            "ফেব্রুয়ারি",
+            "মার্চ",
+            "এপ্রিল",
+            "মে",
+            "জুন",
+            "জুলাই",
+            "আগস্ট",
+            "সেপ্টেম্বর",
+            "অক্টোবর",
+            "নভেম্বর",
+            "ডিসেম্বর",
+          ];
+          const dows = ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহ", "শুক্র", "শনি"];
+          function iso(d) {
+            return (
+              d.getFullYear() +
+              "-" +
+              String(d.getMonth() + 1).padStart(2, "0") +
+              "-" +
+              String(d.getDate()).padStart(2, "0")
+            );
+          }
+          function parseIso(v) {
+            const [y, m, d] = v.split("-").map(Number);
+            return new Date(y, m - 1, d);
+          }
+          function close() {
+            if (!pop) return;
+            pop.remove();
+            pop = null;
+            document.removeEventListener("mousedown", onDocClick, true);
+            document.removeEventListener("keydown", onKey);
+          }
+          function onDocClick(e) {
+            if (pop && !pop.contains(e.target) && e.target !== input)
+              close();
+          }
+          function onKey(e) {
+            if (e.key === "Escape") close();
+          }
+          function render() {
+            const y = viewDate.getFullYear();
+            const m = viewDate.getMonth();
+            const first = new Date(y, m, 1);
+            const startDow = first.getDay();
+            const daysInMonth = new Date(y, m + 1, 0).getDate();
+            const daysInPrevMonth = new Date(y, m, 0).getDate();
+            const selectedIso = input.value;
+            const todayIso = iso(new Date());
+            let html =
+              '<div class="cdp-head">' +
+              '<button type="button" class="cdp-nav" data-dir="-1">‹</button>' +
+              '<span class="cdp-title">' +
+              monthNames[m] +
+              " " +
+              y +
+              "</span>" +
+              '<button type="button" class="cdp-nav" data-dir="1">›</button>' +
+              "</div>" +
+              '<div class="cdp-grid">' +
+              dows.map((d) => '<div class="cdp-dow">' + d + "</div>").join("");
+            for (let i = 0; i < startDow; i++) {
+              html +=
+                '<div class="cdp-day other">' +
+                (daysInPrevMonth - startDow + 1 + i) +
+                "</div>";
+            }
+            for (let d = 1; d <= daysInMonth; d++) {
+              const dIso = iso(new Date(y, m, d));
+              const cls = ["cdp-day"];
+              if (dIso === selectedIso) cls.push("sel");
+              if (dIso === todayIso) cls.push("today");
+              html +=
+                '<div class="' +
+                cls.join(" ") +
+                '" data-iso="' +
+                dIso +
+                '">' +
+                d +
+                "</div>";
+            }
+            const totalCells = startDow + daysInMonth;
+            const trailing = (7 - (totalCells % 7)) % 7;
+            for (let i = 1; i <= trailing; i++) {
+              html += '<div class="cdp-day other">' + i + "</div>";
+            }
+            html += "</div>";
+            pop.innerHTML = html;
+            pop.querySelectorAll(".cdp-nav").forEach((btn) => {
+              btn.onclick = (e) => {
+                e.stopPropagation();
+                viewDate.setMonth(
+                  viewDate.getMonth() + Number(btn.dataset.dir),
+                );
+                render();
+              };
+            });
+            pop.querySelectorAll(".cdp-day[data-iso]").forEach((cell) => {
+              cell.onclick = (e) => {
+                e.stopPropagation();
+                input.value = cell.dataset.iso;
+                input.dispatchEvent(new Event("change", { bubbles: true }));
+                close();
+              };
+            });
+          }
+          function open() {
+            if (pop) return;
+            viewDate = input.value ? parseIso(input.value) : new Date();
+            pop = document.createElement("div");
+            pop.className = "cdp-pop";
+            field.appendChild(pop);
+            render();
+            setTimeout(() => {
+              document.addEventListener("mousedown", onDocClick, true);
+              document.addEventListener("keydown", onKey);
+            }, 0);
+          }
+          input.addEventListener("click", open);
+          input.addEventListener("focus", open);
+        }
+        initDatePicker("rdFrom");
+        initDatePicker("rdTo");
         const dlg = $("entry"),
           list = $("deRows");
         const viewDlg = $("viewDlg");
@@ -3696,7 +4112,7 @@
         function setDraftStatus(message) {
           $("draftStatus").textContent = message;
         }
-        function restoreDraftClick() {
+        async function restoreDraftClick() {
           const draft = loadDraft();
           if (!hasMeaningfulDraft(draft)) {
             setDraftStatus("সংরক্ষিত কোনো Draft পাওয়া যায়নি।");
@@ -3704,9 +4120,9 @@
           }
           if (
             currentEntryHasContent() &&
-            !confirm(
+            !(await showConfirm(
               "বর্তমান ফরমের তথ্য মুছে আগের Draft ফিরিয়ে আনা হবে। এগোবেন?",
-            )
+            ))
           )
             return;
           restoreDraft(draft);
@@ -3779,7 +4195,7 @@
           }
           const data = collectEntry(true);
           if (!data.rows.length) {
-            alert("কমপক্ষে একটি পণ্যের সারি পূরণ করুন।");
+            showMessage("কমপক্ষে একটি পণ্যের সারি পূরণ করুন।", "warning");
             return;
           }
           pending = data;
@@ -4114,7 +4530,7 @@
               const viewButton = document.createElement("button");
               viewButton.type = "button";
               viewButton.className = "rd-view-btn";
-              viewButton.textContent = "দেখুন";
+              viewButton.textContent = "View";
               viewButton.addEventListener("click", () =>
                 openEntryInNewTab(date, key),
               );
@@ -4272,7 +4688,7 @@
             ? $("typeProduct")
             : t.empty;
           if (t.incomplete) {
-            alert(
+            showMessage(
               t.invalid
                 ? "সারি " +
                     t.rowNo +
@@ -4286,6 +4702,7 @@
                     t.label +
                     "” ঘরটি ফাঁকা আছে।\n" +
                     "আগে এটি পূরণ করুন, তারপর Add চাপুন।",
+              "warning",
             );
           }
           setTimeout(() => {
@@ -4313,10 +4730,11 @@
             }
             const warning = row.querySelector(".row-warn");
             if (warning?.style.display === "block") {
-              alert(
+              showMessage(
                 "সারি " +
                   (Array.from(list.children).indexOf(row) + 1) +
                   "-এর মেয়াদ এখনো শেষ হয়নি। Date of Exp ঠিক করুন.",
+                "warning",
               );
               inputs[2].focus();
               return false;
@@ -4349,8 +4767,9 @@
             }
             const warning = editingRow.querySelector(".row-warn");
             if (warning?.style.display === "block") {
-              alert(
+              showMessage(
                 "এই product-এর মেয়াদ এখনো শেষ হয়নি। Date of Exp ঠিক করুন।",
+                "warning",
               );
               const mfg = editingRow.querySelector(".mfg-date");
               if (mfg) mfg.focus();
@@ -4435,7 +4854,10 @@
         $("viewAdded").onclick = () => {
           const data = collectEntry(true);
           if (!data.rows.length) {
-            alert('View করার জন্য কমপক্ষে একটি পণ্যের সারি "Add" করুন।');
+            showMessage(
+              'View করার জন্য কমপক্ষে একটি পণ্যের সারি "Add" করুন।',
+              "warning",
+            );
             return;
           }
           dlg.close();
@@ -5359,7 +5781,10 @@
           ];
           const missing = fields.find(({ input }) => !input.value.trim());
           if (!missing) return true;
-          alert(missing.label + " পূরণ করুন, তারপর Product List-এ যান।");
+          showMessage(
+            missing.label + " পূরণ করুন, তারপর Product List-এ যান।",
+            "warning",
+          );
           $("entryFieldsBlock").classList.remove("post-search-hidden");
           document
             .querySelectorAll(".product-list-group")
@@ -5392,7 +5817,7 @@
         async function searchChemist() {
           const code = $("de_ccode").value.trim();
           if (!code) {
-            alert("আগে Chemist Code লিখুন, তারপর Search চাপুন।");
+            showMessage("আগে Chemist Code লিখুন, তারপর Search চাপুন।", "warning");
             $("de_ccode").focus();
             return;
           }
@@ -5412,7 +5837,7 @@
           try {
             const result = await findChemistByCode(code);
             if (!result) {
-              alert(code + " Code-এর কোনো Chemist পাওয়া যায়নি।");
+              showMessage(code + " Code-এর কোনো Chemist পাওয়া যায়নি।", "error");
               setSt("err", code + " Code-এর কোনো Chemist পাওয়া যায়নি।");
               return;
             }
