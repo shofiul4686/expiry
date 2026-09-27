@@ -4283,8 +4283,14 @@
           const ym =
             d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0");
           // প্রতিটা প্রিফিক্স + মাসের জন্য আলাদা কাউন্টার ডকুমেন্ট:
-          // InvoiceCounters/<prefix>/<yyyymm> (Firestore প্রজেক্ট dinajpur-expiry)
-          const path = "InvoiceCounters/" + prefix + "/" + ym;
+          // InvoiceCounters/<prefix>-<yyyymm> (Firestore প্রজেক্ট dinajpur-expiry)
+          // নোট: আগে path ছিল "InvoiceCounters/<prefix>/<yyyymm>" (৩টা অংশ),
+          // কিন্তু Firestore-এ ডকুমেন্ট path সবসময় জোড় সংখ্যক অংশের হতে হয়
+          // (collection/document/collection/document...) — বিজোড় সংখ্যক অংশ
+          // আসলে একটা সাব-কালেকশনকে নির্দেশ করে, ডকুমেন্ট না। তাই আগের
+          // path দিয়ে :commit কল করলে সবসময় "400 Invalid resource" এরর
+          // আসতো (এটাই "ইন্টারনেট/সার্ভার সমস্যা" মেসেজের আসল কারণ ছিল)।
+          const path = "InvoiceCounters/" + prefix + "-" + ym;
           const serial = await firestoreIncrementCounter(path, 1);
           return prefix + "-MEXP-" + ym + "-" + String(serial).padStart(4, "0");
         }
@@ -4501,7 +4507,13 @@
                   "Save হয়নি",
                   e.code === "perm"
                     ? "Invoice কাউন্টারে write অনুমতি নেই (Firebase Rules)।"
-                    : "Invoice No তৈরি করা যায়নি (ইন্টারনেট/সার্ভার সমস্যা)।",
+                    : e.status
+                      ? "Invoice No তৈরি করা যায়নি — সার্ভার এরর (" +
+                        e.status +
+                        ")" +
+                        (e.detail ? ": " + e.detail : "") +
+                        "।"
+                      : "Invoice No তৈরি করা যায়নি (ইন্টারনেট/সার্ভার সমস্যা)।",
                 );
                 return;
               }
