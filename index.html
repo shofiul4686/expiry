@@ -921,8 +921,8 @@
         outline-offset: 0;
         border-color: #1a3f7a;
       }
-      #entry #de_wp1::placeholder,
-      #entry #de_wp2::placeholder {
+      #entry #de_wp_mpo::placeholder,
+      #entry #de_wp_am::placeholder {
         color: #c81e1e;
       }
       #entry h3.sec {
@@ -1001,6 +1001,12 @@
         margin-bottom: 6px;
       }
       #entry .pl .ppc {
+        display: none;
+      }
+      /* Box Size: প্রোডাক্ট বাছাই করলে ব্যাকগ্রাউন্ডে অটো-ফিল হয়ে Firebase-এ
+         সেভ হয় এবং View (Product Preview)-এ দেখা যায়, কিন্তু এন্ট্রি গ্রিড/
+         প্রিন্ট Form E-তে আলাদা ঘর হিসেবে দেখানো হয় না */
+      #entry .pl .box-size {
         display: none;
       }
       #entry .pl .row-warn {
@@ -1375,8 +1381,8 @@
         #entry #chemistFieldsBlock input[type="text"]::placeholder {
           font-size: 8px;
         }
-        #entry #de_wp1::placeholder,
-        #entry #de_wp2::placeholder {
+        #entry #de_wp_mpo::placeholder,
+        #entry #de_wp_am::placeholder {
           font-size: 8px;
         }
         #entry footer.df {
@@ -2484,12 +2490,12 @@
         </div>
         <div class="col right">
           <div class="row">
-            <label for="wp1">Working Period in the territory</label
-            ><input id="wp1" type="text" class="boxed" />
+            <label for="wp_mpo">Working Period in the territory</label
+            ><input id="wp_mpo" type="text" class="boxed" />
           </div>
           <div class="row">
-            <label for="wp2">Working Period in the territory</label
-            ><input id="wp2" type="text" class="boxed" />
+            <label for="wp_am">Working Period in the territory</label
+            ><input id="wp_am" type="text" class="boxed" />
           </div>
           <div class="row">
             <label for="ccode">Chemist Code</label
@@ -2602,11 +2608,11 @@
                   >
                 </div>
                 <div>
-                  <label class="f" for="de_wp1"
+                  <label class="f" for="de_wp_mpo"
                     >Working Period in the territory</label
                   ><input
                     type="text"
-                    id="de_wp1"
+                    id="de_wp_mpo"
                     autocomplete="off"
                     placeholder="আপনি কতদিন ধরে এই টেরিটরিতে আছেন?"
                   />
@@ -2642,11 +2648,11 @@
                   ><input type="text" id="de_am" autocomplete="off" readonly />
                 </div>
                 <div>
-                  <label class="f" for="de_wp2"
+                  <label class="f" for="de_wp_am"
                     >Working Period in the territory</label
                   ><input
                     type="text"
-                    id="de_wp2"
+                    id="de_wp_am"
                     autocomplete="off"
                     placeholder="আপনি কতদিন ধরে এই টেরিটরিতে আছেন?"
                   />
@@ -2829,6 +2835,7 @@
                 <th>Exp</th>
                 <th>Qty</th>
                 <th>Value</th>
+                <th>Box Size</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -2838,6 +2845,7 @@
                 <td colspan="6">Grand Total</td>
                 <td id="viewGrandQty">0</td>
                 <td id="viewGrandValue">0</td>
+                <td></td>
               </tr>
             </tfoot>
           </table>
@@ -3227,7 +3235,7 @@
         savedForm.dataset.form = "Saved Form";
         savedForm.style.display = "none";
         const savedFieldEls = {};
-        ["mpo", "am", "ccode", "chemist", "wp1", "wp2", "addr"].forEach((k) => {
+        ["mpo", "am", "ccode", "chemist", "wp_mpo", "wp_am", "addr"].forEach((k) => {
           savedFieldEls[k] = savedForm.querySelector("#" + k);
         });
         const savedTbody = savedForm.querySelector("#rows");
@@ -3304,7 +3312,7 @@
           return null;
         }
 
-        // ---- Employee (IPI/MPO/WP1/AM/WP2) persistence: এই ডিভাইস/ব্রাউজারে সংরক্ষণ ----
+        // ---- Employee (IPI/MPO/WP_MPO/AM/WP_AM) persistence: এই ডিভাইস/ব্রাউজারে সংরক্ষণ ----
         function saveEmployee() {
           try {
             localStorage.setItem(
@@ -3312,9 +3320,9 @@
               JSON.stringify({
                 ipi: $("de_ipi").value.trim(),
                 mpo: $("de_mpo").value.trim(),
-                wp1: $("de_wp1").value.trim(),
+                wp_mpo: $("de_wp_mpo").value.trim(),
                 am: $("de_am").value.trim(),
-                wp2: $("de_wp2").value.trim(),
+                wp_am: $("de_wp_am").value.trim(),
                 territoryCode: currentTerritoryCode || "",
                 employeeInfo: { ...currentEmployeeInfo },
               }),
@@ -3480,8 +3488,8 @@
           am: "am",
           ccode: "ccode",
           chemist: "chemist",
-          wp1: "wp1",
-          wp2: "wp2",
+          wp_mpo: "wp_mpo",
+          wp_am: "wp_am",
           addr: "addr",
         };
         const COLS = [
@@ -3491,6 +3499,7 @@
           "Date of exp",
           "Quantity",
           "Invoice value",
+          "Box size",
         ];
         const ph = [
           "Name of Product",
@@ -3499,6 +3508,7 @@
           "Date of Exp (মাস/বছর)",
           "Quantity",
           "Invoice Value",
+          "Box Size",
         ];
         const monthNames = [
           "Jan",
@@ -3553,6 +3563,7 @@
               "exp-date",
               "quantity",
               "inv",
+              "box-size",
             ][i];
             const input =
               '<input type="text" class="' +
@@ -3562,9 +3573,11 @@
               '"' +
               (i === 5
                 ? ' inputmode="decimal" readonly tabindex="-1" title="Quantity অনুযায়ী অটো হিসাব হবে"'
-                : i === 1 || i === 4
-                  ? ' inputmode="numeric"'
-                  : "") +
+                : i === 6
+                  ? ' inputmode="decimal" readonly tabindex="-1" title="প্রোডাক্ট বাছাই করলে অটো আসবে (Print Form-এ দেখাবে না)"'
+                  : i === 1 || i === 4
+                    ? ' inputmode="numeric"'
+                    : "") +
               ">";
             h +=
               i === 2
@@ -3653,6 +3666,9 @@
               const pe = d.querySelector(".ppc");
               if (pe) pe.textContent = "";
               d.dataset.perPcs = "";
+              d.dataset.packSize = "";
+              const bse = d.querySelector(".box-size");
+              if (bse) bse.value = "";
             }
             if (!d.classList.contains("row-committed")) {
               $("typeProduct").value = productInput.value;
@@ -3862,9 +3878,9 @@
               (d) => !committedOnly || d.classList.contains("row-committed"),
             )
             .map((d) => ({
-              row: Array.from(d.querySelectorAll("input")).map((i) =>
-                i.value.trim(),
-              ),
+              row: Array.from(d.querySelectorAll("input"))
+                .map((i) => i.value.trim())
+                .concat([d.dataset.packSize || "", d.dataset.perPcs || ""]),
               code: codeFor(d),
             }))
             .filter((it) => it.row.slice(0, 5).some((v) => v !== ""));
@@ -3943,6 +3959,7 @@
                 row[3] || "",
                 row[4] || "",
                 row[5] || "",
+                row[6] || "",
               ];
               const quantity = Number(row[4]);
               const value = Number(row[5]);
@@ -4006,7 +4023,7 @@
         // জন্য প্রস্তুত করে (Clear All-এর মতোই, কিন্তু confirm ছাড়া এবং ডায়ালগ
         // খোলা রেখে দেয় যাতে পরের এন্ট্রি সাথে সাথে দেওয়া যায়)।
         function resetEntryForNext() {
-          // IPI NO পরিবর্তন হয় না, তাই Employee section (IPI/MPO/WP1/AM/WP2)
+          // IPI NO পরিবর্তন হয় না, তাই Employee section (IPI/MPO/WP_MPO/AM/WP_AM)
           // খালি করা হয় না বা লগইন সেকশনও আর দেখানো হয় না — শুধু Chemist
           // Code/Name of Chemist/Address ও Product List পরের এন্ট্রির জন্য খালি হয়।
           ["ccode", "chemist", "addr"].forEach((k) => {
@@ -4204,8 +4221,6 @@
           runSave(); // সরাসরি সেভ হবে; আলাদা করে দ্বিতীয়বার Save চাপতে হবে না
         }
 
-        const EXPIRY_DB =
-          "https://dinajpur-expiry-default-rtdb.asia-southeast1.firebasedatabase.app";
         // Dinajpur / Sep-2026 / 25 / <অটো আইডি>
         function expiryPath(d) {
           return (
@@ -4221,43 +4236,213 @@
         // ===== Invoice No অটো-জেনারেট =====
         // NDIN... => INM-MEXP-YYYYMM-0001, SVD... => ISV-MEXP-YYYYMM-0001,
         // বাকি সব => IPI-MEXP-YYYYMM-0001। সাল/মাস বদলালে সিরিয়াল নতুন করে ০০০১ থেকে শুরু হয়।
-        async function putJSON(url, body) {
-          const r = await fetch(url, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-          });
-          if (r.status === 401 || r.status === 403) {
-            const e = new Error("perm");
-            e.code = "perm";
-            throw e;
-          }
-          if (!r.ok) {
-            const e = new Error("http " + r.status);
-            e.code = "http";
-            throw e;
-          }
-          return r.json();
-        }
         function invoicePrefix(territoryCode) {
           const t = (territoryCode || "").trim().toUpperCase();
           if (/^NDIN/.test(t)) return "INM";
           if (/^SVD/.test(t)) return "ISV";
           return "IPI";
         }
+        // Firestore-এর commit API দিয়ে সার্ভার-সাইড atomic increment
+        // (fieldTransforms.increment) — একাধিক ডিভাইস থেকে একসাথে সেভ করলেও
+        // সিরিয়াল নম্বর কখনো ডুপ্লিকেট হবে না।
+        async function firestoreIncrementCounter(path, amount) {
+          const name =
+            "projects/" +
+            FIRESTORE_PROJECT +
+            "/databases/(default)/documents/" +
+            path;
+          const r = await fetch(FIRESTORE_BASE + ":commit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              writes: [
+                {
+                  update: { name: name, fields: {} },
+                  updateMask: { fieldPaths: [] },
+                  updateTransforms: [
+                    {
+                      fieldPath: "value",
+                      increment: { integerValue: String(amount) },
+                    },
+                  ],
+                },
+              ],
+            }),
+          });
+          if (!r.ok) await firestoreThrowFor(r);
+          const j = await r.json();
+          const tr =
+            j.writeResults &&
+            j.writeResults[0] &&
+            j.writeResults[0].transformResults &&
+            j.writeResults[0].transformResults[0];
+          return Number(tr ? fromFirestoreValue(tr) : null);
+        }
         async function nextInvoiceNo(territoryCode, d) {
           const prefix = invoicePrefix(territoryCode);
           const ym =
             d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0");
-          // প্রতিটা প্রিফিক্স + মাসের জন্য আলাদা কাউন্টার; Firebase-এর
-          // সার্ভার-সাইড atomic increment (".sv":{"increment":1}) ব্যবহার করা
-          // হয়েছে, যাতে একাধিক ডিভাইস থেকে একসাথে সেভ করলেও নম্বর না মেলা
-          // (duplicate) কখনো না হয়।
-          const path = "InvoiceCounters/" + prefix + "/" + ym + ".json";
-          const serial = await putJSON(EXPIRY_DB + "/" + path, {
-            ".sv": { increment: 1 },
-          });
+          // প্রতিটা প্রিফিক্স + মাসের জন্য আলাদা কাউন্টার ডকুমেন্ট:
+          // InvoiceCounters/<prefix>/<yyyymm> (Firestore প্রজেক্ট dinajpur-expiry)
+          const path = "InvoiceCounters/" + prefix + "/" + ym;
+          const serial = await firestoreIncrementCounter(path, 1);
           return prefix + "-MEXP-" + ym + "-" + String(serial).padStart(4, "0");
+        }
+
+        // ===== Firestore (এক্সপায়ারি এন্ট্রি ও Invoice কাউন্টার — দুটোই এখানে সেভ হয়) =====
+        // dinajpur-expiry প্রজেক্টের Firestore ডেটাবেস।
+        const FIRESTORE_PROJECT = "dinajpur-expiry";
+        const FIRESTORE_BASE =
+          "https://firestore.googleapis.com/v1/projects/" +
+          FIRESTORE_PROJECT +
+          "/databases/(default)/documents";
+
+        function toFirestoreValue(v) {
+          if (v === null || v === undefined) return { nullValue: null };
+          if (typeof v === "string") return { stringValue: v };
+          if (typeof v === "boolean") return { booleanValue: v };
+          if (typeof v === "number") {
+            return Number.isInteger(v)
+              ? { integerValue: String(v) }
+              : { doubleValue: v };
+          }
+          if (Array.isArray(v)) {
+            return { arrayValue: { values: v.map(toFirestoreArrayItem) } };
+          }
+          return { mapValue: { fields: toFirestoreFields(v) } };
+        }
+        // Firestore একটা array-এর ভেতরে সরাসরি আরেকটা array রাখতে দেয় না
+        // (nested array আনসাপোর্টেড — এটাই আগের "সেভ হয়নি" এররের আসল কারণ,
+        // কারণ আমাদের "rows" ফিল্ড হলো array-এর-array)। তাই array-এর ভেতরের
+        // array-কে ছোট্ট একটা map-এ মুড়ে রাখা হচ্ছে (__arr key দিয়ে)।
+        function toFirestoreArrayItem(v) {
+          if (Array.isArray(v)) {
+            return { mapValue: { fields: { __arr: toFirestoreValue(v) } } };
+          }
+          return toFirestoreValue(v);
+        }
+        function toFirestoreFields(obj) {
+          const fields = {};
+          Object.keys(obj || {}).forEach((k) => {
+            fields[k] = toFirestoreValue(obj[k]);
+          });
+          return fields;
+        }
+        function fromFirestoreValue(v) {
+          if (!v) return null;
+          if ("stringValue" in v) return v.stringValue;
+          if ("integerValue" in v) return Number(v.integerValue);
+          if ("doubleValue" in v) return v.doubleValue;
+          if ("booleanValue" in v) return v.booleanValue;
+          if ("nullValue" in v) return null;
+          if ("arrayValue" in v)
+            return (v.arrayValue.values || []).map(fromFirestoreArrayItem);
+          if ("mapValue" in v)
+            return fromFirestoreFields(v.mapValue.fields || {});
+          return null;
+        }
+        // __arr সেন্টিনেল দেখলে সেটাকে আবার প্লেইন array হিসেবে ফিরিয়ে আনে
+        function fromFirestoreArrayItem(v) {
+          const f = v && v.mapValue && v.mapValue.fields;
+          if (f && Object.keys(f).length === 1 && "__arr" in f) {
+            return fromFirestoreValue(f.__arr);
+          }
+          return fromFirestoreValue(v);
+        }
+        function fromFirestoreFields(fields) {
+          const obj = {};
+          Object.keys(fields || {}).forEach((k) => {
+            obj[k] = fromFirestoreValue(fields[k]);
+          });
+          return obj;
+        }
+        // ব্যর্থ হলে Firestore-এর আসল এরর মেসেজও (যেমন INVALID_ARGUMENT-এর
+        // বিস্তারিত কারণ) সাথে নিয়ে থ্রো করে, যাতে "নেট সমস্যা" বলে ভুল
+        // দেখানোর বদলে আসল কারণ বোঝা যায়
+        async function firestoreThrowFor(r) {
+          let detail = "";
+          try {
+            const body = await r.json();
+            detail = (body && body.error && body.error.message) || "";
+          } catch (e) {}
+          const e = new Error("firestore " + r.status);
+          e.status = r.status;
+          e.detail = detail;
+          e.code = r.status === 401 || r.status === 403 ? "perm" : "http";
+          throw e;
+        }
+        // ==== rows: অ্যাপের ভেতরে array হিসেবেই ব্যবহার হয় (row[0]=name,
+        // row[1]=batchNo, ...), কিন্তু Firestore-এ পড়া/সহজে বোঝার জন্য
+        // নামযুক্ত অবজেক্ট আকারে সেভ হয়। এই কনভার্সন শুধু নিচের তিনটা
+        // ফাংশনের ভেতরেই হয় (I/O বাউন্ডারি), তাই বাকি কোডে কোনো পরিবর্তন
+        // লাগেনি — সেভ করার সময় array→object, পড়ার সময় object→array।
+        const ROW_KEYS = [
+          "name",
+          "batchNo",
+          "mfgDate",
+          "expDate",
+          "quantity",
+          "invoiceValue",
+          "boxSize",
+          "packSize",
+          "perPcs",
+        ];
+        function rowsToFirestoreRows(rows) {
+          return (rows || []).map((row) => {
+            if (!Array.isArray(row)) return row;
+            const obj = {};
+            ROW_KEYS.forEach((k, i) => {
+              obj[k] = row[i] !== undefined ? row[i] : "";
+            });
+            return obj;
+          });
+        }
+        function rowsFromFirestoreRows(rows) {
+          return (rows || []).map((row) => {
+            if (Array.isArray(row)) return row; // পুরনো এন্ট্রি (array আকারে সেভ হওয়া)
+            return ROW_KEYS.map((k) =>
+              row && row[k] !== undefined ? row[k] : "",
+            );
+          });
+        }
+        // path যেমন: "Dinajpur/Sep-2026/25/IPI-MEXP-202609-0001" (নির্দিষ্ট ডকুমেন্ট)
+        async function firestoreSetDoc(path, data) {
+          const payload =
+            data && Array.isArray(data.rows)
+              ? { ...data, rows: rowsToFirestoreRows(data.rows) }
+              : data;
+          const r = await fetch(FIRESTORE_BASE + "/" + path, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fields: toFirestoreFields(payload) }),
+          });
+          if (!r.ok) await firestoreThrowFor(r);
+          return r.json();
+        }
+        async function firestoreGetDoc(path) {
+          const r = await fetch(FIRESTORE_BASE + "/" + path);
+          if (r.status === 404) return null;
+          if (!r.ok) await firestoreThrowFor(r);
+          const j = await r.json();
+          const data = fromFirestoreFields(j.fields || {});
+          if (data && Array.isArray(data.rows)) {
+            data.rows = rowsFromFirestoreRows(data.rows);
+          }
+          return data;
+        }
+        // collectionPath যেমন: "Dinajpur/Sep-2026/25" (ওই তারিখের সব ইনভয়েস)
+        async function firestoreListDocs(collectionPath) {
+          const r = await fetch(FIRESTORE_BASE + "/" + collectionPath);
+          if (r.status === 404) return [];
+          if (!r.ok) await firestoreThrowFor(r);
+          const j = await r.json();
+          return (j.documents || []).map((doc) => {
+            const data = fromFirestoreFields(doc.fields || {});
+            if (data && Array.isArray(data.rows)) {
+              data.rows = rowsFromFirestoreRows(data.rows);
+            }
+            return { id: doc.name.split("/").pop(), data };
+          });
         }
 
         // ===== সেভ প্রবাহ: Save চাপলে অটো Invoice No তৈরি + Firebase-এ সেভ =====
@@ -4335,18 +4520,23 @@
             let cloud = false,
               cloudErr = "";
             try {
-              const path = expiryPath(now);
-              const res = await postJSON(
-                EXPIRY_DB + "/" + path + ".json",
-                data,
-              );
-              data.cloudPath = path + "/" + res.name;
+              // Invoice No-ই ডকুমেন্ট আইডি, যাতে পাথ হয়:
+              // Dinajpur/<মাস>-<বছর>/<তারিখ>/<Invoice No> — এখন Firestore-এ সেভ
+              const path = expiryPath(now) + "/" + pending.invoiceNo;
+              await firestoreSetDoc(path, data);
+              data.cloudPath = path;
               cloud = true;
             } catch (e) {
               cloudErr =
                 e.code === "perm"
                   ? "Firebase Rules-এ write অনুমতি নেই।"
-                  : "ইন্টারনেট/সার্ভার সমস্যা।";
+                  : e.status
+                    ? "সার্ভার এরর (" +
+                      e.status +
+                      ")" +
+                      (e.detail ? ": " + e.detail : "") +
+                      "।"
+                    : "ইন্টারনেট/সার্ভার সমস্যা।";
             }
             const stored = persist(data);
             populateSavedForm(data);
@@ -4472,10 +4662,8 @@
             const results = await Promise.all(
               dates.map(async (date) => {
                 try {
-                  const data = await getJSON(
-                    EXPIRY_DB + "/" + expiryPath(date) + ".json",
-                  );
-                  return { date, data };
+                  const docs = await firestoreListDocs(expiryPath(date));
+                  return { date, docs };
                 } catch (error) {
                   return { date, error };
                 }
@@ -4483,11 +4671,11 @@
             );
             const failed = results.find((result) => result.error);
             const entries = [];
-            results.forEach(({ date, data }) => {
-              if (!data || typeof data !== "object") return;
-              Object.entries(data).forEach(([key, entry]) => {
-                if (entry && typeof entry === "object") {
-                  entries.push({ date, key, entry });
+            results.forEach(({ date, docs }) => {
+              if (!docs) return;
+              docs.forEach(({ id, data }) => {
+                if (data && typeof data === "object") {
+                  entries.push({ date, key: id, entry: data });
                 }
               });
             });
@@ -5659,6 +5847,10 @@
                   rowEl.dataset.perPcs = Number.isFinite(perPcs)
                     ? String(perPcs)
                     : "";
+                  rowEl.dataset.packSize = record.fields["PACK SIZE"] || "";
+                  const boxSizeEl = rowEl.querySelector(".box-size");
+                  if (boxSizeEl)
+                    boxSizeEl.value = record.fields["BOX SIZE"] || "";
                   panel.style.display = "none";
                   batchInput.focus();
                 });
@@ -5996,7 +6188,7 @@
           e.preventDefault();
           // Employee section-এর শেষ ঘর (Working Period AM)-এ Enter দিলে সরাসরি
           // OK চাপার মতো কাজ করবে, যাতে মাউস ছাড়াই কীবোর্ড দিয়ে এগোনো যায়
-          if (e.target.id === "de_wp2") {
+          if (e.target.id === "de_wp_am") {
             tryEmployeeOk();
             return;
           }
@@ -6022,9 +6214,8 @@
           (async () => {
             try {
               const date = parseDateInput(viewDate);
-              const url =
-                EXPIRY_DB + "/" + expiryPath(date) + "/" + viewKey + ".json";
-              const entry = await getJSON(url);
+              const path = expiryPath(date) + "/" + viewKey;
+              const entry = await firestoreGetDoc(path);
               if (!entry || typeof entry !== "object") {
                 document.body.innerHTML =
                   '<p style="padding:24px;font-family:sans-serif;font-size:15px">এই এন্ট্রিটি খুঁজে পাওয়া যায়নি।</p>';
@@ -6062,14 +6253,8 @@
             for (const item of entries) {
               try {
                 const date = parseDateInput(item.date);
-                const url =
-                  EXPIRY_DB +
-                  "/" +
-                  expiryPath(date) +
-                  "/" +
-                  encodeURIComponent(item.key) +
-                  ".json";
-                const entry = await getJSON(url);
+                const path = expiryPath(date) + "/" + item.key;
+                const entry = await firestoreGetDoc(path);
                 if (!entry || typeof entry !== "object") continue;
                 populateSavedForm(entry);
                 const pageCount = Math.max(
@@ -6104,7 +6289,7 @@
         showPage("none");
         document.body.classList.add("de-open");
 
-        // ---- এই ব্রাউজার/ডিভাইসে আগে Employee (IPI/MPO/WP1/AM/WP2) তথ্য OK
+        // ---- এই ব্রাউজার/ডিভাইসে আগে Employee (IPI/MPO/WP_MPO/AM/WP_AM) তথ্য OK
         // করা থাকলে, তা এখনই পূরণ করে লগইন সেকশন না দেখিয়ে সরাসরি Chemist
         // সেকশন দেখানো হয় — IPI NO পরিবর্তন হয় না বলে বার বার টাইপ করার
         // দরকার নেই। নতুন ব্রাউজার/ডিভাইসে localStorage খালি থাকায় এই অংশ
@@ -6118,8 +6303,8 @@
             !savedEmp.employeeInfo?.amIpi && savedAmSeparator !== -1;
           $("de_ipi").value = savedEmp.ipi;
           $("de_mpo").value = savedEmp.mpo || "";
-          $("de_wp1").value = savedEmp.wp1 || "";
-          $("de_wp2").value = savedEmp.wp2 || "";
+          $("de_wp_mpo").value = savedEmp.wp_mpo || savedEmp.wp1 || "";
+          $("de_wp_am").value = savedEmp.wp_am || savedEmp.wp2 || "";
           currentTerritoryCode =
             savedEmp.territoryCode ||
             savedEmp.employeeInfo?.territoryCode ||
